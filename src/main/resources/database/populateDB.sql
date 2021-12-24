@@ -1,0 +1,2 @@
+-- INSERT INTO clients VALUES
+-- (1, )
