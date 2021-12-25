@@ -14,7 +14,7 @@ import java.util.Random;
  * still considered robust.
  * The hashed value has 256 bits.
  */
-public class Password {
+public class PasswordModel {
     private static final Random RANDOM = new SecureRandom();
     private static final int ITERATIONS = 10000;
     private static final int KEY_LENGTH = 256;
@@ -22,7 +22,7 @@ public class Password {
     /**
      * static utility class
      */
-    private Password() {}
+    private PasswordModel() {}
 
     /**
      * Returns a random salt to be used to hash a password.

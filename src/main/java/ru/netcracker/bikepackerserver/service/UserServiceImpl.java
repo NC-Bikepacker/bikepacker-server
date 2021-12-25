@@ -7,8 +7,12 @@ import ru.netcracker.bikepackerserver.exceptions.EmailAlreadyExistsException;
 import ru.netcracker.bikepackerserver.exceptions.NoAnyUsersException;
 import ru.netcracker.bikepackerserver.exceptions.UserNotFoundException;
 import ru.netcracker.bikepackerserver.exceptions.UsernameAlreadyExistsException;
-import ru.netcracker.bikepackerserver.model.User;
+import ru.netcracker.bikepackerserver.model.UserModel;
 import ru.netcracker.bikepackerserver.repository.UserRepo;
+
+import java.util.ArrayList;
+import java.util.List;
+import java.util.Optional;
 
 @Service
 public class UserServiceImpl implements UserService {
@@ -19,21 +23,19 @@ public class UserServiceImpl implements UserService {
     /**
      * Creates a new user.
      *
-     * @param user
+     * @param entity
      */
     @Override
-    public UserEntity create(UserEntity user) throws UsernameAlreadyExistsException, EmailAlreadyExistsException {
-        if (userRepo.findByUsername(user.getUsername()) != null) {
+    public UserModel create(UserEntity entity) throws UsernameAlreadyExistsException, EmailAlreadyExistsException {
+        if (userRepo.findByUsername(entity.getUsername()) != null) {
             throw new UsernameAlreadyExistsException("A user with this username already exists.");
         }
 
-        if (userRepo.findByEmail(user.getEmail()) != null) {
+        if (userRepo.findByEmail(entity.getEmail()) != null) {
             throw new EmailAlreadyExistsException("This email address is already in use.");
         }
 
-//        TODO: Check if user's role id is correct
-
-        return userRepo.save(user);
+        return UserModel.toModel(userRepo.save(entity));
     }
 
     /**
@@ -42,12 +44,16 @@ public class UserServiceImpl implements UserService {
      * @return list of all users.
      */
     @Override
-    public Iterable<UserEntity> readAll() throws NoAnyUsersException {
+    public List<UserModel> readAll() throws NoAnyUsersException {
         Iterable<UserEntity> users = userRepo.findAll();
         if (users.equals(null)) {
             throw new NoAnyUsersException("There are no any users.");
         }
-        return users;
+
+        List<UserModel> userModelList = new ArrayList<>();
+        users.forEach(element -> userModelList.add(UserModel.toModel(element)));
+
+        return userModelList;
     }
 
     /**
@@ -57,13 +63,13 @@ public class UserServiceImpl implements UserService {
      * @return user by his uuid.
      */
     @Override
-    public UserEntity read(Long id) throws UserNotFoundException {
+    public UserModel read(Long id) throws UserNotFoundException {
         UserEntity userEntity = userRepo.findById(id).get();
         if (userEntity.equals(null)) {
             throw new UserNotFoundException("User with id=" + id + " not found.");
         }
 
-        return userEntity;
+        return UserModel.toModel(userEntity);
     }
 
     /**
@@ -75,21 +81,18 @@ public class UserServiceImpl implements UserService {
      * false if didn't.
      */
     @Override
-    public boolean update(User newUser, Long id) {
-        try {
-            UserEntity dbUser = userRepo.findById(id).get();
-            dbUser.setFirstname(newUser.getFirstname());
-            dbUser.setLastname(newUser.getLastname());
-            dbUser.setUserName(newUser.getNickname());
-            dbUser.setRoleId(newUser.getRole().getId());
-            dbUser.setEmail(newUser.getEmail());
-//            dbUser.get().setAvatarImageUrl(newUser.getUserPicLink());
-//            FIXME: Check & fix this method
-            userRepo.save(dbUser);
+    public boolean update(UserModel newUser, Long id) throws Exception {
+        Optional<UserEntity> dbUser = userRepo.findById(id);
+        if(dbUser.isPresent()) {
+//            FIXME: Fix NullPointerException for UserModel fields
+            if (!newUser.getFirstname().equals(null)) dbUser.get().setFirstname(newUser.getFirstname());
+            if (!newUser.getLastname().equals(null)) dbUser.get().setLastname(newUser.getLastname());
+            if (!newUser.getNickname().equals(null)) dbUser.get().setUserName(newUser.getNickname());
+            if (!newUser.getEmail().equals(null)) dbUser.get().setEmail(newUser.getEmail());
+            if (!newUser.getUserPicLink().equals(null)) dbUser.get().setAvatarImageUrl(newUser.getUserPicLink());
             return true;
-        } catch (Exception e) {
-            return false;
         }
+        return false;
     }
 
     /**
@@ -111,12 +114,16 @@ public class UserServiceImpl implements UserService {
 
     /**
      * Delete all users;
-     *
-     * @return true if users were deleted and
-     * @return false if weren't.
+     * @return true if user was deleted and
+     *         false if didn't.
      */
+
+    @Override
     public boolean deleteAll() throws Exception {
-        userRepo.deleteAll();
-        return true;
+        if (userRepo.count() != 0) {
+            userRepo.deleteAll();
+            return true;
+        }
+        return false;
     }
 }

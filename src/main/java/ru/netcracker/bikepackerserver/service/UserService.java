@@ -5,10 +5,9 @@ import ru.netcracker.bikepackerserver.exceptions.EmailAlreadyExistsException;
 import ru.netcracker.bikepackerserver.exceptions.NoAnyUsersException;
 import ru.netcracker.bikepackerserver.exceptions.UserNotFoundException;
 import ru.netcracker.bikepackerserver.exceptions.UsernameAlreadyExistsException;
-import ru.netcracker.bikepackerserver.model.User;
+import ru.netcracker.bikepackerserver.model.UserModel;
 
 import java.util.List;
-import java.util.UUID;
 
 public interface UserService {
 
@@ -16,29 +15,29 @@ public interface UserService {
      * Creates a new user.
      * @param user
      */
-    public UserEntity create(UserEntity user) throws UsernameAlreadyExistsException, EmailAlreadyExistsException;
+    public UserModel create(UserEntity user) throws UsernameAlreadyExistsException, EmailAlreadyExistsException;
 
     /**
      * Returns list of all users.
      * @return
      */
-    public Iterable<UserEntity> readAll() throws NoAnyUsersException;
+    public List<UserModel> readAll() throws NoAnyUsersException;
 
     /**
      * Returns user by his uuid.
      * @param id
      * @return user by his uuid.
      */
-    UserEntity read(Long id) throws UserNotFoundException;
+    UserModel read(Long id) throws UserNotFoundException;
 
     /**
      * Updates user's info finding him by uuid
-     * @param user
+     * @param userModel
      * @param id
      * @return true if user was updated and
      *         false if didn't.
      */
-    boolean update(User user, Long id);
+    boolean update(UserModel userModel, Long id) throws Exception;
 
     /**
      * Delete user;

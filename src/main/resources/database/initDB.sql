@@ -1,4 +1,4 @@
-CREATE TABLE IF NOT EXISTS public."user" (
+CREATE TABLE IF NOT EXISTS public."userModel" (
                                user_id integer NOT NULL,
                                first_name character varying(50),
                                last_name character varying(50),

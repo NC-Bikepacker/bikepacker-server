@@ -8,11 +8,12 @@ import ru.netcracker.bikepackerserver.exceptions.EmailAlreadyExistsException;
 import ru.netcracker.bikepackerserver.exceptions.NoAnyUsersException;
 import ru.netcracker.bikepackerserver.exceptions.UserNotFoundException;
 import ru.netcracker.bikepackerserver.exceptions.UsernameAlreadyExistsException;
-import ru.netcracker.bikepackerserver.model.User;
+import ru.netcracker.bikepackerserver.model.UserModel;
 import ru.netcracker.bikepackerserver.service.UserServiceImpl;
 
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
+import java.util.List;
 
 /**
  * Controller for operations on users.
@@ -54,8 +55,8 @@ public class UserController {
     @GetMapping
     public ResponseEntity read() {
         try {
-            Iterable<UserEntity> users = userService.readAll();
-            return new ResponseEntity(users, HttpStatus.OK);
+            List<UserModel> userModels = userService.readAll();
+            return new ResponseEntity(userModels, HttpStatus.OK);
         } catch (NoAnyUsersException e) {
             return new ResponseEntity(e.getMessage(), HttpStatus.BAD_REQUEST);
         } catch (Exception e) {
@@ -70,10 +71,10 @@ public class UserController {
      * @return http status "404 Not Found" if user equals null.
      */
     @GetMapping("{id}")
-    public ResponseEntity<User> read(@PathVariable(name = "id") Long id) {
+    public ResponseEntity<UserModel> read(@PathVariable(name = "id") Long id) {
         try {
-            UserEntity user = userService.read(id);
-            return new ResponseEntity(user, HttpStatus.OK);
+            UserModel userModel = userService.read(id);
+            return new ResponseEntity(userModel, HttpStatus.OK);
         } catch (UserNotFoundException e) {
             return new ResponseEntity(e.getMessage(), HttpStatus.BAD_REQUEST);
         } catch (Exception e) {
@@ -84,14 +85,17 @@ public class UserController {
     /**
      * Put request for updating user's data.
      * @param id
-     * @param newUser
+     * @param newUserModel
      * @return http status.
      */
     @PutMapping("/{id}")
-    public ResponseEntity<User> update(@PathVariable("id") Long id, @RequestBody User newUser) {
+    public ResponseEntity update(@PathVariable("id") Long id, @RequestBody UserModel newUserModel) {
         try {
-//            TODO: Fix this method
-            return new ResponseEntity(HttpStatus.OK);
+            if (userService.update(newUserModel, id)) {
+                return new ResponseEntity(HttpStatus.OK);
+            } else {
+                return new ResponseEntity("Что-то пошло не так.", HttpStatus.NOT_MODIFIED);
+            }
         } catch (Exception e) {
             return new ResponseEntity(e.getMessage(), HttpStatus.NOT_MODIFIED);
         }
@@ -103,7 +107,7 @@ public class UserController {
      * @return http status.
      */
     @DeleteMapping("/{id}")
-    public ResponseEntity<User> deleteById(@PathVariable("id") Long id) {
+    public ResponseEntity deleteById(@PathVariable("id") Long id) {
         try {
             boolean isDeleted = userService.deleteById(id);
             if (isDeleted) {
@@ -121,7 +125,7 @@ public class UserController {
      * @return http status.
      */
     @DeleteMapping("/all")
-    public ResponseEntity<User> deleteAll() {
+    public ResponseEntity deleteAll() {
         try {
             boolean wereDeleted = userService.deleteAll();
             if (wereDeleted) {
