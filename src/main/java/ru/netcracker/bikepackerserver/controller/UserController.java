@@ -28,6 +28,7 @@ public class UserController {
         this.userService = userService;
     }
 
+
     /**
      * Post request for creating new user.
      * @param userEntity
@@ -150,4 +151,7 @@ public class UserController {
             return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).build();
         }
     }
+
+
+
 }

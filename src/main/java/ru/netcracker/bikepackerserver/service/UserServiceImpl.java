@@ -68,7 +68,6 @@ public class UserServiceImpl implements UserService {
         if (userEntity.equals(null)) {
             throw new UserNotFoundException("User with id=" + id + " not found.");
         }
-
         return UserModel.toModel(userEntity);
     }
 
