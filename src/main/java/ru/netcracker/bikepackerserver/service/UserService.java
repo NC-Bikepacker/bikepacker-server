@@ -1,10 +1,10 @@
 package ru.netcracker.bikepackerserver.service;
 
 import ru.netcracker.bikepackerserver.entity.UserEntity;
-import ru.netcracker.bikepackerserver.exceptions.EmailAlreadyExistsException;
-import ru.netcracker.bikepackerserver.exceptions.NoAnyUsersException;
-import ru.netcracker.bikepackerserver.exceptions.UserNotFoundException;
-import ru.netcracker.bikepackerserver.exceptions.UsernameAlreadyExistsException;
+import ru.netcracker.bikepackerserver.exception.EmailAlreadyExistsException;
+import ru.netcracker.bikepackerserver.exception.NoAnyUsersException;
+import ru.netcracker.bikepackerserver.exception.UserNotFoundException;
+import ru.netcracker.bikepackerserver.exception.UsernameAlreadyExistsException;
 import ru.netcracker.bikepackerserver.model.UserModel;
 
 import java.util.List;
