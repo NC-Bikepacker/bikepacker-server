@@ -3,10 +3,7 @@ package ru.netcracker.bikepackerserver.service;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 import ru.netcracker.bikepackerserver.entity.UserEntity;
-import ru.netcracker.bikepackerserver.exceptions.EmailAlreadyExistsException;
-import ru.netcracker.bikepackerserver.exceptions.NoAnyUsersException;
-import ru.netcracker.bikepackerserver.exceptions.UserNotFoundException;
-import ru.netcracker.bikepackerserver.exceptions.UsernameAlreadyExistsException;
+import ru.netcracker.bikepackerserver.exception.*;
 import ru.netcracker.bikepackerserver.model.UserModel;
 import ru.netcracker.bikepackerserver.repository.UserRepo;
 
@@ -28,11 +25,11 @@ public class UserServiceImpl implements UserService {
     @Override
     public UserModel create(UserEntity entity) throws UsernameAlreadyExistsException, EmailAlreadyExistsException {
         if (userRepo.findByUsername(entity.getUsername()) != null) {
-            throw new UsernameAlreadyExistsException("A user with this username already exists.");
+            throw new UsernameAlreadyExistsException(entity.getUsername());
         }
 
         if (userRepo.findByEmail(entity.getEmail()) != null) {
-            throw new EmailAlreadyExistsException("This email address is already in use.");
+            throw new EmailAlreadyExistsException(entity.getEmail());
         }
 
         return UserModel.toModel(userRepo.save(entity));
@@ -45,13 +42,14 @@ public class UserServiceImpl implements UserService {
      */
     @Override
     public List<UserModel> readAll() throws NoAnyUsersException {
-        Iterable<UserEntity> users = userRepo.findAll();
-        if (users.equals(null)) {
-            throw new NoAnyUsersException("There are no any users.");
+        Optional<List<UserEntity>> users = Optional.ofNullable(userRepo.findAll());
+
+        if (users.isEmpty()) {
+            throw new NoAnyUsersException();
         }
 
         List<UserModel> userModelList = new ArrayList<>();
-        users.forEach(element -> userModelList.add(UserModel.toModel(element)));
+        users.get().forEach(element -> userModelList.add(UserModel.toModel(element)));
 
         return userModelList;
     }
@@ -64,11 +62,13 @@ public class UserServiceImpl implements UserService {
      */
     @Override
     public UserModel read(Long id) throws UserNotFoundException {
-        UserEntity userEntity = userRepo.findById(id).get();
-        if (userEntity.equals(null)) {
-            throw new UserNotFoundException("User with id=" + id + " not found.");
+        Optional<UserEntity> userEntity = Optional.ofNullable(userRepo.findById(id).get());
+
+        if (userEntity.isEmpty()) {
+            throw new UserNotFoundException(id);
         }
-        return UserModel.toModel(userEntity);
+
+        return UserModel.toModel(userEntity.get());
     }
 
     /**
@@ -80,49 +80,54 @@ public class UserServiceImpl implements UserService {
      * false if didn't.
      */
     @Override
-    public boolean update(UserModel newUser, Long id) throws Exception {
+    public boolean update(UserModel newUser, Long id) throws UserNotFoundException {
         Optional<UserEntity> dbUser = userRepo.findById(id);
-        if(dbUser.isPresent()) {
-//            FIXME: Fix NullPointerException for UserModel fields
-            if (!newUser.getFirstname().equals(null)) dbUser.get().setFirstname(newUser.getFirstname());
-            if (!newUser.getLastname().equals(null)) dbUser.get().setLastname(newUser.getLastname());
-            if (!newUser.getNickname().equals(null)) dbUser.get().setUserName(newUser.getNickname());
-            if (!newUser.getEmail().equals(null)) dbUser.get().setEmail(newUser.getEmail());
-            if (!newUser.getUserPicLink().equals(null)) dbUser.get().setAvatarImageUrl(newUser.getUserPicLink());
-            return true;
+
+        if (dbUser.isEmpty()) {
+            throw new UserNotFoundException(id);
         }
-        return false;
+
+        if (newUser.getFirstname().isPresent()) dbUser.get().setFirstname(newUser.getFirstname().get());
+        if (newUser.getLastname().isPresent()) dbUser.get().setLastname(newUser.getLastname().get());
+        if (newUser.getNickname().isPresent()) dbUser.get().setUserName(newUser.getNickname().get());
+        if (newUser.getEmail().isPresent()) dbUser.get().setEmail(newUser.getEmail().get());
+        if (newUser.getUserPicLink().isPresent()) dbUser.get().setAvatarImageUrl(newUser.getUserPicLink().get());
+
+        return true;
     }
 
     /**
      * Delete user;
      *
      * @param id
-     * @return true if user was deleted and
-     * @return false if didn't.
+     * @return true if user was deleted
      */
     @Override
-    public boolean deleteById(Long id) throws Exception {
-        if (!userRepo.findById(id).equals(null)) {
+    public boolean deleteById(Long id) throws UserNotFoundException {
+        Optional<UserEntity> user = userRepo.findById(id);
+
+        if (user.isPresent()) {
             userRepo.deleteById(id);
             return true;
         } else {
-            return false;
+            throw new UserNotFoundException(id);
         }
     }
 
     /**
      * Delete all users;
+     *
      * @return true if user was deleted and
-     *         false if didn't.
+     * false if didn't.
      */
 
     @Override
-    public boolean deleteAll() throws Exception {
+    public boolean deleteAll() throws UsersDeletingException {
         if (userRepo.count() != 0) {
             userRepo.deleteAll();
             return true;
+        } else {
+            throw new UsersDeletingException();
         }
-        return false;
     }
 }

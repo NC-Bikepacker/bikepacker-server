@@ -3,14 +3,15 @@ package ru.netcracker.bikepackerserver.model;
 import ru.netcracker.bikepackerserver.entity.UserEntity;
 
 import java.util.Objects;
+import java.util.Optional;
 
 public class UserModel {
-    private String firstname;
-    private String lastname;
-    private String email;
-    private String nickname;
-    private String userPicLink;
-    private Long id;
+    private Optional<String> firstname;
+    private Optional<String> lastname;
+    private Optional<String> email;
+    private Optional<String> nickname;
+    private Optional<String> userPicLink;
+    private Optional<Long> id;
 
     public UserModel() {
     }
@@ -26,52 +27,52 @@ public class UserModel {
         return model;
     }
 
-    public String getFirstname() {
+    public Optional<String> getFirstname() {
         return firstname;
     }
 
-    public void setFirstname(String firstname) {
-        this.firstname = firstname;
-    }
-
-    public String getLastname() {
+    public Optional<String> getLastname() {
         return lastname;
     }
 
-    public void setLastname(String lastname) {
-        this.lastname = lastname;
-    }
-
-    public String getEmail() {
+    public Optional<String> getEmail() {
         return email;
     }
 
-    public void setEmail(String email) {
-        this.email = email;
-    }
-
-    public String getNickname() {
+    public Optional<String> getNickname() {
         return nickname;
     }
 
-    public void setNickname(String nickname) {
-        this.nickname = nickname;
-    }
-
-    public String getUserPicLink() {
+    public Optional<String> getUserPicLink() {
         return userPicLink;
     }
 
+    public Optional<Long> getId() {
+        return id;
+    }
+
+    public void setFirstname(String firstname) {
+        this.firstname = Optional.ofNullable(firstname);
+    }
+
+    public void setLastname(String lastname) {
+        this.lastname = Optional.ofNullable(lastname);
+    }
+
+    public void setEmail(String email) {
+        this.email = Optional.ofNullable(email);
+    }
+
+    public void setNickname(String nickname) {
+        this.nickname = Optional.ofNullable(nickname);
+    }
+
     public void setUserPicLink(String userPicLink) {
-        this.userPicLink = userPicLink;
+        this.userPicLink = Optional.ofNullable(userPicLink);
     }
 
     public void setId(Long id) {
-        this.id = id;
-    }
-
-    public Long getId() {
-        return id;
+        this.id = Optional.ofNullable(id);
     }
 
     @Override
@@ -79,7 +80,7 @@ public class UserModel {
         if (this == o) return true;
         if (!(o instanceof UserModel)) return false;
         UserModel userModel = (UserModel) o;
-        return Objects.equals(getFirstname(), userModel.getFirstname()) && Objects.equals(getLastname(), userModel.getLastname()) && Objects.equals(getEmail(), userModel.getEmail()) && Objects.equals(getNickname(), userModel.getNickname()) && Objects.equals(getUserPicLink(), userModel.getUserPicLink()) && Objects.equals(getId(), userModel.getId());
+        return Objects.equals(getFirstname(), userModel.getFirstname()) && Objects.equals(getLastname(), userModel.getLastname()) && getEmail().equals(userModel.getEmail()) && getNickname().equals(userModel.getNickname()) && Objects.equals(getUserPicLink(), userModel.getUserPicLink()) && getId().equals(userModel.getId());
     }
 
     @Override
@@ -90,11 +91,11 @@ public class UserModel {
     @Override
     public String toString() {
         return "UserModel{" +
-                "firstname='" + firstname + '\'' +
-                ", lastname='" + lastname + '\'' +
-                ", email='" + email + '\'' +
-                ", nickname='" + nickname + '\'' +
-                ", userPicLink='" + userPicLink + '\'' +
+                "firstname=" + firstname +
+                ", lastname=" + lastname +
+                ", email=" + email +
+                ", nickname=" + nickname +
+                ", userPicLink=" + userPicLink +
                 ", id=" + id +
                 '}';
     }
