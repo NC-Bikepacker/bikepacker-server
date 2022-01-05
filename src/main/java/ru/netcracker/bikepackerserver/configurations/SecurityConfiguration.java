@@ -13,6 +13,8 @@ import org.springframework.security.crypto.password.NoOpPasswordEncoder;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import ru.netcracker.bikepackerserver.service.UserDetailsServiceImpl;
 
+import static org.springframework.security.test.web.reactive.server.SecurityMockServerConfigurers.csrf;
+
 @Configuration
 @EnableWebSecurity
 public class SecurityConfiguration extends WebSecurityConfigurerAdapter {
@@ -37,6 +39,13 @@ public class SecurityConfiguration extends WebSecurityConfigurerAdapter {
                 .anyRequest().authenticated()
                 .and()
             .formLogin()
+                .and()
+            .httpBasic()
+                .and()
+            .csrf()
+                .disable()
+            .logout()
+                .permitAll()
                 /*.loginPage("/login")
                 .permitAll()
                 .and()

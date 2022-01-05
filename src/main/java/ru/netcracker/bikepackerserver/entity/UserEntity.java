@@ -24,7 +24,7 @@ public class UserEntity {
     @Column(name = "password")
     private String password;
 
-    @JoinColumn(name = "avatar_image_url")
+    @Column(name = "avatar_image_url")
     private String avatarImageUrl;
 
     @ManyToOne()
