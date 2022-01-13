@@ -9,6 +9,7 @@ import org.springframework.security.config.annotation.web.builders.HttpSecurity;
 import org.springframework.security.config.annotation.web.configuration.EnableWebSecurity;
 import org.springframework.security.config.annotation.web.configuration.WebSecurityConfigurerAdapter;
 import org.springframework.security.core.userdetails.UserDetailsService;
+import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
 import org.springframework.security.crypto.password.NoOpPasswordEncoder;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import ru.netcracker.bikepackerserver.service.UserDetailsServiceImpl;
@@ -45,16 +46,11 @@ public class SecurityConfiguration extends WebSecurityConfigurerAdapter {
             .csrf()
                 .disable()
             .logout()
-                .permitAll()
-                /*.loginPage("/login")
-                .permitAll()
-                .and()
-            .logout()
-                .permitAll()*/;
+                .permitAll();
     }
 
     @Bean
-    public PasswordEncoder getPasswordEncoder() {
-        return NoOpPasswordEncoder.getInstance();
+    public PasswordEncoder passwordEncoder() {
+        return new BCryptPasswordEncoder();
     }
 }

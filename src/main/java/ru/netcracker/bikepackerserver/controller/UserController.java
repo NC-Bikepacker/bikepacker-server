@@ -1,10 +1,13 @@
 package ru.netcracker.bikepackerserver.controller;
 
+import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
+import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
 import org.springframework.web.bind.annotation.*;
 import ru.netcracker.bikepackerserver.entity.UserEntity;
 import ru.netcracker.bikepackerserver.model.UserModel;
+import ru.netcracker.bikepackerserver.repository.UserRepo;
 import ru.netcracker.bikepackerserver.service.UserServiceImpl;
 
 /**
@@ -13,6 +16,9 @@ import ru.netcracker.bikepackerserver.service.UserServiceImpl;
 @RestController
 @RequestMapping("/users")
 public class UserController {
+
+    @Autowired
+    private UserRepo userRepo;
 
     private final UserServiceImpl userService;
 
@@ -29,7 +35,9 @@ public class UserController {
      */
     @PostMapping
     public ResponseEntity create(@RequestBody UserEntity userEntity) {
-        userService.create(userEntity);
+        BCryptPasswordEncoder encrypter = new BCryptPasswordEncoder(12);
+        userEntity.setPassword(encrypter.encode(userEntity.getPassword()));
+        userRepo.save(userEntity);
         return new ResponseEntity(HttpStatus.CREATED);
     }
 
