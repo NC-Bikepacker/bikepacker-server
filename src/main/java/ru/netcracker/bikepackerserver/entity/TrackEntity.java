@@ -6,7 +6,6 @@ import java.util.Objects;
 @Entity
 @Table(name="tracks", schema = "public")
 public class TrackEntity {
-
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     @Column(name = "track_id")
@@ -22,8 +21,7 @@ public class TrackEntity {
     @JoinColumn(name = "user_id", nullable = false)
     private UserEntity user;
 
-    @Column(name = "gpx_url")
-    private String gpx_url;
+    private String gpx;
 
     public TrackEntity() {
     }
@@ -60,12 +58,12 @@ public class TrackEntity {
         this.user = user;
     }
 
-    public String getGpx_url() {
-        return gpx_url;
+    public String getGpx() {
+        return gpx;
     }
 
-    public void setGpx_url(String gpx_url) {
-        this.gpx_url = gpx_url;
+    public void setGpx(String gpx) {
+        this.gpx = gpx;
     }
 
 
@@ -76,7 +74,7 @@ public class TrackEntity {
                 ", travel_time=" + travel_time +
                 ", track_complexity=" + track_complexity +
                 ", user=" + user +
-                ", gpx_url='" + gpx_url + '\'' +
+                ", gpx_url='" + gpx+ '\'' +
                 '}';
     }
 
@@ -85,11 +83,11 @@ public class TrackEntity {
         if (this == o) return true;
         if (o == null || getClass() != o.getClass()) return false;
         TrackEntity that = (TrackEntity) o;
-        return Objects.equals(track_id, that.track_id) && Objects.equals(travel_time, that.travel_time) && Objects.equals(track_complexity, that.track_complexity) && Objects.equals(user, that.user) && Objects.equals(gpx_url, that.gpx_url);
+        return Objects.equals(track_id, that.track_id) && Objects.equals(travel_time, that.travel_time) && Objects.equals(track_complexity, that.track_complexity) && Objects.equals(user, that.user) && Objects.equals(gpx, that.gpx);
     }
 
     @Override
     public int hashCode() {
-        return Objects.hash(track_id, travel_time, track_complexity, user, gpx_url);
+        return Objects.hash(track_id, travel_time, track_complexity, user, gpx);
     }
 }
