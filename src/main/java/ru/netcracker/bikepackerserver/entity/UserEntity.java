@@ -4,7 +4,7 @@ import javax.persistence.*;
 import java.util.Objects;
 
 @Entity
-@Table(name = "users", schema = "public")
+@Table(name="users", schema = "public")
 public class UserEntity {
 
     @Id
@@ -24,11 +24,12 @@ public class UserEntity {
     @Column(name = "password")
     private String password;
 
-    @JoinColumn(name = "avatar_image_url")
+    @Column(name = "avatar_image_url")
     private String avatarImageUrl;
 
-    @Column(name = "role_id")
-    private int roleId;
+    @ManyToOne()
+    @JoinColumn(name="role_id")
+    private RoleEntity roles;
 
     @Column(name = "email")
     private String email;
@@ -72,12 +73,12 @@ public class UserEntity {
         this.password = password;
     }
 
-    public int getRoleId() {
-        return roleId;
+    public RoleEntity getRoles() {
+        return roles;
     }
 
-    public void setRoleId(int roleId) {
-        this.roleId = roleId;
+    public void setRoles(RoleEntity roles) {
+        this.roles = roles;
     }
 
     public void setEmail(String email) {
@@ -96,16 +97,18 @@ public class UserEntity {
         this.avatarImageUrl = url;
     }
 
+
+
     @Override
     public boolean equals(Object o) {
         if (this == o) return true;
         if (!(o instanceof UserEntity)) return false;
         UserEntity that = (UserEntity) o;
-        return getRoleId() == that.getRoleId() && Objects.equals(getId(), that.getId()) && Objects.equals(getFirstname(), that.getFirstname()) && Objects.equals(getLastname(), that.getLastname()) && Objects.equals(getUsername(), that.getUsername()) && Objects.equals(getPassword(), that.getPassword()) && Objects.equals(getAvatarImageUrl(), that.getAvatarImageUrl()) && Objects.equals(getEmail(), that.getEmail());
+        return getRoles() == that.getRoles() && Objects.equals(getId(), that.getId()) && Objects.equals(getFirstname(), that.getFirstname()) && Objects.equals(getLastname(), that.getLastname()) && Objects.equals(getUsername(), that.getUsername()) && Objects.equals(getPassword(), that.getPassword()) && Objects.equals(getAvatarImageUrl(), that.getAvatarImageUrl()) && Objects.equals(getEmail(), that.getEmail());
     }
 
     @Override
     public int hashCode() {
-        return Objects.hash(getId(), getFirstname(), getLastname(), getUsername(), getPassword(), getAvatarImageUrl(), getRoleId(), getEmail());
+        return Objects.hash(getId(), getFirstname(), getLastname(), getUsername(), getPassword(), getAvatarImageUrl(), getRoles().getRole_id(), getEmail());
     }
 }

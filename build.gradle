@@ -22,8 +22,10 @@ dependencies {
     implementation group: 'org.springframework.boot', name: 'spring-boot-starter-data-jpa', version: '2.6.1'
     implementation group: 'org.springframework.boot', name: 'spring-boot-starter-data-rest', version: '2.6.1'
     implementation group: 'org.postgresql', name: 'postgresql', version: '42.3.1'
-
+    implementation group: 'org.springframework.boot', name: 'spring-boot-starter-security', version: '2.6.2'
     testImplementation 'org.springframework.boot:spring-boot-starter-test:2.6.1'
+    implementation 'org.springframework.security:spring-security-test'
+    implementation 'org.springframework.boot:spring-boot-starter-thymeleaf'
 }
 
 test {
