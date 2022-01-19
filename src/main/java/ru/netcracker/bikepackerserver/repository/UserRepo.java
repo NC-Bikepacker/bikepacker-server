@@ -8,5 +8,6 @@ import ru.netcracker.bikepackerserver.entity.UserEntity;
 public interface UserRepo extends JpaRepository<UserEntity, Long> {
     UserEntity findByUsername(String username);
 
+
     UserEntity findByEmail(String email);
 }

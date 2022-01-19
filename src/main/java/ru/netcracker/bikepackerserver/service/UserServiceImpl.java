@@ -130,4 +130,14 @@ public class UserServiceImpl implements UserService {
             throw new UsersDeletingException();
         }
     }
+
+    public boolean addFriend(Long id){
+        Optional<UserEntity> user = userRepo.findById(id);
+        if (user.isPresent()) {
+
+            return true;
+        } else {
+            throw new UserNotFoundException(id);
+        }
+    }
 }

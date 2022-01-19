@@ -1,7 +1,10 @@
 package ru.netcracker.bikepackerserver.model;
 
 import ru.netcracker.bikepackerserver.entity.UserEntity;
+import ru.netcracker.bikepackerserver.repository.UserRepo;
 
+import java.util.HashMap;
+import java.util.Map;
 import java.util.Objects;
 import java.util.Optional;
 
@@ -12,6 +15,18 @@ public class UserModel {
     private Optional<String> nickname;
     private Optional<String> userPicLink;
     private Optional<Long> id;
+    private Map<String, UserModel> friends = new HashMap<>();
+
+    public void addFriend(String email){
+    }
+
+    public void setFriends(Map<String, UserModel> friends) {
+        this.friends = friends;
+    }
+
+    public Map<String, UserModel> getFriends() {
+        return friends;
+    }
 
     public UserModel() {
     }

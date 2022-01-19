@@ -20,6 +20,7 @@ public class UserController {
         this.userService = userService;
     }
 
+
     /**
      * Post request for creating new user.
      *
@@ -99,4 +100,7 @@ public class UserController {
             return new ResponseEntity("Deleting users was failed.", HttpStatus.NO_CONTENT);
         }
     }
+
+
+
 }
