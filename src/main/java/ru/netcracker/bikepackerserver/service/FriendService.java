@@ -41,7 +41,6 @@ public class FriendService {
     }
 
     public void deleteFriend(UserEntity user, Long id) throws NullPointerException {
-//        UserEntity friend = userRepository.getById(id);
         Optional<UserEntity> friend = userRepository.findById(id);
         if (!friend.isPresent()) {
             throw new UserNotFoundException(friend.get().getId());
@@ -56,11 +55,14 @@ public class FriendService {
 
 
     public List<UserEntity> getFriends(UserEntity currentUser) {
+        System.out.println("curruser - " + currentUser.getUsername());
+        System.out.println("1 - FriendController");
         List<Friends> friendsByFirstUser = friendRepository.findByUserAndAccepted(currentUser, true);
         List<UserEntity> friendUsers = new ArrayList<>();
         for (Friends friend : friendsByFirstUser) {
             friendUsers.add(userRepository.getById(friend.getFriend().getId()));
         }
+        System.out.println("1.2 - " + friendUsers.size() );
         return friendUsers;
     }
 
@@ -76,4 +78,5 @@ public class FriendService {
             friendRepository.updateStatus(friends.getId(), status);
         }
     }
+
 }

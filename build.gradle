@@ -17,13 +17,19 @@ dependencies {
     implementation 'org.springframework.boot:spring-boot-starter:2.6.1'
     implementation 'org.springframework.boot:spring-boot-starter-web:2.6.1'
 
+    // https://mvnrepository.com/artifact/mysql/mysql-connector-java
+    implementation group: 'mysql', name: 'mysql-connector-java', version: '8.0.27'
+    implementation 'org.mapstruct:mapstruct:1.4.2.Final'
+
     implementation group: 'org.springframework.boot', name: 'spring-boot-starter-web', version: '2.6.1'
     implementation group: 'org.springframework', name: 'spring-webmvc', version: '5.3.12'
     implementation group: 'org.springframework.boot', name: 'spring-boot-starter-data-jpa', version: '2.6.1'
     implementation group: 'org.springframework.boot', name: 'spring-boot-starter-data-rest', version: '2.6.1'
     implementation group: 'org.postgresql', name: 'postgresql', version: '42.3.1'
-
+    implementation group: 'org.springframework.boot', name: 'spring-boot-starter-security', version: '2.6.2'
     testImplementation 'org.springframework.boot:spring-boot-starter-test:2.6.1'
+    implementation 'org.springframework.security:spring-security-test'
+    implementation 'org.springframework.boot:spring-boot-starter-thymeleaf'
 }
 
 test {

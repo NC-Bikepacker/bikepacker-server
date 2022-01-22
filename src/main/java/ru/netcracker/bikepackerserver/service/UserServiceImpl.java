@@ -10,6 +10,8 @@ import ru.netcracker.bikepackerserver.repository.UserRepo;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Optional;
+import java.util.regex.Matcher;
+import java.util.regex.Pattern;
 
 @Service
 public class UserServiceImpl implements UserService {
@@ -131,13 +133,33 @@ public class UserServiceImpl implements UserService {
         }
     }
 
-    public boolean addFriend(Long id){
-        Optional<UserEntity> user = userRepo.findById(id);
-        if (user.isPresent()) {
-
-            return true;
-        } else {
-            throw new UserNotFoundException(id);
+    public List<UserEntity> searchByName(String name) {
+        List<UserEntity> users = userRepo.findAll();
+        List<UserEntity> res = new ArrayList<>();
+        for (UserEntity user : users
+        ) {
+            if (contains(name, user))
+                res.add(user);
         }
+        return res;
     }
+
+    public boolean contains(String part, UserEntity user) {
+        System.out.println("4 - contains? ");
+        String userName = user.getFirstname();
+        String REGEX_FIND_WORD = ".*?" + part + ".*?";
+
+        System.out.println(part);
+        System.out.println(user.getFirstname());
+        System.out.println(REGEX_FIND_WORD);
+
+
+        String regex = String.format(REGEX_FIND_WORD, Pattern.quote(part));
+        if (userName.matches(regex)){
+            System.out.println("true...");
+            return true;
+        }
+        return false;
+    }
+
 }

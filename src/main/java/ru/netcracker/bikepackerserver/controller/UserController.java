@@ -1,11 +1,15 @@
 package ru.netcracker.bikepackerserver.controller;
 
 import org.springframework.http.HttpStatus;
+import org.springframework.http.MediaType;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
+import ru.netcracker.bikepackerserver.entity.Friends;
 import ru.netcracker.bikepackerserver.entity.UserEntity;
 import ru.netcracker.bikepackerserver.model.UserModel;
 import ru.netcracker.bikepackerserver.service.UserServiceImpl;
+
+import java.util.List;
 
 /**
  * Controller for operations on users.
@@ -101,6 +105,9 @@ public class UserController {
         }
     }
 
-
-
+    @PostMapping(value = "/search", consumes = MediaType.APPLICATION_JSON_VALUE)
+    public ResponseEntity<List<UserEntity>> search(@RequestBody String name) {
+        List<UserEntity> users = userService.searchByName(name);
+        return new ResponseEntity<List<UserEntity>>(users, HttpStatus.OK);
+    }
 }

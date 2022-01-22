@@ -19,6 +19,7 @@ public interface FriendRepo extends JpaRepository<Friends,Long> {
     List<Friends> findByUser(UserEntity user);
     List<Friends> findByFriend(UserEntity friend);
 
+
     List<Friends> findByUserAndAccepted(UserEntity user, boolean accepted);
 
     Friends findByUserAndFriend(UserEntity user, UserEntity friend);
