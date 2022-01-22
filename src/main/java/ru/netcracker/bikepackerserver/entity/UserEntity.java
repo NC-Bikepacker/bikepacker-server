@@ -2,10 +2,11 @@ package ru.netcracker.bikepackerserver.entity;
 
 import javax.persistence.*;
 import java.util.Objects;
+import java.util.Optional;
 import java.util.Set;
 
 @Entity
-@Table(name="users", schema = "public")
+@Table(name = "users", schema = "public")
 public class UserEntity {
 
     @Id
@@ -29,7 +30,7 @@ public class UserEntity {
     private String avatarImageUrl;
 
     @ManyToOne()
-    @JoinColumn(name="role_id")
+    @JoinColumn(name = "role_id")
     private RoleEntity roles;
 
     @Column(name = "email")
@@ -41,44 +42,64 @@ public class UserEntity {
     public UserEntity() {
     }
 
-    public Long getId() {
-        return id;
+    public Optional<Long> getId() {
+        return Optional.of(id);
     }
 
-    public String getFirstname() {
-        return firstname;
+    public Optional<String> getFirstname() {
+        return Optional.of(firstname);
+    }
+
+    public Optional<String> getLastname() {
+        return Optional.of(lastname);
+    }
+
+    public Optional<String> getUsername() {
+        return Optional.of(username);
+    }
+
+    public Optional<String> getPassword() {
+        return Optional.of(password);
+    }
+
+    public Optional<String> getAvatarImageUrl() {
+        return Optional.ofNullable(avatarImageUrl);
+    }
+
+    public Optional<RoleEntity> getRoles() {
+        return Optional.of(roles);
+    }
+
+    public Optional<String> getEmail() {
+        return Optional.of(email);
+    }
+
+    public Set<TrackEntity> getTracks() {
+        return tracks;
+    }
+
+    public void setId(Long id) {
+        this.id = id;
     }
 
     public void setFirstname(String firstname) {
         this.firstname = firstname;
     }
 
-    public String getLastname() {
-        return lastname;
-    }
-
     public void setLastname(String lastname) {
         this.lastname = lastname;
     }
 
-    public String getUsername() {
-        return username;
-    }
-
-    public void setUserName(String nickname) {
-        this.username = nickname;
-    }
-
-    public String getPassword() {
-        return password;
+    public void setUsername(String username) {
+        this.username = username;
     }
 
     public void setPassword(String password) {
         this.password = password;
     }
 
-    public RoleEntity getRoles() {
-        return roles;
+    public void setAvatarImageUrl(String avatarImageUrl) {
+        this.avatarImageUrl = avatarImageUrl;
     }
 
     public void setRoles(RoleEntity roles) {
@@ -89,30 +110,34 @@ public class UserEntity {
         this.email = email;
     }
 
-    public String getEmail() {
-        return email;
+    public void setTracks(Set<TrackEntity> tracks) {
+        this.tracks = tracks;
     }
-
-    public String getAvatarImageUrl() {
-        return avatarImageUrl;
-    }
-
-    public void setAvatarImageUrl(String url) {
-        this.avatarImageUrl = url;
-    }
-
-
 
     @Override
     public boolean equals(Object o) {
         if (this == o) return true;
         if (!(o instanceof UserEntity)) return false;
         UserEntity that = (UserEntity) o;
-        return getRoles() == that.getRoles() && Objects.equals(getId(), that.getId()) && Objects.equals(getFirstname(), that.getFirstname()) && Objects.equals(getLastname(), that.getLastname()) && Objects.equals(getUsername(), that.getUsername()) && Objects.equals(getPassword(), that.getPassword()) && Objects.equals(getAvatarImageUrl(), that.getAvatarImageUrl()) && Objects.equals(getEmail(), that.getEmail());
+        return Objects.equals(getId(), that.getId()) && Objects.equals(getFirstname(), that.getFirstname()) && Objects.equals(getLastname(), that.getLastname()) && Objects.equals(getUsername(), that.getUsername()) && Objects.equals(getPassword(), that.getPassword()) && Objects.equals(getAvatarImageUrl(), that.getAvatarImageUrl()) && Objects.equals(getRoles(), that.getRoles()) && Objects.equals(getEmail(), that.getEmail()) && Objects.equals(getTracks(), that.getTracks());
     }
 
     @Override
     public int hashCode() {
-        return Objects.hash(getId(), getFirstname(), getLastname(), getUsername(), getPassword(), getAvatarImageUrl(), getRoles().getRole_id(), getEmail());
+        return Objects.hash(getId(), getFirstname(), getLastname(), getUsername(), getPassword(), getAvatarImageUrl(), getRoles(), getEmail(), getTracks());
+    }
+
+    @Override
+    public String toString() {
+        return "UserEntity{" +
+                "id=" + id +
+                ", firstname='" + firstname + '\'' +
+                ", lastname='" + lastname + '\'' +
+                ", username='" + username + '\'' +
+                ", avatarImageUrl='" + avatarImageUrl + '\'' +
+                ", roles=" + roles +
+                ", email='" + email + '\'' +
+                ", tracks=" + tracks +
+                '}';
     }
 }

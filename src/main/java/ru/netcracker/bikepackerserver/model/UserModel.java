@@ -6,73 +6,63 @@ import java.util.Objects;
 import java.util.Optional;
 
 public class UserModel {
-    private Optional<String> firstname;
-    private Optional<String> lastname;
-    private Optional<String> email;
-    private Optional<String> nickname;
-    private Optional<String> userPicLink;
-    private Optional<Long> id;
+    private String firstname;
+    private String lastname;
+    private String email;
+    private String username;
+    private String userPicLink;
 
     public UserModel() {
     }
 
     public static UserModel toModel(UserEntity entity) {
         UserModel model = new UserModel();
-        model.setFirstname(entity.getFirstname());
-        model.setLastname(entity.getLastname());
-        model.setNickname(entity.getUsername());
-        model.setEmail(entity.getEmail());
-        model.setId(entity.getId());
-        model.setUserPicLink(entity.getAvatarImageUrl());
+        model.setFirstname(entity.getFirstname().orElse(null));
+        model.setLastname(entity.getLastname().orElse(null));
+        model.setUsername(entity.getUsername().orElse(null));
+        model.setEmail(entity.getEmail().orElse(null));
+        model.setUserPicLink(entity.getAvatarImageUrl().orElse(null));
         return model;
     }
 
     public Optional<String> getFirstname() {
-        return firstname;
+        return Optional.of(firstname);
     }
 
     public Optional<String> getLastname() {
-        return lastname;
+        return Optional.of(lastname);
     }
 
     public Optional<String> getEmail() {
-        return email;
+        return Optional.of(email);
     }
 
-    public Optional<String> getNickname() {
-        return nickname;
+    public Optional<String> getUsername() {
+        return Optional.of(username);
     }
 
     public Optional<String> getUserPicLink() {
-        return userPicLink;
-    }
-
-    public Optional<Long> getId() {
-        return id;
+        return Optional.ofNullable(userPicLink);
     }
 
     public void setFirstname(String firstname) {
-        this.firstname = Optional.ofNullable(firstname);
+        this.firstname = firstname;
     }
 
     public void setLastname(String lastname) {
-        this.lastname = Optional.ofNullable(lastname);
+        this.lastname = lastname;
     }
 
     public void setEmail(String email) {
-        this.email = Optional.ofNullable(email);
+        this.email = email;
     }
 
-    public void setNickname(String nickname) {
-        this.nickname = Optional.ofNullable(nickname);
+    public void setUsername(String username) {
+        this.username = username;
     }
 
     public void setUserPicLink(String userPicLink) {
-        this.userPicLink = Optional.ofNullable(userPicLink);
-    }
-
-    public void setId(Long id) {
-        this.id = Optional.ofNullable(id);
+        this.userPicLink = userPicLink;
     }
 
     @Override
@@ -80,23 +70,22 @@ public class UserModel {
         if (this == o) return true;
         if (!(o instanceof UserModel)) return false;
         UserModel userModel = (UserModel) o;
-        return Objects.equals(getFirstname(), userModel.getFirstname()) && Objects.equals(getLastname(), userModel.getLastname()) && getEmail().equals(userModel.getEmail()) && getNickname().equals(userModel.getNickname()) && Objects.equals(getUserPicLink(), userModel.getUserPicLink()) && getId().equals(userModel.getId());
+        return Objects.equals(getFirstname(), userModel.getFirstname()) && Objects.equals(getLastname(), userModel.getLastname()) && Objects.equals(getEmail(), userModel.getEmail()) && Objects.equals(getUsername(), userModel.getUsername()) && Objects.equals(getUserPicLink(), userModel.getUserPicLink());
     }
 
     @Override
     public int hashCode() {
-        return Objects.hash(getFirstname(), getLastname(), getEmail(), getNickname(), getUserPicLink(), getId());
+        return Objects.hash(getFirstname(), getLastname(), getEmail(), getUsername(), getUserPicLink());
     }
 
     @Override
     public String toString() {
         return "UserModel{" +
-                "firstname=" + firstname +
-                ", lastname=" + lastname +
-                ", email=" + email +
-                ", nickname=" + nickname +
-                ", userPicLink=" + userPicLink +
-                ", id=" + id +
+                "firstname='" + firstname + '\'' +
+                ", lastname='" + lastname + '\'' +
+                ", email='" + email + '\'' +
+                ", nickname='" + username + '\'' +
+                ", userPicLink='" + userPicLink + '\'' +
                 '}';
     }
 }

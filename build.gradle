@@ -16,6 +16,7 @@ dependencies {
     implementation 'org.springframework.boot:spring-boot-starter:2.6.1'
     implementation 'org.springframework.boot:spring-boot-starter:2.6.1'
     implementation 'org.springframework.boot:spring-boot-starter-web:2.6.1'
+    implementation 'com.github.ulisesbocchio:jasypt-spring-boot-starter:3.0.4'
 
     implementation group: 'org.springframework.boot', name: 'spring-boot-starter-web', version: '2.6.1'
     implementation group: 'org.springframework', name: 'spring-webmvc', version: '5.3.12'

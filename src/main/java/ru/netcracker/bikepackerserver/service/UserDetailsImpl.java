@@ -1,6 +1,5 @@
 package ru.netcracker.bikepackerserver.service;
 
-
 import java.util.Arrays;
 import java.util.Collection;
 import java.util.List;
@@ -26,19 +25,20 @@ public class UserDetailsImpl implements UserDetails {
     private List<GrantedAuthority> authorities;
 
     public UserDetailsImpl(UserEntity user) {
-        this.firstname = user.getFirstname();
-        this.lastname = user.getLastname();
-        this.nickname = user.getUsername();
-        this.password = user.getPassword();
-        this.avatarImageUrl = user.getAvatarImageUrl();
-        this.email = user.getEmail();
-        this.roles = user.getRoles();
-        this.authorities = Arrays.stream(user.getRoles().getRole_name().split(","))
+        this.firstname = user.getFirstname().get();
+        this.lastname = user.getLastname().get();
+        this.nickname = user.getUsername().get();
+        this.password = user.getPassword().get();
+        this.avatarImageUrl = user.getAvatarImageUrl().orElse(null);
+        this.email = user.getEmail().get();
+        this.roles = user.getRoles().get();
+        this.authorities = Arrays.stream(user.getRoles().get().getRole_name().split(","))
                 .map(SimpleGrantedAuthority::new)
                 .collect(Collectors.toList());
     }
 
-    public UserDetailsImpl() {}
+    public UserDetailsImpl() {
+    }
 
     @Override
     public Collection<? extends GrantedAuthority> getAuthorities() {
@@ -74,5 +74,4 @@ public class UserDetailsImpl implements UserDetails {
     public boolean isEnabled() {
         return true;
     }
-
 }

@@ -11,5 +11,4 @@ public class UserProfileController {
     public String user(Model model) {
         return "<h1>Welcome, user!</h1>";
     }
-
 }

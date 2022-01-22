@@ -1,6 +1,5 @@
 package ru.netcracker.bikepackerserver.controller;
 
-import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
@@ -17,26 +16,23 @@ import ru.netcracker.bikepackerserver.service.UserServiceImpl;
 @RequestMapping("/users")
 public class UserController {
 
-    @Autowired
     private UserRepo userRepo;
-
     private final UserServiceImpl userService;
 
-    public UserController(UserServiceImpl userService) {
+    public UserController(UserRepo userRepo, UserServiceImpl userService) {
+        this.userRepo = userRepo;
         this.userService = userService;
     }
-
 
     /**
      * Post request for creating new user.
      *
-     * @param userEntity
-     * @return http status.
+     * @return response entity.
      */
     @PostMapping
     public ResponseEntity create(@RequestBody UserEntity userEntity) {
         BCryptPasswordEncoder encrypter = new BCryptPasswordEncoder(12);
-        userEntity.setPassword(encrypter.encode(userEntity.getPassword()));
+        userEntity.setPassword(encrypter.encode(userEntity.getPassword().get()));
         userRepo.save(userEntity);
         return new ResponseEntity(HttpStatus.CREATED);
     }
@@ -44,8 +40,7 @@ public class UserController {
     /**
      * Get request for getting all users list.
      *
-     * @return users list and http status if list is not empty.
-     * @return http status not found if it is.
+     * @return response entity.
      */
     @GetMapping
     public ResponseEntity read() {
@@ -56,12 +51,22 @@ public class UserController {
      * Get request for getting user by his id.
      *
      * @param id
-     * @return user and http status "200 OK" if user in not null.
-     * @return http status "404 Not Found" if user equals null.
+     * @return response entity.
      */
-    @GetMapping("{id}")
-    public ResponseEntity<UserModel> read(@PathVariable(name = "id") Long id) {
-        return new ResponseEntity(userService.read(id), HttpStatus.OK);
+    @GetMapping("/{id}")
+    public ResponseEntity readById(@PathVariable(name = "id") Long id) {
+        return new ResponseEntity(userService.readById(id), HttpStatus.OK);
+    }
+
+    /**
+     * Get request for getting user by his username.
+     *
+     * @param username
+     * @return response entity.
+     */
+    @GetMapping("/{username}")
+    public ResponseEntity readByUsername(@PathVariable(name = "username") String username) {
+        return new ResponseEntity(userService.readByUsername(username), HttpStatus.OK);
     }
 
     /**
@@ -69,7 +74,7 @@ public class UserController {
      *
      * @param id
      * @param newUserModel
-     * @return http status.
+     * @return response entity.
      */
     @PutMapping("/{id}")
     public ResponseEntity update(@PathVariable("id") Long id, @RequestBody UserModel newUserModel) {
@@ -84,7 +89,7 @@ public class UserController {
      * Delete request for user deleting.
      *
      * @param id
-     * @return http status.
+     * @return response entity.
      */
     @DeleteMapping("/{id}")
     public ResponseEntity deleteById(@PathVariable("id") Long id) {
@@ -98,7 +103,7 @@ public class UserController {
     /**
      * Delete request for user deleting.
      *
-     * @return http status.
+     * @return response entity.
      */
     @DeleteMapping("/all")
     public ResponseEntity deleteAll() {
@@ -108,7 +113,4 @@ public class UserController {
             return new ResponseEntity("Deleting users was failed.", HttpStatus.NO_CONTENT);
         }
     }
-
-
-
 }

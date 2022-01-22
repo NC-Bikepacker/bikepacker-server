@@ -7,9 +7,9 @@ import org.springframework.web.bind.annotation.GetMapping;
 @Controller
 public class RegistrationController {
 
+//    FIXME:
     @GetMapping("/registration")
     public String registration(Model model) {
         return "registration";
     }
-
 }

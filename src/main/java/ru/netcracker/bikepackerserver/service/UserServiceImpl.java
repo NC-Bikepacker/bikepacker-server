@@ -24,12 +24,12 @@ public class UserServiceImpl implements UserService {
      */
     @Override
     public UserModel create(UserEntity entity) throws UsernameAlreadyExistsException, EmailAlreadyExistsException {
-        if (userRepo.findByUsername(entity.getUsername()) != null) {
-            throw new UsernameAlreadyExistsException(entity.getUsername());
+        if (userRepo.findByUsername(entity.getUsername().get()) != null) {
+            throw new UsernameAlreadyExistsException(entity.getUsername().get());
         }
 
-        if (userRepo.findByEmail(entity.getEmail()) != null) {
-            throw new EmailAlreadyExistsException(entity.getEmail());
+        if (userRepo.findByEmail(entity.getEmail().get()) != null) {
+            throw new EmailAlreadyExistsException(entity.getEmail().get());
         }
 
         return UserModel.toModel(userRepo.save(entity));
@@ -61,11 +61,28 @@ public class UserServiceImpl implements UserService {
      * @return user by his uuid.
      */
     @Override
-    public UserModel read(Long id) throws UserNotFoundException {
+    public UserModel readById(Long id) throws UserNotFoundException {
         Optional<UserEntity> userEntity = Optional.ofNullable(userRepo.findById(id).get());
 
         if (userEntity.isEmpty()) {
             throw new UserNotFoundException(id);
+        }
+
+        return UserModel.toModel(userEntity.get());
+    }
+
+    /**
+     * Returns user by his username.
+     *
+     * @param username
+     * @return user by his username.
+     */
+    @Override
+    public UserModel readByUsername(String username) throws UserNotFoundException {
+        Optional<UserEntity> userEntity = Optional.ofNullable(userRepo.findByUsername(username).get());
+
+        if (userEntity.isEmpty()) {
+            throw new UserNotFoundException(username);
         }
 
         return UserModel.toModel(userEntity.get());
@@ -89,7 +106,7 @@ public class UserServiceImpl implements UserService {
 
         if (newUser.getFirstname().isPresent()) dbUser.get().setFirstname(newUser.getFirstname().get());
         if (newUser.getLastname().isPresent()) dbUser.get().setLastname(newUser.getLastname().get());
-        if (newUser.getNickname().isPresent()) dbUser.get().setUserName(newUser.getNickname().get());
+        if (newUser.getUsername().isPresent()) dbUser.get().setUsername(newUser.getUsername().get());
         if (newUser.getEmail().isPresent()) dbUser.get().setEmail(newUser.getEmail().get());
         if (newUser.getUserPicLink().isPresent()) dbUser.get().setAvatarImageUrl(newUser.getUserPicLink().get());
 
