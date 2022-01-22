@@ -4,6 +4,7 @@ import javax.persistence.*;
 import java.util.HashMap;
 import java.util.Map;
 import java.util.Objects;
+import java.util.Set;
 
 @Entity
 @Table(name="users", schema = "public")
@@ -35,6 +36,9 @@ public class UserEntity {
 
     @Column(name = "email")
     private String email;
+
+    @OneToMany(mappedBy = "user", fetch = FetchType.LAZY, cascade = CascadeType.ALL)
+    private Set<TrackEntity> tracks;
 
     public UserEntity() {
     }
