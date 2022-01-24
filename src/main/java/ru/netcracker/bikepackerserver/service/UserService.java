@@ -49,7 +49,7 @@ public interface UserService {
      * @return true if user was updated and
      * false if didn't.
      */
-    boolean update(UserModel userModel, Long id) throws Exception;
+    boolean update(UserModel userModel, Long id);
 
     /**
      * Delete user;
@@ -58,7 +58,17 @@ public interface UserService {
      * @return true if user was deleted and
      * false if didn't.
      */
-    boolean deleteById(Long id) throws Exception;
+    boolean deleteById(Long id);
+
+
+    /**
+     * Delete user;
+     *
+     * @param username
+     * @return true if user was deleted and
+     * false if didn't.
+     */
+    boolean deleteByUsername(String username);
 
     /**
      * Delete all users;
@@ -66,5 +76,5 @@ public interface UserService {
      * @return true if user was deleted and
      * false if didn't.
      */
-    boolean deleteAll() throws Exception;
+    boolean deleteAll();
 }

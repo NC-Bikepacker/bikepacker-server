@@ -1,5 +1,8 @@
 package ru.netcracker.bikepackerserver.controller;
 
+import io.swagger.annotations.Api;
+import io.swagger.annotations.ApiOperation;
+import io.swagger.annotations.ApiParam;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
@@ -14,6 +17,7 @@ import ru.netcracker.bikepackerserver.service.UserServiceImpl;
  */
 @RestController
 @RequestMapping("/users")
+@Api(tags = {"User controller: creating and getting user models"})
 public class UserController {
 
     private UserRepo userRepo;
@@ -29,11 +33,20 @@ public class UserController {
      *
      * @return response entity.
      */
-    @PostMapping
-    public ResponseEntity create(@RequestBody UserEntity userEntity) {
+    @PostMapping("/user")
+    @ApiOperation(value = "Create a new user", notes = "This request creates a new Bikepacker user")
+    public ResponseEntity create(
+            @ApiParam(
+                    name = "userEntity",
+                    type = "UserEntity",
+                    value = "User Entity",
+                    required = true
+            )
+            @RequestBody UserEntity userEntity
+    ){
         BCryptPasswordEncoder encrypter = new BCryptPasswordEncoder(12);
         userEntity.setPassword(encrypter.encode(userEntity.getPassword().get()));
-        userRepo.save(userEntity);
+        userService.create(userEntity);
         return new ResponseEntity(HttpStatus.CREATED);
     }
 
@@ -43,6 +56,7 @@ public class UserController {
      * @return response entity.
      */
     @GetMapping
+    @ApiOperation(value = "Get all users", notes = "This request return all Bikepacker users")
     public ResponseEntity read() {
         return new ResponseEntity(userService.readAll(), HttpStatus.OK);
     }
@@ -53,8 +67,18 @@ public class UserController {
      * @param id
      * @return response entity.
      */
-    @GetMapping("/{id}")
-    public ResponseEntity readById(@PathVariable(name = "id") Long id) {
+    @GetMapping(value = "/user/id")
+    @ApiOperation(value = "Get a user by id", notes = "This request finds and returns a user model by his id")
+    public ResponseEntity readById(
+            @ApiParam(
+                    name = "id",
+                    type = "Long",
+                    value = "User id",
+                    example = "1",
+                    required = true
+            )
+            @RequestParam Long id
+    ) {
         return new ResponseEntity(userService.readById(id), HttpStatus.OK);
     }
 
@@ -64,8 +88,17 @@ public class UserController {
      * @param username
      * @return response entity.
      */
-    @GetMapping("/{username}")
-    public ResponseEntity readByUsername(@PathVariable(name = "username") String username) {
+    @GetMapping(value = "/user/username")
+    @ApiOperation(value = "Get a user by username", notes = "This request finds and returns a user model by his username")
+    public ResponseEntity readByUsername(
+            @ApiParam(
+                    name = "username",
+                    type = "String",
+                    value = "Username",
+                    example = "fedoro_79",
+                    required = true
+            )
+            @RequestParam String username) {
         return new ResponseEntity(userService.readByUsername(username), HttpStatus.OK);
     }
 
@@ -76,8 +109,24 @@ public class UserController {
      * @param newUserModel
      * @return response entity.
      */
-    @PutMapping("/{id}")
-    public ResponseEntity update(@PathVariable("id") Long id, @RequestBody UserModel newUserModel) {
+    @PutMapping(value = "/user/id")
+    @ApiOperation(value = "Update a user profile data", notes = "This request changes current user data")
+    public ResponseEntity update(
+            @ApiParam(
+                    name = "id",
+                    type = "Long",
+                    value = "User id",
+                    example = "11",
+                    required = true
+            )
+            @RequestParam Long id,
+            @RequestBody
+            @ApiParam(
+                    name = "UserModel",
+                    type = "UserModel",
+                    value = "New user model. New user fields to be updated"
+            )
+            UserModel newUserModel) {
         if (userService.update(newUserModel, id)) {
             return new ResponseEntity(HttpStatus.OK);
         } else {
@@ -91,13 +140,20 @@ public class UserController {
      * @param id
      * @return response entity.
      */
-    @DeleteMapping("/{id}")
-    public ResponseEntity deleteById(@PathVariable("id") Long id) {
-        if (userService.deleteById(id)) {
-            return new ResponseEntity(HttpStatus.OK);
-        } else {
-            return new ResponseEntity("Deleting user was failed.", HttpStatus.BAD_REQUEST);
-        }
+    @DeleteMapping("/user/id")
+    @ApiOperation(value = "Delete a user", notes = "This request deletes a user with a specific id.")
+    public ResponseEntity deleteById(
+            @ApiParam(
+                    name = "id",
+                    type = "Long",
+                    value = "User id",
+                    example = "11",
+                    required = true
+            )
+            @RequestParam Long id
+    ) {
+        userService.deleteById(id);
+        return new ResponseEntity(HttpStatus.OK);
     }
 
     /**
@@ -106,6 +162,7 @@ public class UserController {
      * @return response entity.
      */
     @DeleteMapping("/all")
+    @ApiOperation(value = "Delete all users", notes = "This method deletes all Bikepacker users")
     public ResponseEntity deleteAll() {
         if (userService.deleteAll()) {
             return new ResponseEntity(HttpStatus.OK);

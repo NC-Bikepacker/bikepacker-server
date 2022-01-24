@@ -32,6 +32,14 @@ public class SecurityConfiguration extends WebSecurityConfigurerAdapter {
     protected void configure(HttpSecurity http) throws Exception {
         http.authorizeRequests()
                 .antMatchers("/admin", "/users").hasRole(ADMIN)
+                .antMatchers("/v2/api-docs",
+                        "/configuration/ui",
+                        "/swagger-resources/**",
+                        "/configuration/security",
+                        "/swagger-ui.html",
+                        "/swagger-ui/",
+                        "/webjars/**",
+                        "/swagger/*").hasRole(ADMIN)
                 .antMatchers("/user").hasAnyRole(ADMIN, USER)
                 .antMatchers("/registration").permitAll()
                 .anyRequest().authenticated()
@@ -41,9 +49,9 @@ public class SecurityConfiguration extends WebSecurityConfigurerAdapter {
                 .httpBasic()
                     .and()
                 .csrf()
-                    .disable()
+                .disable()
                 .logout()
-                    .permitAll();
+                .permitAll();
     }
 
     @Bean

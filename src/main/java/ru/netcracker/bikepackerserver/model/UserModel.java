@@ -26,19 +26,19 @@ public class UserModel {
     }
 
     public Optional<String> getFirstname() {
-        return Optional.of(firstname);
+        return Optional.ofNullable(firstname);
     }
 
     public Optional<String> getLastname() {
-        return Optional.of(lastname);
+        return Optional.ofNullable(lastname);
     }
 
     public Optional<String> getEmail() {
-        return Optional.of(email);
+        return Optional.ofNullable(email);
     }
 
     public Optional<String> getUsername() {
-        return Optional.of(username);
+        return Optional.ofNullable(username);
     }
 
     public Optional<String> getUserPicLink() {

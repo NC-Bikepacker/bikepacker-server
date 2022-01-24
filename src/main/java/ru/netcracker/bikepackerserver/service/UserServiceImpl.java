@@ -1,7 +1,11 @@
 package ru.netcracker.bikepackerserver.service;
 
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.data.jpa.repository.Query;
+import org.springframework.data.repository.query.Param;
+import org.springframework.http.HttpStatus;
 import org.springframework.stereotype.Service;
+import org.springframework.web.bind.annotation.ResponseStatus;
 import ru.netcracker.bikepackerserver.entity.UserEntity;
 import ru.netcracker.bikepackerserver.exception.*;
 import ru.netcracker.bikepackerserver.model.UserModel;
@@ -10,6 +14,7 @@ import ru.netcracker.bikepackerserver.repository.UserRepo;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Optional;
+import java.util.OptionalInt;
 
 @Service
 public class UserServiceImpl implements UserService {
@@ -24,11 +29,22 @@ public class UserServiceImpl implements UserService {
      */
     @Override
     public UserModel create(UserEntity entity) throws UsernameAlreadyExistsException, EmailAlreadyExistsException {
-        if (userRepo.findByUsername(entity.getUsername().get()) != null) {
+        String username = "";
+        String email = "";
+
+        if (entity.getUsername().isPresent()) {
+            username = entity.getUsername().get();
+        }
+
+        if (entity.getEmail().isPresent()) {
+            email = entity.getEmail().get();
+        }
+
+        if (userRepo.findByUsername(username).isPresent()){
             throw new UsernameAlreadyExistsException(entity.getUsername().get());
         }
 
-        if (userRepo.findByEmail(entity.getEmail().get()) != null) {
+        if (userRepo.findByEmail(email).isPresent()){
             throw new EmailAlreadyExistsException(entity.getEmail().get());
         }
 
@@ -62,13 +78,8 @@ public class UserServiceImpl implements UserService {
      */
     @Override
     public UserModel readById(Long id) throws UserNotFoundException {
-        Optional<UserEntity> userEntity = Optional.ofNullable(userRepo.findById(id).get());
-
-        if (userEntity.isEmpty()) {
-            throw new UserNotFoundException(id);
-        }
-
-        return UserModel.toModel(userEntity.get());
+        UserEntity userEntity = userRepo.findById(id).orElseThrow(() -> new UserNotFoundException(id));
+        return UserModel.toModel(userEntity);
     }
 
     /**
@@ -79,13 +90,8 @@ public class UserServiceImpl implements UserService {
      */
     @Override
     public UserModel readByUsername(String username) throws UserNotFoundException {
-        Optional<UserEntity> userEntity = Optional.ofNullable(userRepo.findByUsername(username).get());
-
-        if (userEntity.isEmpty()) {
-            throw new UserNotFoundException(username);
-        }
-
-        return UserModel.toModel(userEntity.get());
+        UserEntity userEntity = userRepo.findByUsername(username).orElseThrow(() -> new UserNotFoundException(username));
+        return UserModel.toModel(userEntity);
     }
 
     /**
@@ -98,17 +104,15 @@ public class UserServiceImpl implements UserService {
      */
     @Override
     public boolean update(UserModel newUser, Long id) throws UserNotFoundException {
-        Optional<UserEntity> dbUser = userRepo.findById(id);
+        UserEntity dbUser = userRepo.findById(id).orElseThrow(() -> new UserNotFoundException(id));
 
-        if (dbUser.isEmpty()) {
-            throw new UserNotFoundException(id);
-        }
+        if (newUser.getFirstname().isPresent()) dbUser.setFirstname(newUser.getFirstname().get());
+        if (newUser.getLastname().isPresent()) dbUser.setLastname(newUser.getLastname().get());
+        if (newUser.getUsername().isPresent()) dbUser.setUsername(newUser.getUsername().get());
+        if (newUser.getEmail().isPresent()) dbUser.setEmail(newUser.getEmail().get());
+        if (newUser.getUserPicLink().isPresent()) dbUser.setAvatarImageUrl(newUser.getUserPicLink().get());
 
-        if (newUser.getFirstname().isPresent()) dbUser.get().setFirstname(newUser.getFirstname().get());
-        if (newUser.getLastname().isPresent()) dbUser.get().setLastname(newUser.getLastname().get());
-        if (newUser.getUsername().isPresent()) dbUser.get().setUsername(newUser.getUsername().get());
-        if (newUser.getEmail().isPresent()) dbUser.get().setEmail(newUser.getEmail().get());
-        if (newUser.getUserPicLink().isPresent()) dbUser.get().setAvatarImageUrl(newUser.getUserPicLink().get());
+        userRepo.save(dbUser);
 
         return true;
     }
@@ -119,15 +123,31 @@ public class UserServiceImpl implements UserService {
      * @param id
      * @return true if user was deleted
      */
+//    FIXME: ClassCastException
     @Override
     public boolean deleteById(Long id) throws UserNotFoundException {
-        Optional<UserEntity> user = userRepo.findById(id);
-
-        if (user.isPresent()) {
+        if (Optional.ofNullable(userRepo.findById(id)).isPresent()) {
             userRepo.deleteById(id);
             return true;
         } else {
             throw new UserNotFoundException(id);
+        }
+    }
+
+    /**
+     * Delete user;
+     *
+     * @param username
+     * @return true if user was deleted
+     */
+//    FIXME: and check if ot works
+    @Override
+    public boolean deleteByUsername(String username) throws UserNotFoundException {
+        if (userRepo.findByUsername(username).isPresent()) {
+            userRepo.deleteByUsername(username);
+            return true;
+        } else {
+            throw new UserNotFoundException(username);
         }
     }
 

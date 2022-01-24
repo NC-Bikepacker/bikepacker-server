@@ -6,7 +6,8 @@ import java.util.Optional;
 import java.util.Set;
 
 @Entity
-@Table(name = "users", schema = "public")
+@Table( name = "users",
+        schema = "public")
 public class UserEntity {
 
     @Id
@@ -30,7 +31,7 @@ public class UserEntity {
     private String avatarImageUrl;
 
     @ManyToOne()
-    @JoinColumn(name = "role_id")
+    @JoinColumn(name = "role_id", referencedColumnName = "role_id")
     private RoleEntity roles;
 
     @Column(name = "email")
@@ -43,23 +44,23 @@ public class UserEntity {
     }
 
     public Optional<Long> getId() {
-        return Optional.of(id);
+        return Optional.ofNullable(id);
     }
 
     public Optional<String> getFirstname() {
-        return Optional.of(firstname);
+        return Optional.ofNullable(firstname);
     }
 
     public Optional<String> getLastname() {
-        return Optional.of(lastname);
+        return Optional.ofNullable(lastname);
     }
 
     public Optional<String> getUsername() {
-        return Optional.of(username);
+        return Optional.ofNullable(username);
     }
 
     public Optional<String> getPassword() {
-        return Optional.of(password);
+        return Optional.ofNullable(password);
     }
 
     public Optional<String> getAvatarImageUrl() {
@@ -67,11 +68,11 @@ public class UserEntity {
     }
 
     public Optional<RoleEntity> getRoles() {
-        return Optional.of(roles);
+        return Optional.ofNullable(roles);
     }
 
     public Optional<String> getEmail() {
-        return Optional.of(email);
+        return Optional.ofNullable(email);
     }
 
     public Set<TrackEntity> getTracks() {
