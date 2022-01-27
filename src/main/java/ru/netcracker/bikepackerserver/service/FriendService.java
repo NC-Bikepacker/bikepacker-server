@@ -53,16 +53,12 @@ public class FriendService {
         friendRepository.deleteById(idFriendRec);
     }
 
-
     public List<UserEntity> getFriends(UserEntity currentUser) {
-        System.out.println("curruser - " + currentUser.getUsername());
-        System.out.println("1 - FriendController");
         List<Friends> friendsByFirstUser = friendRepository.findByUserAndAccepted(currentUser, true);
         List<UserEntity> friendUsers = new ArrayList<>();
         for (Friends friend : friendsByFirstUser) {
             friendUsers.add(userRepository.getById(friend.getFriend().getId()));
         }
-        System.out.println("1.2 - " + friendUsers.size() );
         return friendUsers;
     }
 

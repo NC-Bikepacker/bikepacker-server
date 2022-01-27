@@ -112,9 +112,11 @@ public class UserController {
         }
     }
 
-    @PostMapping(value = "/search", consumes = MediaType.APPLICATION_JSON_VALUE)
-    public ResponseEntity<List<UserEntity>> search(@RequestBody String name) {
-        List<UserEntity> users = userService.searchByName(name);
+    @GetMapping(value = "/search/{name}")
+    public ResponseEntity<List<UserEntity>> search(@PathVariable String name) {
+        System.out.println("search...");
+        System.out.println(name);
+        List<UserEntity> users = userService.searchByFirstLastName(name);
         return new ResponseEntity<List<UserEntity>>(users, HttpStatus.OK);
     }
 }
