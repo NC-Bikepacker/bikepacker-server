@@ -1,15 +1,32 @@
 package ru.netcracker.bikepackerserver.model;
 
+import com.fasterxml.jackson.annotation.JsonIgnoreProperties;
+import org.springframework.validation.annotation.Validated;
 import ru.netcracker.bikepackerserver.entity.UserEntity;
 
+import javax.validation.constraints.Email;
+import javax.validation.constraints.NotBlank;
+import javax.validation.constraints.NotEmpty;
+import javax.validation.constraints.NotNull;
 import java.util.Objects;
-import java.util.Optional;
 
+@Validated
+@JsonIgnoreProperties(ignoreUnknown = true)
 public class UserModel {
+    @NotEmpty(message = "Firstname can not be empty")
     private String firstname;
+
+    @NotEmpty(message = "Lastname can not be empty")
     private String lastname;
+
+    @NotEmpty(message = "Email can not be empty")
+    @Email(message = "Email is not valid", regexp = "^(?=.{1,64}@)[A-Za-z0-9_-]+(\\\\.[A-Za-z0-9_-]+)*@[^-][A-Za-z0-9-]+(\\\\.[A-Za-z0-9-]+)*(\\\\.[A-Za-z]{2,})$")
     private String email;
+
+    @NotEmpty(message = "Username can not be empty")
     private String username;
+
+    @NotNull(message = "Userpic URL can not be null")
     private String userPicLink;
 
     public UserModel() {
@@ -17,32 +34,43 @@ public class UserModel {
 
     public static UserModel toModel(UserEntity entity) {
         UserModel model = new UserModel();
-        model.setFirstname(entity.getFirstname().orElse(null));
-        model.setLastname(entity.getLastname().orElse(null));
-        model.setUsername(entity.getUsername().orElse(null));
-        model.setEmail(entity.getEmail().orElse(null));
-        model.setUserPicLink(entity.getAvatarImageUrl().orElse(null));
+        model.setFirstname(entity.getFirstname());
+        model.setLastname(entity.getLastname());
+        model.setUsername(entity.getUsername());
+        model.setEmail(entity.getEmail());
+        model.setUserPicLink(entity.getAvatarImageUrl());
         return model;
     }
 
-    public Optional<String> getFirstname() {
-        return Optional.ofNullable(firstname);
+    @NotEmpty
+    public String getFirstname() {
+        return firstname;
     }
 
-    public Optional<String> getLastname() {
-        return Optional.ofNullable(lastname);
+    @NotEmpty
+    public String getLastname() {
+        return lastname;
     }
 
-    public Optional<String> getEmail() {
-        return Optional.ofNullable(email);
+    @NotNull
+    @NotBlank
+    @NotEmpty
+    public String getEmail() {
+        return email;
     }
 
-    public Optional<String> getUsername() {
-        return Optional.ofNullable(username);
+    @NotNull
+    @NotBlank
+    @NotEmpty
+    public String getUsername() {
+        return username;
     }
 
-    public Optional<String> getUserPicLink() {
-        return Optional.ofNullable(userPicLink);
+    @NotNull
+    @NotBlank
+    @NotEmpty
+    public String getUserPicLink() {
+        return userPicLink;
     }
 
     public void setFirstname(String firstname) {

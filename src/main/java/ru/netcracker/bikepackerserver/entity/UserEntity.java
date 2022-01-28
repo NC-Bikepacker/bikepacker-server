@@ -1,86 +1,99 @@
 package ru.netcracker.bikepackerserver.entity;
 
+import org.springframework.validation.annotation.Validated;
+
 import javax.persistence.*;
+import javax.validation.Valid;
+import javax.validation.constraints.*;
+import java.io.Serializable;
 import java.util.Objects;
-import java.util.Optional;
 import java.util.Set;
 
 @Entity
-@Table( name = "users",
-        schema = "public")
-public class UserEntity {
+@Table(name = "users", schema = "public")
+@Validated
+public class UserEntity implements Serializable {
 
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     @Column(name = "user_id")
+    @NotNull(message = "User id can not be null")
     private Long id;
 
     @Column(name = "first_name")
+    @NotEmpty(message = "Firstname can not be empty")
     private String firstname;
 
     @Column(name = "last_name")
+    @NotEmpty(message = "Lastname can not be empty")
     private String lastname;
 
     @Column(name = "nickname")
+    @NotEmpty(message = "Username can not be empty")
+    @Size(min = 4, max = 20, message = "Username length should be between 4 an 20 characters")
     private String username;
 
     @Column(name = "password")
+    @NotEmpty(message = "Password can not be empty")
     private String password;
 
     @Column(name = "avatar_image_url")
     private String avatarImageUrl;
 
     @ManyToOne()
-    @JoinColumn(name = "role_id", referencedColumnName = "role_id")
+    @JoinColumn(name = "role_id")
+    @NotNull(message = "Roles can not be null")
     private RoleEntity roles;
 
     @Column(name = "email")
+    @NotEmpty(message = "Email can not be empty")
+    @Email(message = "Email is not valid", regexp = "^(?=.{1,64}@)[A-Za-z0-9_-]+(\\\\.[A-Za-z0-9_-]+)*@[^-][A-Za-z0-9-]+(\\\\.[A-Za-z0-9-]+)*(\\\\.[A-Za-z]{2,})$")
     private String email;
 
-    @OneToMany(mappedBy = "user", fetch = FetchType.LAZY, cascade = CascadeType.ALL)
+    @OneToMany(
+            mappedBy = "user",
+            fetch = FetchType.LAZY,
+            cascade = CascadeType.ALL
+    )
     private Set<TrackEntity> tracks;
 
     public UserEntity() {
     }
 
-    public Optional<Long> getId() {
-        return Optional.ofNullable(id);
+    public Long getId() {
+        return id;
     }
 
-    public Optional<String> getFirstname() {
-        return Optional.ofNullable(firstname);
+    public String getFirstname() {
+        return firstname;
     }
 
-    public Optional<String> getLastname() {
-        return Optional.ofNullable(lastname);
+    public String getLastname() {
+        return lastname;
     }
 
-    public Optional<String> getUsername() {
-        return Optional.ofNullable(username);
+    public String getUsername() {
+        return username;
     }
 
-    public Optional<String> getPassword() {
-        return Optional.ofNullable(password);
+    public String getPassword() {
+        return password;
     }
 
-    public Optional<String> getAvatarImageUrl() {
-        return Optional.ofNullable(avatarImageUrl);
+    public String getAvatarImageUrl() {
+        return avatarImageUrl;
     }
 
-    public Optional<RoleEntity> getRoles() {
-        return Optional.ofNullable(roles);
+    public RoleEntity getRoles() {
+        return roles;
     }
 
-    public Optional<String> getEmail() {
-        return Optional.ofNullable(email);
+    public String getEmail() {
+        return email;
     }
 
     public Set<TrackEntity> getTracks() {
         return tracks;
-    }
-
-    public void setId(Long id) {
-        this.id = id;
     }
 
     public void setFirstname(String firstname) {

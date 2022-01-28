@@ -5,13 +5,11 @@ import org.springframework.data.repository.query.Param;
 import org.springframework.stereotype.Repository;
 import ru.netcracker.bikepackerserver.entity.UserEntity;
 
+import java.io.Serializable;
 import java.util.Optional;
 
 @Repository
-public interface UserRepo extends JpaRepository<UserEntity, Long> {
-    Optional<UserEntity> findByUsername(@Param("nickname") String username);
-    Optional<UserEntity> findById(Long id);
-    void deleteById(Long id);
-    void deleteByUsername(String username);
+public interface UserRepo extends JpaRepository<UserEntity, Long>, Serializable {
+    Optional<UserEntity> findByUsername(String username);
     Optional<UserEntity> findByEmail(String email);
 }

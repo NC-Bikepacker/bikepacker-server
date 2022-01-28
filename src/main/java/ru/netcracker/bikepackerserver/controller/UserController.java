@@ -6,11 +6,16 @@ import io.swagger.annotations.ApiParam;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
+import org.springframework.validation.BindingResult;
+import org.springframework.validation.annotation.Validated;
 import org.springframework.web.bind.annotation.*;
 import ru.netcracker.bikepackerserver.entity.UserEntity;
 import ru.netcracker.bikepackerserver.model.UserModel;
 import ru.netcracker.bikepackerserver.repository.UserRepo;
 import ru.netcracker.bikepackerserver.service.UserServiceImpl;
+
+import javax.validation.Valid;
+import javax.validation.constraints.Min;
 
 /**
  * Controller for operations on users.
@@ -18,6 +23,7 @@ import ru.netcracker.bikepackerserver.service.UserServiceImpl;
 @RestController
 @RequestMapping("/users")
 @Api(tags = {"User controller: creating and getting user models"})
+@Validated
 public class UserController {
 
     private UserRepo userRepo;
@@ -42,10 +48,14 @@ public class UserController {
                     value = "User Entity",
                     required = true
             )
-            @RequestBody UserEntity userEntity
+            @Valid @RequestBody UserEntity userEntity,
+            BindingResult bindingResult
     ){
+        if(bindingResult.hasErrors()) {
+            return new ResponseEntity(bindingResult.getAllErrors().toString(), HttpStatus.BAD_REQUEST);
+        }
         BCryptPasswordEncoder encrypter = new BCryptPasswordEncoder(12);
-        userEntity.setPassword(encrypter.encode(userEntity.getPassword().get()));
+        userEntity.setPassword(encrypter.encode(userEntity.getPassword()));
         userService.create(userEntity);
         return new ResponseEntity(HttpStatus.CREATED);
     }
@@ -77,7 +87,7 @@ public class UserController {
                     example = "1",
                     required = true
             )
-            @RequestParam Long id
+            @RequestParam @Min(1) Long id
     ) {
         return new ResponseEntity(userService.readById(id), HttpStatus.OK);
     }
@@ -98,7 +108,8 @@ public class UserController {
                     example = "fedoro_79",
                     required = true
             )
-            @RequestParam String username) {
+            @RequestParam @Valid String username
+    ) {
         return new ResponseEntity(userService.readByUsername(username), HttpStatus.OK);
     }
 
@@ -106,7 +117,7 @@ public class UserController {
      * Put request for updating user's data.
      *
      * @param id
-     * @param newUserModel
+     * @param userModel
      * @return response entity.
      */
     @PutMapping(value = "/user/id")
@@ -119,15 +130,15 @@ public class UserController {
                     example = "11",
                     required = true
             )
-            @RequestParam Long id,
-            @RequestBody
+            @RequestParam @Min(1) Long id,
             @ApiParam(
-                    name = "UserModel",
+                    name = "userModel",
                     type = "UserModel",
                     value = "New user model. New user fields to be updated"
             )
-            UserModel newUserModel) {
-        if (userService.update(newUserModel, id)) {
+            @RequestBody @Valid UserModel userModel
+    ) {
+        if (userService.update(userModel, id)) {
             return new ResponseEntity(HttpStatus.OK);
         } else {
             return new ResponseEntity("Updating user was failed.", HttpStatus.NO_CONTENT);
@@ -141,7 +152,7 @@ public class UserController {
      * @return response entity.
      */
     @DeleteMapping("/user/id")
-    @ApiOperation(value = "Delete a user", notes = "This request deletes a user with a specific id.")
+    @ApiOperation(value = "Delete a user by his id", notes = "This request deletes a user with a specific id.")
     public ResponseEntity deleteById(
             @ApiParam(
                     name = "id",
@@ -150,9 +161,31 @@ public class UserController {
                     example = "11",
                     required = true
             )
-            @RequestParam Long id
+            @RequestParam @Min(1) Long id
     ) {
         userService.deleteById(id);
+        return new ResponseEntity(HttpStatus.OK);
+    }
+
+    /**
+     * Delete request for user deleting.
+     *
+     * @param username
+     * @return response entity.
+     */
+    @DeleteMapping("/user/username")
+    @ApiOperation(value = "Delete a user by his username", notes = "This request deletes a user with a specific username.")
+    public ResponseEntity deleteByUsername(
+            @ApiParam(
+                    name = "username",
+                    type = "String",
+                    value = "username",
+                    example = "username",
+                    required = true
+            )
+            @RequestParam @Valid String username
+    ) {
+        userService.deleteByUsername(username);
         return new ResponseEntity(HttpStatus.OK);
     }
 

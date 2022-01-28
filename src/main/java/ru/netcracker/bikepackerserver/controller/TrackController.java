@@ -4,6 +4,7 @@ import io.swagger.annotations.Api;
 import io.swagger.annotations.ApiOperation;
 import io.swagger.annotations.ApiParam;
 import org.springframework.http.ResponseEntity;
+import org.springframework.validation.annotation.Validated;
 import org.springframework.web.bind.annotation.*;
 import ru.netcracker.bikepackerserver.entity.TrackEntity;
 import ru.netcracker.bikepackerserver.repository.TrackRepo;
@@ -14,6 +15,7 @@ import java.util.List;
 
 @RestController
 @RequestMapping("/tracks")
+@Validated
 @Api(tags = {"Track controller: creating and getting tracks"})
 public class TrackController {
 
@@ -42,6 +44,6 @@ public class TrackController {
                     TrackEntity track
     ) throws URISyntaxException {
         TrackEntity savedTrack = trackRepo.save(track);
-        return ResponseEntity.created(new URI("/tracks/" + savedTrack.getTrack_id())).body(savedTrack);
+        return ResponseEntity.created(new URI("/tracks/" + savedTrack.getTrackId())).body(savedTrack);
     }
 }

@@ -58,7 +58,7 @@ public interface UserService {
      * @return true if user was deleted and
      * false if didn't.
      */
-    boolean deleteById(Long id);
+    void deleteById(Long id);
 
 
     /**
@@ -68,7 +68,7 @@ public interface UserService {
      * @return true if user was deleted and
      * false if didn't.
      */
-    boolean deleteByUsername(String username);
+    void deleteByUsername(String username);
 
     /**
      * Delete all users;

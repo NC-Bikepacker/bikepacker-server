@@ -1,33 +1,44 @@
 package ru.netcracker.bikepackerserver.entity;
 
+import org.springframework.validation.annotation.Validated;
+
 import javax.persistence.*;
+import javax.validation.constraints.NotBlank;
+import javax.validation.constraints.NotEmpty;
+import javax.validation.constraints.NotNull;
+import java.io.Serializable;
 
 @Entity
 @Table(name = "user_roles", schema = "public")
-public class RoleEntity {
+@Validated
+public class RoleEntity implements Serializable {
 
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
-    private Long role_id;
+    @NotNull
+    private Long roleId;
 
     @Column(name = "role_name")
-    private String role_name;
+    @NotBlank
+    @NotEmpty
+    private String roleName;
 
-    public RoleEntity() {}
-
-    public Long getRole_id() {
-        return role_id;
+    public RoleEntity() {
     }
 
-    public void setRole_id(Long role_id) {
-        this.role_id = role_id;
+    public Long getRoleId() {
+        return roleId;
     }
 
-    public String getRole_name() {
-        return role_name;
+    public void setRoleId(Long role_id) {
+        this.roleId = role_id;
     }
 
-    public void setRole_name(String role_name) {
-        this.role_name = role_name;
+    public String getRoleName() {
+        return roleName;
+    }
+
+    public void setRoleName(String role_name) {
+        this.roleName = role_name;
     }
 }
