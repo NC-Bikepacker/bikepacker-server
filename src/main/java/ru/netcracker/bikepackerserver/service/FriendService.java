@@ -62,14 +62,8 @@ public class FriendService {
         return friendUsers;
     }
 
-    public List<Friends> getAllFriends() {
-        List<Friends> friendUsers = friendRepository.findAll();
-        return friendUsers;
-    }
-
     public void updateStatus(UserEntity user, UserEntity friend, boolean status){
         Friends friends = friendRepository.findByUserAndFriend(user, friend);
-
         if (friends != null){
             friendRepository.updateStatus(friends.getId(), status);
         }
