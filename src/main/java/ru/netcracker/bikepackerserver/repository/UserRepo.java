@@ -13,10 +13,4 @@ public interface UserRepo extends JpaRepository<UserEntity, Long> {
     List<UserEntity> findByFirstname(String name);
 
     UserEntity findByEmail(String email);
-
-//    @Transactional
-//    @Modifying
-//    @Query(value = "select from users where accepted = :accepted WHERE id = :id")
-//    void updateStatus(@Param("id") Long id, @Param("accepted") boolean accepted);
-
 }

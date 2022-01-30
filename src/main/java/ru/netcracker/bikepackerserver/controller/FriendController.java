@@ -14,6 +14,7 @@ import ru.netcracker.bikepackerserver.service.UserServiceImpl;
 import java.security.Principal;
 import java.util.ArrayList;
 import java.util.List;
+import java.util.Optional;
 
 @RestController
 @RequestMapping("/friends")
@@ -39,17 +40,15 @@ public class FriendController {
         return ResponseEntity.ok("Friend deleted successfully");
     }
 
-    @GetMapping("/list")
-    public ResponseEntity<List<UserEntity>> getFriends(Principal principal) {
-        UserEntity currentUser = userRepository.findByEmail(principal.getName());
-        List<UserEntity> myFriends = friendService.getFriends(currentUser);
+    @GetMapping("/list/{userId}")
+    public ResponseEntity<List<UserEntity>> getFriends(@PathVariable Long userId) {
+        List<UserEntity> myFriends = friendService.getFriends(userId);
         return new ResponseEntity<>(myFriends, HttpStatus.OK);
     }
 
-    @GetMapping(value = "/search/{name}")
-    public ResponseEntity<List<UserEntity>> searchByName(@PathVariable String name, Principal principal) {
-        UserEntity currentUser = userRepository.findByEmail(principal.getName());
-        List<UserEntity> myFriends = friendService.getFriends(currentUser);
+    @GetMapping(value = "/search/{userId}/{name}")
+    public ResponseEntity<List<UserEntity>> searchByName(@PathVariable Long userId, @PathVariable String name) {
+        List<UserEntity> myFriends = friendService.getFriends(userId);
         List<UserEntity> res = new ArrayList<>();
         for (UserEntity user : myFriends
         ) {

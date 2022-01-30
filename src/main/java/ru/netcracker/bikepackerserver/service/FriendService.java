@@ -25,7 +25,7 @@ public class FriendService {
     public void addFriend(Long userId, Long friendId) throws NullPointerException {
         Optional<UserEntity> user = userRepository.findById(userId);
         Optional<UserEntity> friend = userRepository.findById(friendId);
-        if (! user.isPresent()){
+        if (!user.isPresent()) {
             throw new UserNotFoundException(friend.get().getId());
         }
         if (!friend.isPresent()) {
@@ -34,7 +34,7 @@ public class FriendService {
         Friends friendRec = new Friends();
         if (friendRepository.existsByUserAndFriend(user.get(), friend.get())) {
             throw new FriendAlreadyExistsException(user.get().getUsername(), friend.get().getUsername());
-        }else {
+        } else {
             if (friendRepository.existsByUserAndFriend(friend.get(), user.get())) {
                 updateStatus(friend.get(), user.get(), true);
                 friendRec.setAccepted(true);
@@ -50,22 +50,26 @@ public class FriendService {
     public void deleteFriend(Long userId, Long friendId) throws NullPointerException {
         Optional<UserEntity> user = userRepository.findById(userId);
         Optional<UserEntity> friend = userRepository.findById(friendId);
-        if (! user.isPresent()){
-            throw new UserNotFoundException(friend.get().getId());
+        if (!user.isPresent()) {
+            throw new UserNotFoundException(user.get().getId());
         }
         if (!friend.isPresent()) {
             throw new UserNotFoundException(friend.get().getId());
         }
         Friends fr1 = friendRepository.findByUserAndFriend(user.get(), friend.get());
-        if (friendRepository.existsByUserAndFriend(friend.get(), user.get())){
+        if (friendRepository.existsByUserAndFriend(friend.get(), user.get())) {
             updateStatus(friend.get(), user.get(), false);
         }
         Long idFriendRec = fr1.getId();
         friendRepository.deleteById(idFriendRec);
     }
 
-    public List<UserEntity> getFriends(UserEntity currentUser) {
-        List<Friends> friendsByFirstUser = friendRepository.findByUserAndAccepted(currentUser, true);
+    public List<UserEntity> getFriends(Long userId) {
+        Optional<UserEntity> user = userRepository.findById(userId);
+        if (!user.isPresent()) {
+            throw new UserNotFoundException(user.get().getId());
+        }
+        List<Friends> friendsByFirstUser = friendRepository.findByUserAndAccepted(user.get(), true);
         List<UserEntity> friendUsers = new ArrayList<>();
         for (Friends friend : friendsByFirstUser) {
             friendUsers.add(userRepository.getById(friend.getFriend().getId()));
@@ -73,9 +77,9 @@ public class FriendService {
         return friendUsers;
     }
 
-    public void updateStatus(UserEntity user, UserEntity friend, boolean status){
+    public void updateStatus(UserEntity user, UserEntity friend, boolean status) {
         Friends friends = friendRepository.findByUserAndFriend(user, friend);
-        if (friends != null){
+        if (friends != null) {
             friendRepository.updateStatus(friends.getId(), status);
         }
     }
