@@ -4,7 +4,9 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
+import ru.netcracker.bikepackerserver.data.FriendRequest;
 import ru.netcracker.bikepackerserver.entity.UserEntity;
+import ru.netcracker.bikepackerserver.repository.FriendRepo;
 import ru.netcracker.bikepackerserver.repository.UserRepo;
 import ru.netcracker.bikepackerserver.service.FriendService;
 import ru.netcracker.bikepackerserver.service.UserServiceImpl;
@@ -26,16 +28,14 @@ public class FriendController {
     private UserServiceImpl userService;
 
     @PostMapping(value = "/add", consumes = "application/json", produces = "application/json")
-    public ResponseEntity addFriend(@RequestBody String friendId, Principal principal) throws NullPointerException {
-        UserEntity currentUser = userRepository.findByEmail(principal.getName());
-        friendService.addFriend(currentUser, Long.parseLong(friendId));
+    public ResponseEntity addFriend(@RequestBody FriendRequest request) throws NullPointerException {
+        friendService.addFriend(request.getUserId(), request.getFriendId());
         return ResponseEntity.ok("Friend added successfully");
     }
 
-    @PostMapping(value = "/delete", consumes = "application/json", produces = "application/json")
-    public ResponseEntity deleteFriend(Principal principal, @RequestBody String friendId) throws NullPointerException {
-        UserEntity currentUser = userRepository.findByEmail(principal.getName());
-        friendService.deleteFriend(currentUser, Long.parseLong(friendId));
+    @DeleteMapping(value = "/delete", consumes = "application/json", produces = "application/json")
+    public ResponseEntity deleteFriend(@RequestBody FriendRequest request) throws NullPointerException {
+        friendService.deleteFriend(request.getUserId(), request.getFriendId());
         return ResponseEntity.ok("Friend deleted successfully");
     }
 

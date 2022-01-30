@@ -29,7 +29,6 @@ public class UserController {
         this.userService = userService;
     }
 
-
     /**
      * Post request for creating new user.
      *
@@ -114,8 +113,6 @@ public class UserController {
 
     @GetMapping(value = "/search/{name}")
     public ResponseEntity<List<UserEntity>> search(@PathVariable String name) {
-        System.out.println("search...");
-        System.out.println(name);
         List<UserEntity> users = userService.searchByFirstLastName(name);
         return new ResponseEntity<List<UserEntity>>(users, HttpStatus.OK);
     }

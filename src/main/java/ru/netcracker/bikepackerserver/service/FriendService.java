@@ -22,32 +22,43 @@ public class FriendService {
     @Autowired
     UserRepo userRepository;
 
-    public void addFriend(UserEntity user, Long id) throws NullPointerException {
-        UserEntity friend = userRepository.getById(id);
+    public void addFriend(Long userId, Long friendId) throws NullPointerException {
+        Optional<UserEntity> user = userRepository.findById(userId);
+        Optional<UserEntity> friend = userRepository.findById(friendId);
+        if (! user.isPresent()){
+            throw new UserNotFoundException(friend.get().getId());
+        }
+        if (!friend.isPresent()) {
+            throw new UserNotFoundException(friend.get().getId());
+        }
         Friends friendRec = new Friends();
-        if (friendRepository.existsByUserAndFriend(user, friend)) {
-            throw new FriendAlreadyExistsException(user.getUsername(), friend.getUsername());
+        if (friendRepository.existsByUserAndFriend(user.get(), friend.get())) {
+            throw new FriendAlreadyExistsException(user.get().getUsername(), friend.get().getUsername());
         }else {
-            if (friendRepository.existsByUserAndFriend(friend, user)) {
-                updateStatus(friend, user, true);
+            if (friendRepository.existsByUserAndFriend(friend.get(), user.get())) {
+                updateStatus(friend.get(), user.get(), true);
                 friendRec.setAccepted(true);
             } else {
                 friendRec.setAccepted(false);
             }
-            friendRec.setUser(user);
-            friendRec.setFriend(friend);
+            friendRec.setUser(user.get());
+            friendRec.setFriend(friend.get());
             friendRepository.save(friendRec);
         }
     }
 
-    public void deleteFriend(UserEntity user, Long id) throws NullPointerException {
-        Optional<UserEntity> friend = userRepository.findById(id);
+    public void deleteFriend(Long userId, Long friendId) throws NullPointerException {
+        Optional<UserEntity> user = userRepository.findById(userId);
+        Optional<UserEntity> friend = userRepository.findById(friendId);
+        if (! user.isPresent()){
+            throw new UserNotFoundException(friend.get().getId());
+        }
         if (!friend.isPresent()) {
             throw new UserNotFoundException(friend.get().getId());
         }
-        Friends fr1 = friendRepository.findByUserAndFriend(user, friend.get());
-        if (friendRepository.existsByUserAndFriend(friend.get(), user)){
-            updateStatus(friend.get(), user, false);
+        Friends fr1 = friendRepository.findByUserAndFriend(user.get(), friend.get());
+        if (friendRepository.existsByUserAndFriend(friend.get(), user.get())){
+            updateStatus(friend.get(), user.get(), false);
         }
         Long idFriendRec = fr1.getId();
         friendRepository.deleteById(idFriendRec);
@@ -68,5 +79,4 @@ public class FriendService {
             friendRepository.updateStatus(friends.getId(), status);
         }
     }
-
 }
