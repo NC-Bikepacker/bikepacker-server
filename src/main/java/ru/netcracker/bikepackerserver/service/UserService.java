@@ -16,7 +16,7 @@ public interface UserService {
      *
      * @param user
      */
-    public UserModel create(UserEntity user) throws UsernameAlreadyExistsException, EmailAlreadyExistsException;
+    public void create(UserEntity user) throws UsernameAlreadyExistsException, EmailAlreadyExistsException;
 
     /**
      * Returns list of all users.
@@ -49,7 +49,7 @@ public interface UserService {
      * @return true if user was updated and
      * false if didn't.
      */
-    boolean update(UserModel userModel, Long id);
+    void update(UserModel userModel, Long id);
 
     /**
      * Delete user;

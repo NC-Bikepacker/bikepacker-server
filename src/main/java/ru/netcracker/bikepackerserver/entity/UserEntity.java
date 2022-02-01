@@ -3,8 +3,10 @@ package ru.netcracker.bikepackerserver.entity;
 import org.springframework.validation.annotation.Validated;
 
 import javax.persistence.*;
-import javax.validation.Valid;
-import javax.validation.constraints.*;
+import javax.validation.constraints.Email;
+import javax.validation.constraints.NotEmpty;
+import javax.validation.constraints.NotNull;
+import javax.validation.constraints.Size;
 import java.io.Serializable;
 import java.util.Objects;
 import java.util.Set;
@@ -17,7 +19,6 @@ public class UserEntity implements Serializable {
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     @Column(name = "user_id")
-    @NotNull(message = "User id can not be null")
     private Long id;
 
     @Column(name = "first_name")
@@ -47,7 +48,7 @@ public class UserEntity implements Serializable {
 
     @Column(name = "email")
     @NotEmpty(message = "Email can not be empty")
-    @Email(message = "Email is not valid", regexp = "^(?=.{1,64}@)[A-Za-z0-9_-]+(\\\\.[A-Za-z0-9_-]+)*@[^-][A-Za-z0-9-]+(\\\\.[A-Za-z0-9-]+)*(\\\\.[A-Za-z]{2,})$")
+    @Email(message = "Email is not valid")
     private String email;
 
     @OneToMany(

@@ -1,11 +1,11 @@
 package ru.netcracker.bikepackerserver.model;
 
 import com.fasterxml.jackson.annotation.JsonIgnoreProperties;
+import net.minidev.json.annotate.JsonIgnore;
 import org.springframework.validation.annotation.Validated;
 import ru.netcracker.bikepackerserver.entity.UserEntity;
 
 import javax.validation.constraints.Email;
-import javax.validation.constraints.NotBlank;
 import javax.validation.constraints.NotEmpty;
 import javax.validation.constraints.NotNull;
 import java.util.Objects;
@@ -13,6 +13,7 @@ import java.util.Objects;
 @Validated
 @JsonIgnoreProperties(ignoreUnknown = true)
 public class UserModel {
+
     @NotEmpty(message = "Firstname can not be empty")
     private String firstname;
 
@@ -20,7 +21,7 @@ public class UserModel {
     private String lastname;
 
     @NotEmpty(message = "Email can not be empty")
-    @Email(message = "Email is not valid", regexp = "^(?=.{1,64}@)[A-Za-z0-9_-]+(\\\\.[A-Za-z0-9_-]+)*@[^-][A-Za-z0-9-]+(\\\\.[A-Za-z0-9-]+)*(\\\\.[A-Za-z]{2,})$")
+    @Email(message = "Email is not valid")
     private String email;
 
     @NotEmpty(message = "Username can not be empty")
@@ -28,6 +29,9 @@ public class UserModel {
 
     @NotNull(message = "Userpic URL can not be null")
     private String userPicLink;
+
+    @JsonIgnore
+    private Long id;
 
     public UserModel() {
     }
@@ -39,38 +43,32 @@ public class UserModel {
         model.setUsername(entity.getUsername());
         model.setEmail(entity.getEmail());
         model.setUserPicLink(entity.getAvatarImageUrl());
+        model.setId(entity.getId());
         return model;
     }
 
-    @NotEmpty
     public String getFirstname() {
         return firstname;
     }
 
-    @NotEmpty
     public String getLastname() {
         return lastname;
     }
 
-    @NotNull
-    @NotBlank
-    @NotEmpty
     public String getEmail() {
         return email;
     }
 
-    @NotNull
-    @NotBlank
-    @NotEmpty
     public String getUsername() {
         return username;
     }
 
-    @NotNull
-    @NotBlank
-    @NotEmpty
     public String getUserPicLink() {
         return userPicLink;
+    }
+
+    public Long getId() {
+        return id;
     }
 
     public void setFirstname(String firstname) {
@@ -93,17 +91,21 @@ public class UserModel {
         this.userPicLink = userPicLink;
     }
 
+    public void setId(Long id) {
+        this.id = id;
+    }
+
     @Override
     public boolean equals(Object o) {
         if (this == o) return true;
         if (!(o instanceof UserModel)) return false;
         UserModel userModel = (UserModel) o;
-        return Objects.equals(getFirstname(), userModel.getFirstname()) && Objects.equals(getLastname(), userModel.getLastname()) && Objects.equals(getEmail(), userModel.getEmail()) && Objects.equals(getUsername(), userModel.getUsername()) && Objects.equals(getUserPicLink(), userModel.getUserPicLink());
+        return Objects.equals(getFirstname(), userModel.getFirstname()) && Objects.equals(getLastname(), userModel.getLastname()) && Objects.equals(getEmail(), userModel.getEmail()) && Objects.equals(getUsername(), userModel.getUsername()) && Objects.equals(getUserPicLink(), userModel.getUserPicLink()) && Objects.equals(getId(), userModel.getId());
     }
 
     @Override
     public int hashCode() {
-        return Objects.hash(getFirstname(), getLastname(), getEmail(), getUsername(), getUserPicLink());
+        return Objects.hash(getFirstname(), getLastname(), getEmail(), getUsername(), getUserPicLink(), getId());
     }
 
     @Override
@@ -112,8 +114,9 @@ public class UserModel {
                 "firstname='" + firstname + '\'' +
                 ", lastname='" + lastname + '\'' +
                 ", email='" + email + '\'' +
-                ", nickname='" + username + '\'' +
+                ", username='" + username + '\'' +
                 ", userPicLink='" + userPicLink + '\'' +
+                ", id=" + id +
                 '}';
     }
 }

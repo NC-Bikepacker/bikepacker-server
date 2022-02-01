@@ -1,8 +1,5 @@
 package ru.netcracker.bikepackerserver.service;
 
-import org.springframework.data.jpa.repository.Modifying;
-import org.springframework.data.jpa.repository.Query;
-import org.springframework.data.repository.query.Param;
 import org.springframework.stereotype.Service;
 import ru.netcracker.bikepackerserver.entity.UserEntity;
 import ru.netcracker.bikepackerserver.exception.*;
@@ -12,51 +9,23 @@ import ru.netcracker.bikepackerserver.repository.UserRepo;
 import javax.transaction.Transactional;
 import java.util.ArrayList;
 import java.util.List;
+import java.util.Optional;
 
 @Service
 @Transactional
 public class UserServiceImpl implements UserService {
 
-    private UserRepo userRepo;
+    private final UserRepo userRepo;
 
     public UserServiceImpl(UserRepo userRepo) {
         this.userRepo = userRepo;
     }
 
-    /**
-     * Creates a new user.
-     *
-     * @param entity
-     */
     @Override
-    public UserModel create(UserEntity entity) throws UsernameAlreadyExistsException, EmailAlreadyExistsException {
-        String username = "";
-        String email = "";
-
-        if (entity.getUsername() != null) {
-            username = entity.getUsername();
-        }
-
-        if (entity.getEmail() != null) {
-            email = entity.getEmail();
-        }
-
-        if (userRepo.findByUsername(username).isPresent()){
-            throw new UsernameAlreadyExistsException(entity.getUsername());
-        }
-
-        if (userRepo.findByEmail(email).isPresent()){
-            throw new EmailAlreadyExistsException(entity.getEmail());
-        }
-
-        return UserModel.toModel(userRepo.save(entity));
+    public void create(UserEntity entity) throws UsernameAlreadyExistsException, EmailAlreadyExistsException {
+        userRepo.save(entity);
     }
 
-    /**
-     * Returns list of all users.
-     *
-     * @return list of all users.
-     */
     @Override
     public List<UserModel> readAll() throws NoAnyUsersException {
         List<UserEntity> users = userRepo.findAll();
@@ -71,98 +40,46 @@ public class UserServiceImpl implements UserService {
         return userModelList;
     }
 
-    /**
-     * Returns user by his uuid.
-     *
-     * @param id
-     * @return user by his uuid.
-     */
     @Override
     public UserModel readById(Long id) throws UserNotFoundException {
-        UserEntity userEntity = userRepo.findById(id).orElseThrow(() -> new UserNotFoundException(id));
-        return UserModel.toModel(userEntity);
+        Optional<UserEntity> userEntity = userRepo.findById(id);
+
+        if (userEntity.isEmpty()) {
+            throw new UserNotFoundException(id);
+        }
+
+        return UserModel.toModel(userEntity.get());
     }
 
-    /**
-     * Returns user by his username.
-     *
-     * @param username
-     * @return user by his username.
-     */
     @Override
     public UserModel readByUsername(String username) throws UserNotFoundException {
         UserEntity userEntity = userRepo.findByUsername(username).orElseThrow(() -> new UserNotFoundException(username));
         return UserModel.toModel(userEntity);
     }
 
-    /**
-     * Updates user's info finding him by uuid
-     *
-     * @param newUser
-     * @param id
-     * @return true if user was updated and
-     * false if didn't.
-     */
     @Override
-    public boolean update(UserModel newUser, Long id) throws UserNotFoundException {
-        UserEntity dbUser = userRepo.findById(id).orElseThrow(() -> new UserNotFoundException(id));
+    public void update(UserModel model, Long id) {
+        UserEntity userEntity = userRepo.findById(id).orElseThrow(() -> new UserNotFoundException(Long.toString(id)));
 
-        if (newUser.getFirstname() != null && !newUser.getFirstname().equals("")) {
-            dbUser.setFirstname(newUser.getFirstname());
-        }
+        System.out.println(model);
 
-        if (newUser.getLastname() != null && !newUser.getLastname().equals("")) {
-            dbUser.setLastname(newUser.getLastname());
-        }
+        if(!model.getFirstname().equals("")) userEntity.setFirstname(model.getFirstname());
+        if(!model.getLastname().equals("")) userEntity.setLastname(model.getLastname());
+        if(!model.getUsername().equals("")) userEntity.setUsername(model.getUsername());
+        if(!model.getEmail().equals("")) userEntity.setEmail(model.getEmail());
+        if(!model.getUserPicLink().equals("")) userEntity.setAvatarImageUrl(model.getUserPicLink());
 
-        if (newUser.getUsername() != null && !newUser.getUsername().equals("")) {
-            dbUser.setUsername(newUser.getUsername());
-        }
-
-        if (newUser.getEmail() != null && !newUser.getEmail().equals("")) {
-            dbUser.setEmail(newUser.getEmail());
-        }
-
-        if (newUser.getUserPicLink() != null && !newUser.getUserPicLink().equals("")) {
-            dbUser.setAvatarImageUrl(newUser.getUserPicLink());
-        }
-
-        userRepo.save(dbUser);
-        return true;
+        userRepo.save(userEntity);
     }
 
-    /**
-     * Delete user by id;
-     *
-     * @param id
-     * @return true if user was deleted
-     */
     @Override
     public void deleteById(Long id) throws UserNotFoundException {
             userRepo.deleteById(id);
     }
 
-    /**
-     * Delete user by username;
-     *
-     * @param username
-     * @return true if user was deleted
-     */
-    @Transactional
-    @Modifying
-    @Query(value =
-            "delete " +
-            "from UserEntity ue " +
-            "where ue.username = :username"
-    )
-    public void deleteByUsername(@Param("username") String username) {}
-
-    /**
-     * Delete all users;
-     *
-     * @return true if user was deleted and
-     * false if didn't.
-     */
+    public void deleteByUsername(String username) {
+        userRepo.deleteByUsername(username);
+    }
 
     @Override
     public boolean deleteAll() throws UsersDeletingException {
