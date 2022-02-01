@@ -6,27 +6,28 @@ import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 import ru.netcracker.bikepackerserver.data.FriendRequest;
 import ru.netcracker.bikepackerserver.entity.UserEntity;
-import ru.netcracker.bikepackerserver.repository.FriendRepo;
 import ru.netcracker.bikepackerserver.repository.UserRepo;
 import ru.netcracker.bikepackerserver.service.FriendService;
 import ru.netcracker.bikepackerserver.service.UserServiceImpl;
-
-import java.security.Principal;
 import java.util.ArrayList;
 import java.util.List;
-import java.util.Optional;
 
 @RestController
 @RequestMapping("/friends")
 public class FriendController {
-    @Autowired
+
     private UserRepo userRepository;
 
-    @Autowired
     private FriendService friendService;
 
-    @Autowired
     private UserServiceImpl userService;
+
+    @Autowired
+    public FriendController(UserRepo userRepository, FriendService friendService, UserServiceImpl userService) {
+        this.userRepository = userRepository;
+        this.friendService = friendService;
+        this.userService = userService;
+    }
 
     @PostMapping(value = "/add", consumes = "application/json", produces = "application/json")
     public ResponseEntity addFriend(@RequestBody FriendRequest request) throws NullPointerException {

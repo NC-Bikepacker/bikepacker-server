@@ -10,6 +10,7 @@ import ru.netcracker.bikepackerserver.entity.Friends;
 import ru.netcracker.bikepackerserver.entity.UserEntity;
 
 import java.util.List;
+import java.util.Optional;
 
 @Repository
 public interface FriendRepo extends JpaRepository<Friends, Long> {
