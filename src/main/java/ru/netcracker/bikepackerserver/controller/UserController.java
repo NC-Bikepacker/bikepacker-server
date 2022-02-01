@@ -2,6 +2,7 @@ package ru.netcracker.bikepackerserver.controller;
 
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
+import org.springframework.http.MediaType;
 import org.springframework.http.ResponseEntity;
 import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
 import org.springframework.web.bind.annotation.*;
@@ -9,6 +10,8 @@ import ru.netcracker.bikepackerserver.entity.UserEntity;
 import ru.netcracker.bikepackerserver.model.UserModel;
 import ru.netcracker.bikepackerserver.repository.UserRepo;
 import ru.netcracker.bikepackerserver.service.UserServiceImpl;
+
+import java.util.List;
 
 /**
  * Controller for operations on users.
@@ -25,7 +28,6 @@ public class UserController {
     public UserController(UserServiceImpl userService) {
         this.userService = userService;
     }
-
 
     /**
      * Post request for creating new user.
@@ -109,6 +111,9 @@ public class UserController {
         }
     }
 
-
-
+    @GetMapping(value = "/search/{name}")
+    public ResponseEntity<List<UserEntity>> search(@PathVariable String name) {
+        List<UserEntity> users = userService.searchByFirstLastName(name);
+        return new ResponseEntity<List<UserEntity>>(users, HttpStatus.OK);
+    }
 }

@@ -1,7 +1,10 @@
 package ru.netcracker.bikepackerserver.model;
 
 import ru.netcracker.bikepackerserver.entity.UserEntity;
+import ru.netcracker.bikepackerserver.repository.UserRepo;
 
+import java.util.HashMap;
+import java.util.Map;
 import java.util.Objects;
 import java.util.Optional;
 
