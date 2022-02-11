@@ -1,11 +1,16 @@
 package ru.netcracker.bikepackerserver.controller;
 
+import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.data.jpa.repository.Query;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 import ru.netcracker.bikepackerserver.entity.UserEntity;
 import ru.netcracker.bikepackerserver.model.UserModel;
+import ru.netcracker.bikepackerserver.repository.UserRepo;
 import ru.netcracker.bikepackerserver.service.UserServiceImpl;
+
+import java.util.Optional;
 
 /**
  * Controller for operations on users.
@@ -15,6 +20,9 @@ import ru.netcracker.bikepackerserver.service.UserServiceImpl;
 public class UserController {
 
     private final UserServiceImpl userService;
+
+    @Autowired
+    private UserRepo userRepo;
 
     public UserController(UserServiceImpl userService) {
         this.userService = userService;
@@ -52,7 +60,7 @@ public class UserController {
      * @return http status "404 Not Found" if user equals null.
      */
     @GetMapping("{id}")
-    public ResponseEntity<UserModel> read(@PathVariable(name = "id") Long id) {
+    public ResponseEntity<Optional<UserModel>> read(@PathVariable(name = "id") Long id) {
         return new ResponseEntity(userService.read(id), HttpStatus.OK);
     }
 
@@ -101,6 +109,15 @@ public class UserController {
         }
     }
 
+    @GetMapping("/getUser/{userNickName}")
+    public ResponseEntity getUserByNickname(@PathVariable(name = "userNickName") String userNickname){
+        UserEntity user = userRepo.findByUsername(userNickname);
+        if( user == null){
+            return new ResponseEntity(HttpStatus.BAD_REQUEST);
+        }
+        else{
+            return new ResponseEntity(userRepo.findByUsername(userNickname), HttpStatus.OK);
+        }
 
-
+    }
 }
