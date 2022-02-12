@@ -10,22 +10,22 @@ import ru.netcracker.bikepackerserver.entity.Friends;
 import ru.netcracker.bikepackerserver.entity.UserEntity;
 
 import java.util.List;
+import java.util.Optional;
 
 @Repository
-public interface FriendRepo extends JpaRepository<Friends,Long> {
+public interface FriendRepo extends JpaRepository<Friends, Long> {
 
     boolean existsByUserAndFriend(UserEntity user, UserEntity friend);
 
     List<Friends> findByUser(UserEntity user);
+
     List<Friends> findByFriend(UserEntity friend);
+
 
     List<Friends> findByUserAndAccepted(UserEntity user, boolean accepted);
 
     Friends findByUserAndFriend(UserEntity user, UserEntity friend);
 
-//    @Modifying
-//    @Query("update Customer u set u.phone = :phone where u.id = :id")
-//    void updatePhone(@Param(value = "id") long id, @Param(value = "phone") String phone);
     @Transactional
     @Modifying
     @Query(value = "UPDATE Friends SET accepted = :accepted WHERE id = :id")
@@ -33,7 +33,4 @@ public interface FriendRepo extends JpaRepository<Friends,Long> {
 
     @Transactional
     void deleteById(Long id);
-//    @Modifying
-//    @Query("select * from Friends where status = :status")
-//    List<Friends> select(@Param("status") int status);
 }

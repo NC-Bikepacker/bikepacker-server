@@ -15,18 +15,6 @@ public class UserModel {
     private Optional<String> nickname;
     private Optional<String> userPicLink;
     private Optional<Long> id;
-    private Map<String, UserModel> friends = new HashMap<>();
-
-    public void addFriend(String email){
-    }
-
-    public void setFriends(Map<String, UserModel> friends) {
-        this.friends = friends;
-    }
-
-    public Map<String, UserModel> getFriends() {
-        return friends;
-    }
 
     public UserModel() {
     }

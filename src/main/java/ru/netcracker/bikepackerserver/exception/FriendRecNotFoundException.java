@@ -6,8 +6,8 @@ import org.springframework.web.bind.annotation.ResponseStatus;
 @ResponseStatus(HttpStatus.NOT_FOUND)
 public class FriendRecNotFoundException extends BaseException {
 
-    public FriendRecNotFoundException() {
+    public FriendRecNotFoundException(Long userId, Long friendId) {
         httpStatus = HttpStatus.NOT_FOUND;
-        description = "User with id " + " is not found.";
+        description = "Friends with id " + " is not found.";
     }
 }

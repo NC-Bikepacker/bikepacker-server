@@ -20,8 +20,11 @@ public class UserDetailsServiceImpl implements UserDetailsService {
 
     @Override
     public UserDetails loadUserByUsername(String email) throws UsernameNotFoundException {
+
         Optional<UserEntity> user = Optional.ofNullable(userRepository.findByEmail(email));
+
         user.orElseThrow(() -> new UsernameNotFoundException(email + " not found."));
+
         return user.map(UserDetailsImpl::new).get();
     }
 

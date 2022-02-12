@@ -12,46 +12,47 @@ import ru.netcracker.bikepackerserver.repository.FriendRepo;
 import ru.netcracker.bikepackerserver.repository.UserRepo;
 import ru.netcracker.bikepackerserver.service.FriendService;
 import ru.netcracker.bikepackerserver.service.UserServiceImpl;
-
-import java.security.Principal;
 import java.util.ArrayList;
 import java.util.List;
 
 @RestController
 @RequestMapping("/friends")
 public class FriendController {
-    @Autowired
+
     private UserRepo userRepository;
 
-    @Autowired
     private FriendService friendService;
 
-    @Autowired
     private UserServiceImpl userService;
+
+    @Autowired
+    public FriendController(UserRepo userRepository, FriendService friendService, UserServiceImpl userService) {
+        this.userRepository = userRepository;
+        this.friendService = friendService;
+        this.userService = userService;
+    }
 
     @PostMapping(value = "/add", consumes = "application/json", produces = "application/json")
     public ResponseEntity addFriend(@RequestBody FriendRequest request) throws NullPointerException {
         friendService.addFriend(request.getUserId(), request.getFriendId());
-        return new ResponseEntity("Friend added successfully", HttpStatus.OK);
+        return ResponseEntity.ok("Friend added successfully");
     }
 
     @DeleteMapping(value = "/delete", consumes = "application/json", produces = "application/json")
     public ResponseEntity deleteFriend(@RequestBody FriendRequest request) throws NullPointerException {
         friendService.deleteFriend(request.getUserId(), request.getFriendId());
-        return new ResponseEntity("Friend deleted successfully", HttpStatus.OK);
+        return ResponseEntity.ok("Friend deleted successfully");
     }
 
-    @GetMapping("/list")
-    public ResponseEntity<List<UserEntity>> getFriends(Principal principal) {
-        UserEntity currentUser = userRepository.findByEmail(principal.getName());
-        List<UserEntity> myFriends = friendService.getFriends(currentUser);
-        return new ResponseEntity<List<UserEntity>>(myFriends, HttpStatus.OK);
+    @GetMapping("/list/{userId}")
+    public ResponseEntity<List<UserEntity>> getFriends(@PathVariable Long userId) {
+        List<UserEntity> myFriends = friendService.getFriends(userId);
+        return new ResponseEntity<>(myFriends, HttpStatus.OK);
     }
 
-    @GetMapping(value = "/search/{name}")
-    public ResponseEntity<List<UserEntity>> searchByName(@PathVariable String name, Principal principal) {
-        UserEntity currentUser = userRepository.findByEmail(principal.getName());
-        List<UserEntity> myFriends = friendService.getFriends(currentUser);
+    @GetMapping(value = "/search/{userId}/{name}")
+    public ResponseEntity<List<UserEntity>> searchByName(@PathVariable Long userId, @PathVariable String name) {
+        List<UserEntity> myFriends = friendService.getFriends(userId);
         List<UserEntity> res = new ArrayList<>();
         for (UserEntity user : myFriends
         ) {

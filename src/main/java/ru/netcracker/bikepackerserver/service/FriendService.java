@@ -1,6 +1,7 @@
 package ru.netcracker.bikepackerserver.service;
 
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.security.core.userdetails.UsernameNotFoundException;
 import org.springframework.stereotype.Service;
 import ru.netcracker.bikepackerserver.entity.Friends;
 import ru.netcracker.bikepackerserver.entity.UserEntity;
@@ -22,54 +23,54 @@ public class FriendService {
     @Autowired
     UserRepo userRepository;
 
-    public void addFriend(Long userId, Long friendId) throws NullPointerException {
-        Optional<UserEntity> user = userRepository.findById(userId);
-        Optional<UserEntity> friend = userRepository.findById(friendId);
-        if (! user.isPresent()){
-            throw new UserNotFoundException(friend.get().getId());
-        }
-        if (!friend.isPresent()) {
-            throw new UserNotFoundException(friend.get().getId());
-        }
+    @Autowired
+    public FriendService(FriendRepo friendRepository, UserRepo userRepository) {
+        this.friendRepository = friendRepository;
+        this.userRepository = userRepository;
+    }
+
+    public void addFriend(Long userId, Long friendId) {
+        UserEntity user = userRepository.findById(userId).orElseThrow(() -> new UserNotFoundException(userId));
+        UserEntity friend = userRepository.findById(friendId).orElseThrow(() -> new UserNotFoundException(friendId));
         Friends friendRec = new Friends();
-        if (friendRepository.existsByUserAndFriend(user.get(), friend.get())) {
-            throw new FriendAlreadyExistsException(user.get().getUsername(), friend.get().getUsername());
-        }else {
-            if (friendRepository.existsByUserAndFriend(friend.get(), user.get())) {
-                updateStatus(friend.get(), user.get(), true);
+        if (friendRepository.existsByUserAndFriend(user, friend)) {
+            throw new FriendAlreadyExistsException(user.getUsername(), friend.getUsername());
+        } else {
+            if (friendRepository.existsByUserAndFriend(friend, user)) {
+                updateStatus(friend, user, true);
                 friendRec.setAccepted(true);
             } else {
                 friendRec.setAccepted(false);
             }
-            friendRec.setUser(user.get());
-            friendRec.setFriend(friend.get());
+            friendRec.setUser(user);
+            friendRec.setFriend(friend);
             friendRepository.save(friendRec);
         }
     }
 
     public void deleteFriend(Long userId, Long friendId) throws NullPointerException {
-        Optional<UserEntity> user = userRepository.findById(userId);
-        Optional<UserEntity> friend = userRepository.findById(friendId);
-        if (! user.isPresent()){
-            throw new UserNotFoundException(friend.get().getId());
-        }
-        if (!friend.isPresent()) {
-            throw new UserNotFoundException(friend.get().getId());
-        }
-        Friends fr1 = friendRepository.findByUserAndFriend(user.get(), friend.get());
-        if (friendRepository.existsByUserAndFriend(friend.get(), user.get())){
-            updateStatus(friend.get(), user.get(), false);
+        UserEntity user = userRepository.findById(userId).orElseThrow(() -> new UserNotFoundException(userId));
+        UserEntity friend = userRepository.findById(friendId).orElseThrow(() -> new UserNotFoundException(friendId));
+        Friends fr1 = friendRepository.findByUserAndFriend(user, friend);
+        if (friendRepository.existsByUserAndFriend(friend, user)) {
+            updateStatus(friend, user, false);
         }
         Long idFriendRec = fr1.getId();
         friendRepository.deleteById(idFriendRec);
     }
 
-    public List<UserEntity> getFriends(UserEntity currentUser) {
-        List<Friends> friendsByFirstUser = friendRepository.findByUserAndAccepted(currentUser, true);
+    public List<UserEntity> getFriends(Long userId) {
+        UserEntity user = userRepository.findById(userId).orElseThrow(() -> new UserNotFoundException(userId));
+        List<Friends> friendsByFirstUser = friendRepository.findByUserAndAccepted(user, true);
         List<UserEntity> friendUsers = new ArrayList<>();
         for (Friends friend : friendsByFirstUser) {
             friendUsers.add(userRepository.getById(friend.getFriend().getId()));
         }
+        return friendUsers;
+    }
+
+    public List<Friends> getAllFriends() {
+        List<Friends> friendUsers = friendRepository.findAll();
         return friendUsers;
     }
 
