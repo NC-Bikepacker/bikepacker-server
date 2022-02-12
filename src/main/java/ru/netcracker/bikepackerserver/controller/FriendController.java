@@ -66,7 +66,7 @@ public class FriendController {
     @GetMapping("{userName}")
     public ResponseEntity<List<UserModel>> getFriends(@PathVariable(name = "userName") String userNickName) {
         UserEntity currentUser = userRepository.findByUsername(userNickName);
-        List<UserEntity> friends = friendService.getFriends(currentUser);
+        List<UserEntity> friends = friendService.getFriends(currentUser.getId());
         return new ResponseEntity(friends, HttpStatus.OK);
     }
 }

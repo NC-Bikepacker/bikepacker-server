@@ -1,8 +1,6 @@
 package ru.netcracker.bikepackerserver.entity;
 
 import javax.persistence.*;
-import java.util.HashMap;
-import java.util.Map;
 import java.util.Objects;
 import java.util.Set;
 
