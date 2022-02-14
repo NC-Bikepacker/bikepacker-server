@@ -15,8 +15,11 @@ import java.util.Map;
 
 public class CustomAuthFilter extends AbstractAuthenticationProcessingFilter {
 
-    protected CustomAuthFilter() {
+    private final ObjectMapper objectMapper;
+
+    protected CustomAuthFilter(ObjectMapper objectMapper) {
         super(new AntPathRequestMatcher("/login", "POST"));
+        this.objectMapper = objectMapper;
     }
 
     @Override
@@ -27,16 +30,16 @@ public class CustomAuthFilter extends AbstractAuthenticationProcessingFilter {
         String email, password;
 
         try {
-            Map<String, String> requestMap = new ObjectMapper().readValue(request.getInputStream(), Map.class);
+            Map<String, String> requestMap = objectMapper.readValue(request.getInputStream(), Map.class);
             email = requestMap.get("email");
             password = requestMap.get("password");
         } catch (IOException e) {
             throw new AuthenticationServiceException(e.getMessage(), e);
         }
 
-        UsernamePasswordAuthenticationToken authRequest = new UsernamePasswordAuthenticationToken(
-                email, password);
+        UsernamePasswordAuthenticationToken authRequest = new UsernamePasswordAuthenticationToken(email, password);
 
-        return this.getAuthenticationManager().authenticate(authRequest);
+        Authentication authentication = this.getAuthenticationManager().authenticate(authRequest);
+        return authentication;
     }
 }

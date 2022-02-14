@@ -1,7 +1,6 @@
 package ru.netcracker.bikepackerserver.model;
 
 import com.fasterxml.jackson.annotation.JsonIgnoreProperties;
-import net.minidev.json.annotate.JsonIgnore;
 import org.springframework.validation.annotation.Validated;
 import ru.netcracker.bikepackerserver.entity.UserEntity;
 
@@ -30,7 +29,7 @@ public class UserModel {
     @NotNull(message = "Userpic URL can not be null")
     private String userPicLink;
 
-    @JsonIgnore
+    @NotNull
     private Long id;
 
     public UserModel() {

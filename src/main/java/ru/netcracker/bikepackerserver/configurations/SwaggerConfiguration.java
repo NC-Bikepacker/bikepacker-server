@@ -11,9 +11,9 @@ import springfox.documentation.swagger2.annotations.EnableSwagger2;
 @EnableSwagger2
 public class SwaggerConfiguration {
     @Bean
-    public Docket swaggerSpringMvcPlugin(){
-        return new Docket( DocumentationType.SWAGGER_2 )//
-                .select().apis( RequestHandlerSelectors.basePackage( "ru.netcracker.bikepackerserver.controller" ) )//
+    public Docket swaggerSpringMvcPlugin() {
+        return new Docket(DocumentationType.SWAGGER_2)
+                .select().apis(RequestHandlerSelectors.basePackage("ru.netcracker.bikepackerserver.controller"))//
                 .build();
     }
 }

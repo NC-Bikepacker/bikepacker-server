@@ -1,6 +1,6 @@
 package ru.netcracker.bikepackerserver.configurations;
 
-import io.swagger.models.HttpMethod;
+import com.fasterxml.jackson.databind.ObjectMapper;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
 import org.springframework.security.config.annotation.authentication.builders.AuthenticationManagerBuilder;
@@ -21,9 +21,11 @@ public class SecurityConfiguration extends WebSecurityConfigurerAdapter {
     private static final String USER = "USER";
 
     private final UserDetailsServiceImpl userDetailsService;
+    private final ObjectMapper objectMapper;
 
-    public SecurityConfiguration(UserDetailsServiceImpl userDetailsService) {
+    public SecurityConfiguration(UserDetailsServiceImpl userDetailsService, ObjectMapper objectMapper) {
         this.userDetailsService = userDetailsService;
+        this.objectMapper = objectMapper;
     }
 
     @Override
@@ -33,8 +35,10 @@ public class SecurityConfiguration extends WebSecurityConfigurerAdapter {
 
     @Override
     protected void configure(HttpSecurity http) throws Exception {
-        CustomAuthFilter authFilter = new CustomAuthFilter();
+        CustomAuthFilter authFilter = new CustomAuthFilter(objectMapper);
         authFilter.setAuthenticationManager(authenticationManager());
+        authFilter.setAuthenticationSuccessHandler((req, resp, auth) -> {
+        });
 
         http
                 .csrf().disable()
@@ -42,14 +46,14 @@ public class SecurityConfiguration extends WebSecurityConfigurerAdapter {
                         authFilter,
                         UsernamePasswordAuthenticationFilter.class)
                 .authorizeRequests()
-                    .antMatchers("/login", "/signin").permitAll()
-                    .antMatchers("/logout", "/user").hasAnyRole(ADMIN, USER)
-                    .antMatchers("/admin", "/users").hasRole(ADMIN)
-                    .anyRequest().authenticated()
+                .antMatchers("/login", "/signin").permitAll()
+                .antMatchers("/logout", "/user").hasAnyRole(ADMIN, USER)
+                .antMatchers("/admin", "/users").hasRole(ADMIN)
+                .anyRequest().authenticated()
                 .and()
                 .logout()
                 .deleteCookies("JSESSIONID")
-                ;
+        ;
     }
 
     @Override

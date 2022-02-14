@@ -21,11 +21,15 @@ public class UserServiceImpl implements UserService {
         this.userRepo = userRepo;
     }
 
+
+    //  Create user
     @Override
     public void create(UserEntity entity) throws UsernameAlreadyExistsException, EmailAlreadyExistsException {
         userRepo.save(entity);
     }
 
+
+    //  Get users
     @Override
     public List<UserModel> readAll() throws NoAnyUsersException {
         List<UserEntity> users = userRepo.findAll();
@@ -57,28 +61,44 @@ public class UserServiceImpl implements UserService {
         return UserModel.toModel(userEntity);
     }
 
+    public UserModel readByEmail(String email) throws UserNotFoundException {
+        Optional<UserEntity> userEntity = userRepo.findByEmail(email);
+
+        if (userEntity.isEmpty()) {
+            throw new UserNotFoundException(email);
+        }
+
+        return UserModel.toModel(userEntity.get());
+    }
+
+
+    //  Update users
     @Override
     public void update(UserModel model, Long id) {
         UserEntity userEntity = userRepo.findById(id).orElseThrow(() -> new UserNotFoundException(Long.toString(id)));
-
-        System.out.println(model);
-
-        if(!model.getFirstname().equals("")) userEntity.setFirstname(model.getFirstname());
-        if(!model.getLastname().equals("")) userEntity.setLastname(model.getLastname());
-        if(!model.getUsername().equals("")) userEntity.setUsername(model.getUsername());
-        if(!model.getEmail().equals("")) userEntity.setEmail(model.getEmail());
-        if(!model.getUserPicLink().equals("")) userEntity.setAvatarImageUrl(model.getUserPicLink());
-
+        updateEntity(model, userEntity);
         userRepo.save(userEntity);
     }
 
+    public void update(UserModel model, String email) {
+        UserEntity userEntity = userRepo.findById(email).orElseThrow(() -> new UserNotFoundException(email));
+        updateEntity(model, userEntity);
+        userRepo.save(userEntity);
+    }
+
+
+    //  Delete users
     @Override
     public void deleteById(Long id) throws UserNotFoundException {
-            userRepo.deleteById(id);
+        userRepo.deleteById(id);
     }
 
     public void deleteByUsername(String username) {
         userRepo.deleteByUsername(username);
+    }
+
+    public void deleteByEmail(String email) {
+        userRepo.deleteByEmail(email);
     }
 
     @Override
@@ -89,5 +109,13 @@ public class UserServiceImpl implements UserService {
         } else {
             throw new UsersDeletingException();
         }
+    }
+
+    private void updateEntity(UserModel model, UserEntity userEntity) {
+        if (!model.getFirstname().equals("")) userEntity.setFirstname(model.getFirstname());
+        if (!model.getLastname().equals("")) userEntity.setLastname(model.getLastname());
+        if (!model.getUsername().equals("")) userEntity.setUsername(model.getUsername());
+        if (!model.getEmail().equals("")) userEntity.setEmail(model.getEmail());
+        if (!model.getUserPicLink().equals("")) userEntity.setAvatarImageUrl(model.getUserPicLink());
     }
 }
