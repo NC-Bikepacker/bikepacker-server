@@ -1,0 +1,33 @@
+name: CI
+on:
+  push:
+    branches: [ main ]
+  pull_request:
+    branches: [ main ]
+
+  workflow_dispatch:
+
+jobs:
+  build:
+    runs-on: ubuntu-latest
+    steps:
+      - name: build-gradle
+        run: gradle build
+  
+  FTP-Deploy-Action:
+    name: FTP-Deploy-Action
+    runs-on: ubuntu-latest
+    steps:
+    - name: build-gradle
+      run: gradle build
+    - name: Upload Files
+      id: upload
+      uses: Creepios/sftp-action@v1.0.3
+      with:
+        host: '37.140.241.224'
+        port: 22
+        username: 'v_filonova'
+        password: 'VFilonova'
+        localPath: './build/libs/BikepackerServer-0.0.1-SNAPSHOT.jar'
+        remotePath: './'
+        
