@@ -53,7 +53,7 @@ public class SecurityConfiguration extends WebSecurityConfigurerAdapter {
                         authFilter,
                         UsernamePasswordAuthenticationFilter.class)
                 .authorizeRequests()
-                .antMatchers("/login", "/signin").permitAll()
+                .antMatchers("/login", "/signup").permitAll()
                 .antMatchers("/logout", "/user").hasAnyRole(ADMIN, USER)
                 .antMatchers("/admin", "/users").hasRole(ADMIN)
                 .anyRequest().authenticated()
