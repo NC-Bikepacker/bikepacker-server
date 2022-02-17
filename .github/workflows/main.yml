@@ -19,6 +19,7 @@ jobs:
     name: FTP-Deploy-Action
     runs-on: ubuntu-latest
     steps:
+    - uses: actions/checkout@v2
     - name: build-gradle
       run: gradle build
     - name: Upload Files
