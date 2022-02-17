@@ -3,6 +3,7 @@ package ru.netcracker.bikepackerserver.model;
 import com.fasterxml.jackson.annotation.JsonIgnoreProperties;
 import org.springframework.validation.annotation.Validated;
 import ru.netcracker.bikepackerserver.entity.UserEntity;
+import ru.netcracker.bikepackerserver.service.UserDetailsImpl;
 
 import javax.validation.constraints.Email;
 import javax.validation.constraints.NotEmpty;
@@ -43,6 +44,17 @@ public class UserModel {
         model.setEmail(entity.getEmail());
         model.setUserPicLink(entity.getAvatarImageUrl());
         model.setId(entity.getId());
+        return model;
+    }
+
+    public static UserModel toModel(UserDetailsImpl userDetails) {
+        UserModel model = new UserModel();
+        model.setFirstname(userDetails.getFirstname());
+        model.setLastname(userDetails.getLastname());
+        model.setUsername(userDetails.getUsername());
+        model.setEmail(userDetails.getEmail());
+        model.setUserPicLink(userDetails.getAvatarImageUrl());
+        model.setId(userDetails.getId());
         return model;
     }
 

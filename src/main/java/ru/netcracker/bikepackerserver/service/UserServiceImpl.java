@@ -20,16 +20,12 @@ public class UserServiceImpl implements UserService {
     public UserServiceImpl(UserRepo userRepo) {
         this.userRepo = userRepo;
     }
-
-
-    //  Create user
+    
     @Override
     public void create(UserEntity entity) throws UsernameAlreadyExistsException, EmailAlreadyExistsException {
         userRepo.save(entity);
     }
 
-
-    //  Get users
     @Override
     public List<UserModel> readAll() throws NoAnyUsersException {
         List<UserEntity> users = userRepo.findAll();
@@ -71,8 +67,6 @@ public class UserServiceImpl implements UserService {
         return UserModel.toModel(userEntity.get());
     }
 
-
-    //  Update users
     @Override
     public void update(UserModel model, Long id) {
         UserEntity userEntity = userRepo.findById(id).orElseThrow(() -> new UserNotFoundException(Long.toString(id)));
@@ -86,8 +80,6 @@ public class UserServiceImpl implements UserService {
         userRepo.save(userEntity);
     }
 
-
-    //  Delete users
     @Override
     public void deleteById(Long id) throws UserNotFoundException {
         userRepo.deleteById(id);
