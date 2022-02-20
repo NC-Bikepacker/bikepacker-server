@@ -13,28 +13,28 @@ repositories {
 }
 
 dependencies {
-    implementation 'org.springframework.boot:spring-boot-starter:2.6.2'
-    implementation 'org.springframework.boot:spring-boot-starter-web:2.6.2'
+    implementation 'org.springframework.boot:spring-boot-starter:2.6.3'
+    implementation 'org.springframework.boot:spring-boot-starter-web:2.6.3'
     implementation 'com.github.ulisesbocchio:jasypt-spring-boot-starter:3.0.4'
     implementation 'io.springfox:springfox-boot-starter:3.0.0'
     implementation 'org.springframework.boot:spring-boot-starter-validation:2.6.3'
 
-    implementation 'io.swagger.core.v3:swagger-core:2.1.12'
+    implementation 'io.swagger.core.v3:swagger-core:2.1.13'
     implementation 'io.springfox:springfox-boot-starter:3.0.0'
     implementation 'io.springfox:springfox-swagger2:3.0.0'
     implementation 'com.github.ulisesbocchio:jasypt-spring-boot-starter:3.0.4'
 
-    implementation group: 'org.springframework.boot', name: 'spring-boot-starter-web', version: '2.6.2'
+    implementation group: 'org.springframework.boot', name: 'spring-boot-starter-web', version: '2.6.3'
     implementation group: 'org.springframework', name: 'spring-webmvc', version: '5.3.12'
     implementation group: 'org.springframework.boot', name: 'spring-boot-starter-data-jpa', version: '2.6.2'
     implementation group: 'org.springframework.boot', name: 'spring-boot-starter-data-rest', version: '2.6.1'
     implementation group: 'org.postgresql', name: 'postgresql', version: '42.3.1'
     implementation group: 'org.springframework.boot', name: 'spring-boot-starter-security', version: '2.6.2'
     implementation group: 'com.fasterxml.jackson.core', name: 'jackson-core', version: '2.13.0'
-    implementation 'com.google.code.gson:gson:2.8.9'
-    testImplementation 'org.springframework.boot:spring-boot-starter-test:2.6.2'
+    implementation 'com.google.code.gson:gson:2.9.0'
+    testImplementation 'org.springframework.boot:spring-boot-starter-test:2.6.3'
     implementation 'org.springframework.security:spring-security-test:5.5.1'
-    implementation 'org.springframework.boot:spring-boot-starter-thymeleaf:2.6.2'
+    implementation 'org.springframework.boot:spring-boot-starter-thymeleaf:2.6.3'
 }
 
 test {

@@ -2,6 +2,7 @@ package ru.netcracker.bikepackerserver.configurations;
 
 import com.fasterxml.jackson.databind.ObjectMapper;
 import com.google.gson.Gson;
+import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.security.authentication.AuthenticationServiceException;
 import org.springframework.security.authentication.UsernamePasswordAuthenticationToken;
 import org.springframework.security.core.Authentication;
@@ -21,12 +22,16 @@ import javax.servlet.http.HttpServletResponse;
 import java.io.IOException;
 import java.util.Map;
 
-public class CustomAuthFilter extends AbstractAuthenticationProcessingFilter {
+public class BikepackerAuthenticationFilter extends AbstractAuthenticationProcessingFilter {
 
+    private static String authRequestFieldEmail = "email";
+    private static String authRequestFieldPassword = "password";
+
+    @Autowired
     private final ObjectMapper objectMapper;
     private final Gson gson = new Gson();
 
-    protected CustomAuthFilter(ObjectMapper objectMapper) {
+    protected BikepackerAuthenticationFilter(ObjectMapper objectMapper) {
         super(new AntPathRequestMatcher("/login", "POST"));
         this.objectMapper = objectMapper;
         setAuthenticationSuccessHandler((request, response, authentication) -> {
@@ -45,8 +50,8 @@ public class CustomAuthFilter extends AbstractAuthenticationProcessingFilter {
 
         try {
             Map<String, String> requestMap = objectMapper.readValue(request.getInputStream(), Map.class);
-            email = requestMap.get("email");
-            password = requestMap.get("password");
+            email = requestMap.get(authRequestFieldEmail);
+            password = requestMap.get(authRequestFieldPassword);
         } catch (IOException e) {
             throw new AuthenticationServiceException(e.getMessage(), e);
         }

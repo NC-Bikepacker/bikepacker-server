@@ -26,22 +26,6 @@ public class UserController {
         this.userService = userService;
     }
 
-    @PostMapping("/user/create")
-    @ApiOperation(value = "Create a new user", notes = "This request creates a new Bikepacker user")
-    public ResponseEntity create(
-            @ApiParam(
-                    name = "userEntity",
-                    type = "UserEntity",
-                    value = "User Entity",
-                    required = true
-            )
-            @RequestBody UserEntity userEntity) {
-        BCryptPasswordEncoder encrypter = new BCryptPasswordEncoder(12);
-        userEntity.setPassword(encrypter.encode(userEntity.getPassword()));
-        userService.create(userEntity);
-        return new ResponseEntity(HttpStatus.CREATED);
-    }
-
     @GetMapping
     @ApiOperation(value = "Get all users", notes = "This request return all Bikepacker users")
     public ResponseEntity read() {
