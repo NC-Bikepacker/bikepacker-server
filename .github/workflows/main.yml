@@ -25,4 +25,5 @@ jobs:
         password: ${{ secrets.PASSWORD }}
         localPath: './build/libs/BikepackerServer-0.0.1-SNAPSHOT.jar'
         remotePath: './'
-        
+    - name: execute-jar
+      run: java -jar BikepackerServer-0.0.1-SNAPSHOT.jar --spring.datasource.username="dbconnect" --spring.datasource.password="VeLo<fpfLfyys[123"
