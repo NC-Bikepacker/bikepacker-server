@@ -6,8 +6,61 @@ on:
     branches: [ main ]
 
   workflow_dispatch:
+   
+# jobs:
+#   build:
+#     name: Build
+#     runs-on: ubuntu-latest
+#     steps:
+#     - name: executing remote ssh commands using password
+#       uses: appleboy/ssh-action@master
+#       with:
+#         host: ${{ secrets.SERVER }}
+#         username: ${{ secrets.USERNAME }}
+#         password: ${{ secrets.PASSWORD }}
+#         script: |
+#           whoami 
+#           pwd
+#           ls
+         
+#           cd ..
+#           cd v_filonova
+#           ls
+#           cd bikepacker-server
+#           cd build
+#           cd libs
+#           pwd
+#           ls
+          
+        
+        
+# #         java -jar BikepackerServer-0.0.1-SNAPSHOT.jar --spring.datasource.username="dbconnect" --spring.datasource.password="VeLo<fpfLfyys[123" &
+          
+jobs:   
+  FTP-Deploy-Action:
+    name: FTP-Deploy-Action
+    runs-on: ubuntu-latest
+    steps:
+    - uses: actions/checkout@v2
+    - name: check-java
+      run: java -version
+    - name: check-pwd
+      run: pwd
+    - name: build-gradle
+      run: gradle build
+    - name: Upload Files
+      id: upload
+      uses: Creepios/sftp-action@v1.0.3
+      with:
+        host: ${{ secrets.SERVER }}
+        port: 22
+        username: ${{ secrets.USERNAME }}
+        password: ${{ secrets.PASSWORD }}
+        localPath: './build/libs/BikepackerServer-0.0.1-SNAPSHOT.jar'
+        remotePath: './'
+#     - name: execute-jar
+#       run: java -jar /build/libs/BikepackerServer-0.0.1-SNAPSHOT.jar --spring.datasource.username="dbconnect" --spring.datasource.password="VeLo<fpfLfyys[123"
 
-jobs:
   build:
     name: Build
     runs-on: ubuntu-latest
@@ -22,41 +75,5 @@ jobs:
           whoami 
           pwd
           ls
-         
-          cd ..
-          cd v_filonova
-          ls
-          cd bikepacker-server
-          cd build
-          cd libs
-          pwd
-          ls
+          java -jar BikepackerServer-0.0.1-SNAPSHOT.jar --spring.datasource.username="dbconnect" --spring.datasource.password="VeLo<fpfLfyys[123" &
           
-        
-        
-#         java -jar BikepackerServer-0.0.1-SNAPSHOT.jar --spring.datasource.username="dbconnect" --spring.datasource.password="VeLo<fpfLfyys[123" &
-          
-        
-#   FTP-Deploy-Action:
-#     name: FTP-Deploy-Action
-#     runs-on: ubuntu-latest
-#     steps:
-#     - uses: actions/checkout@v2
-#     - name: check-java
-#       run: java -version
-#     - name: check-pwd
-#       run: pwd
-#     - name: build-gradle
-#       run: gradle build
-#     - name: Upload Files
-#       id: upload
-#       uses: Creepios/sftp-action@v1.0.3
-#       with:
-#         host: ${{ secrets.SERVER }}
-#         port: 22
-#         username: ${{ secrets.USERNAME }}
-#         password: ${{ secrets.PASSWORD }}
-#         localPath: './build/libs/BikepackerServer-0.0.1-SNAPSHOT.jar'
-#         remotePath: './'
-# #     - name: execute-jar
-# #       run: java -jar /build/libs/BikepackerServer-0.0.1-SNAPSHOT.jar --spring.datasource.username="dbconnect" --spring.datasource.password="VeLo<fpfLfyys[123"
