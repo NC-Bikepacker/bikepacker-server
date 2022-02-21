@@ -10,4 +10,9 @@ public class UserNotFoundException extends BaseException{
         httpStatus = HttpStatus.NOT_FOUND;
         description = "User with id " + id + " is not found.";
     }
+
+    public UserNotFoundException(String username) {
+        httpStatus = HttpStatus.NOT_FOUND;
+        description = username + " is not found.";
+    }
 }

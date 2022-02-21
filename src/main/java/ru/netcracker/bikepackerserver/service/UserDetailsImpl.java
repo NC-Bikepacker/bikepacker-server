@@ -1,6 +1,5 @@
 package ru.netcracker.bikepackerserver.service;
 
-
 import java.util.Arrays;
 import java.util.Collection;
 import java.util.List;
@@ -24,6 +23,7 @@ public class UserDetailsImpl implements UserDetails {
     private String email;
     private RoleEntity roles;
     private List<GrantedAuthority> authorities;
+    private Long id;
 
     public UserDetailsImpl(UserEntity user) {
         this.firstname = user.getFirstname();
@@ -33,26 +33,17 @@ public class UserDetailsImpl implements UserDetails {
         this.avatarImageUrl = user.getAvatarImageUrl();
         this.email = user.getEmail();
         this.roles = user.getRoles();
-        this.authorities = Arrays.stream(user.getRoles().getRole_name().split(","))
+        this.id = user.getId();
+        this.authorities = Arrays.stream(user.getRoles().getRoleName().split(","))
                 .map(SimpleGrantedAuthority::new)
                 .collect(Collectors.toList());
     }
 
-    public UserDetailsImpl() {}
-
+    public UserDetailsImpl() {
+    }
     @Override
     public Collection<? extends GrantedAuthority> getAuthorities() {
         return authorities;
-    }
-
-    @Override
-    public String getPassword() {
-        return password;
-    }
-
-    @Override
-    public String getUsername() {
-        return email;
     }
 
     @Override
@@ -75,4 +66,92 @@ public class UserDetailsImpl implements UserDetails {
         return true;
     }
 
+    @Override
+    public String getPassword() {
+        return password;
+    }
+
+    @Override
+    public String getUsername() {
+        return email;
+    }
+
+
+    public String getFirstname() {
+        return firstname;
+    }
+
+    public void setFirstname(String firstname) {
+        this.firstname = firstname;
+    }
+
+    public String getLastname() {
+        return lastname;
+    }
+
+    public void setLastname(String lastname) {
+        this.lastname = lastname;
+    }
+
+    public String getNickname() {
+        return nickname;
+    }
+
+    public void setNickname(String nickname) {
+        this.nickname = nickname;
+    }
+
+    public void setPassword(String password) {
+        this.password = password;
+    }
+
+    public String getAvatarImageUrl() {
+        return avatarImageUrl;
+    }
+
+    public void setAvatarImageUrl(String avatarImageUrl) {
+        this.avatarImageUrl = avatarImageUrl;
+    }
+
+    public String getEmail() {
+        return email;
+    }
+
+    public void setEmail(String email) {
+        this.email = email;
+    }
+
+    public RoleEntity getRoles() {
+        return roles;
+    }
+
+    public void setRoles(RoleEntity roles) {
+        this.roles = roles;
+    }
+
+    public void setAuthorities(List<GrantedAuthority> authorities) {
+        this.authorities = authorities;
+    }
+
+    public Long getId() {
+        return id;
+    }
+
+    public void setId(Long id) {
+        this.id = id;
+    }
+
+    @Override
+    public String toString() {
+        return "UserDetailsImpl{" +
+                "firstname='" + firstname + '\'' +
+                ", lastname='" + lastname + '\'' +
+                ", nickname='" + nickname + '\'' +
+                ", password='" + password + '\'' +
+                ", avatarImageUrl='" + avatarImageUrl + '\'' +
+                ", email='" + email + '\'' +
+                ", roles=" + roles +
+                ", authorities=" + authorities +
+                '}';
+    }
 }
