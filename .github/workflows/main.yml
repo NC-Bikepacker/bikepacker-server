@@ -22,19 +22,20 @@ jobs:
           whoami 
           pwd
           ls
-          env
+         
           cd ..
           cd v_filonova
           ls
           cd bikepacker-server
           cd build
           cd libs
+          pwd
           ls
-          java -jar BikepackerServer-0.0.1-SNAPSHOT.jar --spring.datasource.username="dbconnect" --spring.datasource.password="VeLo<fpfLfyys[123" &
           
         
         
-        
+#         java -jar BikepackerServer-0.0.1-SNAPSHOT.jar --spring.datasource.username="dbconnect" --spring.datasource.password="VeLo<fpfLfyys[123" &
+          
         
 #   FTP-Deploy-Action:
 #     name: FTP-Deploy-Action
