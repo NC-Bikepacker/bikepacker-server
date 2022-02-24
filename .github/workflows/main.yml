@@ -13,10 +13,6 @@ jobs:
     runs-on: ubuntu-latest
     steps:
     - uses: actions/checkout@v2
-    - name: check-java
-      run: java -version
-    - name: check-pwd
-      run: pwd
     - name: build-gradle
       run: gradle build
     - name: Upload Files
