@@ -1,5 +1,6 @@
 package ru.netcracker.bikepackerserver.service;
 
+import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 import ru.netcracker.bikepackerserver.entity.UserEntity;
 import ru.netcracker.bikepackerserver.exception.*;
@@ -16,12 +17,13 @@ import java.util.regex.Pattern;
 @Transactional
 public class UserServiceImpl implements UserService {
 
+    @Autowired
     private final UserRepo userRepo;
 
     public UserServiceImpl(UserRepo userRepo) {
         this.userRepo = userRepo;
     }
-    
+
     @Override
     public void create(UserEntity entity) throws UsernameAlreadyExistsException, EmailAlreadyExistsException {
         userRepo.save(entity);
@@ -68,6 +70,17 @@ public class UserServiceImpl implements UserService {
         return UserModel.toModel(userEntity.get());
     }
 
+    public List<UserEntity> searchByFirstLastName(String name) {
+        List<UserEntity> users = userRepo.findAll();
+        List<UserEntity> res = new ArrayList<>();
+        for (UserEntity user : users
+        ) {
+            if (contains(name, user.getFirstname()) || contains(name, user.getLastname()))
+                res.add(user);
+        }
+        return res;
+    }
+
     @Override
     public void update(UserModel model, Long id) {
         UserEntity userEntity = userRepo.findById(id).orElseThrow(() -> new UserNotFoundException(Long.toString(id)));
@@ -110,5 +123,14 @@ public class UserServiceImpl implements UserService {
         if (!model.getUsername().equals("")) userEntity.setUsername(model.getUsername());
         if (!model.getEmail().equals("")) userEntity.setEmail(model.getEmail());
         if (!model.getUserPicLink().equals("")) userEntity.setAvatarImageUrl(model.getUserPicLink());
+    }
+
+    public boolean contains(String part, String user) {
+        String REGEX_FIND_WORD = "(?i).*?" + part + ".*?";
+        String regex = String.format(REGEX_FIND_WORD, Pattern.quote(part));
+        if (user.matches(regex)) {
+            return true;
+        }
+        return false;
     }
 }
