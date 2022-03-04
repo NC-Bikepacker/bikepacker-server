@@ -1,24 +1,33 @@
 package ru.netcracker.bikepackerserver.entity;
 
+import org.springframework.validation.annotation.Validated;
+
 import javax.persistence.*;
+import javax.validation.constraints.NotNull;
+import java.io.Serializable;
 import java.util.Objects;
 
 @Entity
 @Table(name="tracks", schema = "public")
-public class TrackEntity {
+@Validated
+public class TrackEntity implements Serializable {
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     @Column(name = "track_id")
-    private Long track_id;
+    @NotNull
+    private Long trackId;
 
     @Column(name = "travel_time")
-    private Long travel_time;
+    @NotNull
+    private Long travelTime;
 
     @Column(name = "track_complexity")
-    private short track_complexity;
+    @NotNull
+    private short trackComplexity;
 
     @ManyToOne(fetch = FetchType.EAGER, optional = false)
     @JoinColumn(name = "user_id", nullable = false)
+    @NotNull
     private UserEntity user;
 
     private String gpx;
@@ -26,28 +35,28 @@ public class TrackEntity {
     public TrackEntity() {
     }
 
-    public Long getTrack_id() {
-        return track_id;
+    public Long getTrackId() {
+        return trackId;
     }
 
-    public void setTrack_id(Long track_id) {
-        this.track_id = track_id;
+    public void setTrackId(Long track_id) {
+        this.trackId = track_id;
     }
 
-    public Long getTravel_time() {
-        return travel_time;
+    public Long getTravelTime() {
+        return travelTime;
     }
 
-    public void setTravel_time(Long travel_time) {
-        this.travel_time = travel_time;
+    public void setTravelTime(Long travel_time) {
+        this.travelTime = travel_time;
     }
 
-    public short getTrack_complexity() {
-        return track_complexity;
+    public short getTrackComplexity() {
+        return trackComplexity;
     }
 
-    public void setTrack_complexity(short track_complexity) {
-        this.track_complexity = track_complexity;
+    public void setTrackComplexity(short track_complexity) {
+        this.trackComplexity = track_complexity;
     }
 
     public UserEntity getUser() {
@@ -70,9 +79,9 @@ public class TrackEntity {
     @Override
     public String toString() {
         return "TrackEntity{" +
-                "track_id=" + track_id +
-                ", travel_time=" + travel_time +
-                ", track_complexity=" + track_complexity +
+                "track_id=" + trackId +
+                ", travel_time=" + travelTime +
+                ", track_complexity=" + trackComplexity +
                 ", user=" + user +
                 ", gpx_url='" + gpx+ '\'' +
                 '}';
@@ -83,11 +92,11 @@ public class TrackEntity {
         if (this == o) return true;
         if (o == null || getClass() != o.getClass()) return false;
         TrackEntity that = (TrackEntity) o;
-        return Objects.equals(track_id, that.track_id) && Objects.equals(travel_time, that.travel_time) && Objects.equals(track_complexity, that.track_complexity) && Objects.equals(user, that.user) && Objects.equals(gpx, that.gpx);
+        return Objects.equals(trackId, that.trackId) && Objects.equals(travelTime, that.travelTime) && Objects.equals(trackComplexity, that.trackComplexity) && Objects.equals(user, that.user) && Objects.equals(gpx, that.gpx);
     }
 
     @Override
     public int hashCode() {
-        return Objects.hash(track_id, travel_time, track_complexity, user, gpx);
+        return Objects.hash(trackId, travelTime, trackComplexity, user, gpx);
     }
 }

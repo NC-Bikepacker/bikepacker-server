@@ -1,0 +1,44 @@
+name: CI
+on:
+  push:
+    branches: [ main ]
+  pull_request:
+    branches: [ main ]
+
+  workflow_dispatch:
+   
+jobs:   
+  FTP-Deploy-Action:
+    name: FTP-Deploy-Action
+    runs-on: ubuntu-latest
+    steps:
+    - uses: actions/checkout@v2
+    - name: build-gradle
+      run: gradle build
+    - name: Upload Files
+      id: upload
+      uses: Creepios/sftp-action@v1.0.3
+      with:
+        host: ${{ secrets.SERVER }}
+        port: 22
+        username: ${{ secrets.USERNAME }}
+        password: ${{ secrets.PASSWORD }}
+        localPath: './build/libs/'
+        remotePath: 'home/user_ci/'
+
+  build:
+    needs: FTP-Deploy-Action
+    name: Build
+    runs-on: ubuntu-latest
+    steps:
+    - name: executing remote ssh commands using password
+      uses: appleboy/ssh-action@master
+      with:
+        host: ${{ secrets.SERVER }}
+        username: ${{ secrets.USERNAME }}
+        password: ${{ secrets.PASSWORD }}
+        command_timeout: 200m
+        script: |
+          echo VFilonova | sudo kill $(sudo lsof -t -i:8085)
+          java -jar home/user_ci/BikepackerServer-0.0.1-SNAPSHOT.jar --spring.datasource.username="${{ secrets.USERNAME_DB}}" --spring.datasource.password="${{secrets.PASSWORD_DB}}" &
+          exit

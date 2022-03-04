@@ -41,7 +41,6 @@ public class PasswordModel {
      *
      * @param password the password to be hashed
      * @param salt     a 16 bytes salt, ideally obtained with the getNextSalt method
-     *
      * @return the hashed password with a pinch of salt
      */
 
@@ -66,7 +65,6 @@ public class PasswordModel {
      * @param password     the password to check
      * @param salt         the salt used to hash the password
      * @param expectedHash the expected hashed value of the password
-     *
      * @return true if the given password and salt match the hashed value, false otherwise
      */
     public static boolean isExpectedPassword(char[] password, byte[] salt, byte[] expectedHash) {
@@ -83,7 +81,6 @@ public class PasswordModel {
      * Generates a random password of a given length, using letters and digits.
      *
      * @param length the length of the password
-     *
      * @return a random password
      */
     public static String generateRandomPassword(int length) {

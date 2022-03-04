@@ -13,25 +13,25 @@ repositories {
 }
 
 dependencies {
-    implementation 'org.springframework.boot:spring-boot-starter:2.6.1'
-    implementation 'org.springframework.boot:spring-boot-starter:2.6.1'
-    implementation 'org.springframework.boot:spring-boot-starter-web:2.6.1'
-
-    // https://mvnrepository.com/artifact/mysql/mysql-connector-java
-    implementation group: 'mysql', name: 'mysql-connector-java', version: '8.0.27'
+    implementation 'com.github.ulisesbocchio:jasypt-spring-boot-starter:3.0.4'
+    implementation 'com.google.code.gson:gson:2.9.0'
+    implementation 'io.springfox:springfox-boot-starter:3.0.0'
+    implementation 'io.springfox:springfox-swagger2:3.0.0'
+    implementation 'io.swagger.core.v3:swagger-core:2.1.13'
     implementation 'org.mapstruct:mapstruct:1.4.2.Final'
-
-    implementation group: 'org.springframework.boot', name: 'spring-boot-starter-web', version: '2.6.1'
-    implementation group: 'org.springframework', name: 'spring-webmvc', version: '5.3.12'
-    implementation group: 'org.springframework.boot', name: 'spring-boot-starter-data-jpa', version: '2.6.1'
-    implementation group: 'org.springframework.boot', name: 'spring-boot-starter-data-rest', version: '2.6.1'
+    implementation 'org.springframework.boot:spring-boot-starter-thymeleaf:2.6.3'
+    implementation 'org.springframework.boot:spring-boot-starter-validation:2.6.3'
+    implementation 'org.springframework.boot:spring-boot-starter-web:2.6.3'
+    implementation 'org.springframework.boot:spring-boot-starter:2.6.3'
+    implementation 'org.springframework.security:spring-security-test:5.5.1'
+    implementation group: 'com.fasterxml.jackson.core', name: 'jackson-core', version: '2.13.0'
     implementation group: 'org.postgresql', name: 'postgresql', version: '42.3.1'
-    implementation group: 'org.springframework.boot', name: 'spring-boot-starter-security', version: '2.6.3'
-
-
-    testImplementation 'org.springframework.boot:spring-boot-starter-test:2.6.1'
-    implementation 'org.springframework.security:spring-security-test'
-    implementation 'org.springframework.boot:spring-boot-starter-thymeleaf'
+    implementation group: 'org.springframework.boot', name: 'spring-boot-starter-data-jpa', version: '2.6.2'
+    implementation group: 'org.springframework.boot', name: 'spring-boot-starter-data-rest', version: '2.6.1'
+    implementation group: 'org.springframework.boot', name: 'spring-boot-starter-security', version: '2.6.2'
+    implementation group: 'org.springframework.boot', name: 'spring-boot-starter-web', version: '2.6.3'
+    implementation group: 'org.springframework', name: 'spring-webmvc', version: '5.3.12'
+    testImplementation 'org.springframework.boot:spring-boot-starter-test:2.6.3'
 }
 
 test {

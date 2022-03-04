@@ -1,28 +1,24 @@
 package ru.netcracker.bikepackerserver.controller;
 
-import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.data.jpa.repository.Query;
+import io.swagger.annotations.Api;
+import io.swagger.annotations.ApiOperation;
+import io.swagger.annotations.ApiParam;
 import org.springframework.http.HttpStatus;
-import org.springframework.http.MediaType;
 import org.springframework.http.ResponseEntity;
 import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
+import org.springframework.validation.annotation.Validated;
 import org.springframework.web.bind.annotation.*;
 import ru.netcracker.bikepackerserver.entity.UserEntity;
 import ru.netcracker.bikepackerserver.model.UserModel;
-import ru.netcracker.bikepackerserver.repository.UserRepo;
 import ru.netcracker.bikepackerserver.service.UserServiceImpl;
 
-import java.util.List;
+import javax.validation.Valid;
 
-/**
- * Controller for operations on users.
- */
 @RestController
 @RequestMapping("/users")
+@Api(tags = {"User controller: creating and getting user models"})
+@Validated
 public class UserController {
-
-    @Autowired
-    private UserRepo userRepo;
 
     private final UserServiceImpl userService;
 
@@ -30,102 +26,120 @@ public class UserController {
         this.userService = userService;
     }
 
-    /**
-     * Post request for creating new user.
-     *
-     * @param userEntity
-     * @return http status.
-     */
-    @PostMapping
-    public ResponseEntity create(@RequestBody UserEntity userEntity) {
-        BCryptPasswordEncoder encrypter = new BCryptPasswordEncoder(12);
-        userEntity.setPassword(encrypter.encode(userEntity.getPassword()));
-        userRepo.save(userEntity);
-        return new ResponseEntity(HttpStatus.CREATED);
-    }
-
-    /**
-     * Get request for getting all users list.
-     *
-     * @return users list and http status if list is not empty.
-     * @return http status not found if it is.
-     */
     @GetMapping
+    @ApiOperation(value = "Get all users", notes = "This request return all Bikepacker users")
     public ResponseEntity read() {
         return new ResponseEntity(userService.readAll(), HttpStatus.OK);
     }
 
-    /**
-     * Get request for getting user by his id.
-     *
-     * @param id
-     * @return user and http status "200 OK" if user in not null.
-     * @return http status "404 Not Found" if user equals null.
-     */
-    @GetMapping("{id}")
-    public ResponseEntity<UserModel> read(@PathVariable(name = "id") Long id) {
-        return new ResponseEntity(userService.read(id), HttpStatus.OK);
+    @GetMapping(value = "/user/getbyid/{id}")
+    @ApiOperation(value = "Get a user by id", notes = "This request finds and returns a user by his id")
+    public ResponseEntity readById(
+            @ApiParam(
+                    name = "id",
+                    type = "Long",
+                    value = "User id",
+                    example = "1",
+                    required = true
+            )
+            @PathVariable Long id
+    ) {
+        return new ResponseEntity(userService.readById(id), HttpStatus.OK);
     }
 
-    /**
-     * Put request for updating user's data.
-     *
-     * @param id
-     * @param newUserModel
-     * @return http status.
-     */
-    @PutMapping("/{id}")
-    public ResponseEntity update(@PathVariable("id") Long id, @RequestBody UserModel newUserModel) {
-        if (userService.update(newUserModel, id)) {
-            return new ResponseEntity(HttpStatus.OK);
-        } else {
-            return new ResponseEntity("Updating user was failed.", HttpStatus.NO_CONTENT);
-        }
+    @GetMapping(value = "/user/getbyusername/{username}")
+    @ApiOperation(value = "Get a user by username", notes = "This request finds and returns a user by his username")
+    public ResponseEntity readByUsername(
+            @ApiParam(
+                    name = "username",
+                    type = "String",
+                    value = "Username",
+                    example = "fedoro_79",
+                    required = true
+            )
+            @PathVariable @Valid String username
+    ) {
+        return new ResponseEntity(userService.readByUsername(username), HttpStatus.OK);
     }
 
-    /**
-     * Delete request for user deleting.
-     *
-     * @param id
-     * @return http status.
-     */
-    @DeleteMapping("/{id}")
-    public ResponseEntity deleteById(@PathVariable("id") Long id) {
-        if (userService.deleteById(id)) {
-            return new ResponseEntity(HttpStatus.OK);
-        } else {
-            return new ResponseEntity("Deleting user was failed.", HttpStatus.BAD_REQUEST);
-        }
+    @GetMapping(value = "/user/getbyemail/{email}")
+    @ApiOperation(value = "Get a user by email", notes = "This request finds and returns a user by his email")
+    public ResponseEntity readByEmail(
+            @ApiParam(
+                    name = "email",
+                    type = "String",
+                    value = "Email",
+                    example = "ad-ryaz@yandex.ru",
+                    required = true
+            )
+            @PathVariable @Valid String email
+    ) {
+        return new ResponseEntity(userService.readByEmail(email), HttpStatus.OK);
     }
 
-    /**
-     * Delete request for user deleting.
-     *
-     * @return http status.
-     */
-    @DeleteMapping("/all")
-    public ResponseEntity deleteAll() {
-        if (userService.deleteAll()) {
-            return new ResponseEntity(HttpStatus.OK);
-        } else {
-            return new ResponseEntity("Deleting users was failed.", HttpStatus.NO_CONTENT);
-        }
+    @PutMapping(value = "/user/updatebyid/{id}")
+    @ApiOperation(value = "Update a user profile data", notes = "This request changes current user data")
+    public ResponseEntity updateById(
+            @ApiParam(
+                    name = "id",
+                    type = "Long",
+                    value = "User id",
+                    example = "11",
+                    required = true
+            )
+            @PathVariable Long id,
+            @RequestBody @Valid UserModel userModel
+    ) {
+        userService.update(userModel, id);
+        return new ResponseEntity(HttpStatus.OK);
     }
 
-    @GetMapping("/getUser/{userNickName}")
-    public ResponseEntity getUserByNickname(@PathVariable(name = "userNickName") String userNickname){
-        UserEntity user = userRepo.findByUsername(userNickname);
-        if( user == null){
-            return new ResponseEntity(HttpStatus.BAD_REQUEST);
-        }
-        else{
-            return new ResponseEntity(userRepo.findByUsername(userNickname), HttpStatus.OK);
-        }
-
+    @PutMapping(value = "/user/updatebyemail/{email}")
+    @ApiOperation(value = "Update a user profile data", notes = "This request changes current user data")
+    public ResponseEntity updateById(
+            @ApiParam(
+                    name = "email",
+                    type = "Long",
+                    value = "User email",
+                    example = "ad-ryaz@yandex.ru",
+                    required = true
+            )
+            @PathVariable String email,
+            @RequestBody @Valid UserModel userModel
+    ) {
+        userService.update(userModel, email);
+        return new ResponseEntity(HttpStatus.OK);
     }
-    @GetMapping(value = "/search/{name}")
-    public ResponseEntity<List<UserEntity>> search(@PathVariable String name) {
-        List<UserEntity> users = userService.searchByFirstLastName(name);
-        return new ResponseEntity<List<UserEntity>>(users, HttpStatus.OK);
+
+    @DeleteMapping("/user/deletebyid/{id}")
+    @ApiOperation(value = "Delete a user by his id", notes = "This request deletes a user with a specific id.")
+    public ResponseEntity deleteById(
+            @ApiParam(
+                    name = "id",
+                    type = "Long",
+                    value = "User id",
+                    example = "11",
+                    required = true
+            )
+            @PathVariable Long id
+    ) {
+        userService.deleteById(id);
+        return new ResponseEntity(HttpStatus.OK);
+    }
+
+    @DeleteMapping("/user/deletebyusername/{username}")
+    @ApiOperation(value = "Delete a user by his username", notes = "This request deletes a user with a specific username.")
+    public ResponseEntity deleteByUsername(
+            @ApiParam(
+                    name = "username",
+                    type = "String",
+                    value = "username",
+                    example = "username",
+                    required = true
+            )
+            @PathVariable String username
+    ) {
+        userService.deleteByUsername(username);
+        return new ResponseEntity(HttpStatus.OK);
     }
 }
