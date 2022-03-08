@@ -1,7 +1,5 @@
 package ru.netcracker.bikepackerserver.service;
 
-import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.security.core.userdetails.UsernameNotFoundException;
 import org.springframework.stereotype.Service;
 import ru.netcracker.bikepackerserver.entity.Friends;
 import ru.netcracker.bikepackerserver.entity.UserEntity;
@@ -12,18 +10,14 @@ import ru.netcracker.bikepackerserver.repository.UserRepo;
 
 import java.util.ArrayList;
 import java.util.List;
-import java.util.Optional;
 
 @Service
 public class FriendService {
 
-    @Autowired
-    FriendRepo friendRepository;
+    private FriendRepo friendRepository;
 
-    @Autowired
-    UserRepo userRepository;
+    private UserRepo userRepository;
 
-    @Autowired
     public FriendService(FriendRepo friendRepository, UserRepo userRepository) {
         this.friendRepository = friendRepository;
         this.userRepository = userRepository;

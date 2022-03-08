@@ -7,6 +7,7 @@ import org.springframework.web.bind.annotation.*;
 import ru.netcracker.bikepackerserver.data.FriendRequest;
 import ru.netcracker.bikepackerserver.entity.Friends;
 import ru.netcracker.bikepackerserver.entity.UserEntity;
+import ru.netcracker.bikepackerserver.exception.UserNotFoundException;
 import ru.netcracker.bikepackerserver.model.UserModel;
 import ru.netcracker.bikepackerserver.repository.FriendRepo;
 import ru.netcracker.bikepackerserver.repository.UserRepo;
@@ -63,10 +64,17 @@ public class FriendController {
         return new ResponseEntity<>(res, HttpStatus.OK);
     }
 
-    @GetMapping("{userName}")
-    public ResponseEntity<List<UserModel>> getFriends(@PathVariable(name = "userName") String userNickName) {
-        UserEntity currentUser = userRepository.findByUsername(userNickName);
+    @GetMapping("{username}")
+    public ResponseEntity<List<UserModel>> getFriends(@PathVariable(name = "username") String userNickName) {
+        UserEntity currentUser = userRepository.findByUsername(userNickName).orElseThrow(() -> new UserNotFoundException(userNickName));;
+        if(currentUser==null){
+            return new ResponseEntity<>(HttpStatus.BAD_REQUEST);
+        }
         List<UserEntity> friends = friendService.getFriends(currentUser.getId());
-        return new ResponseEntity(friends, HttpStatus.OK);
+        List<UserModel> friendList = new ArrayList<>();
+        for (UserEntity userEntity: friends) {
+            friendList.add(UserModel.toModel( userEntity));
+        }
+        return new ResponseEntity(friendList, HttpStatus.OK);
     }
 }
