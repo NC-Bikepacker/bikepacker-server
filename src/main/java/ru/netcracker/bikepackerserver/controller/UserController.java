@@ -5,10 +5,8 @@ import io.swagger.annotations.ApiOperation;
 import io.swagger.annotations.ApiParam;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
-import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
 import org.springframework.validation.annotation.Validated;
 import org.springframework.web.bind.annotation.*;
-import ru.netcracker.bikepackerserver.entity.UserEntity;
 import ru.netcracker.bikepackerserver.model.UserModel;
 import ru.netcracker.bikepackerserver.service.UserServiceImpl;
 
@@ -96,7 +94,7 @@ public class UserController {
 
     @PutMapping(value = "/user/updatebyemail/{email}")
     @ApiOperation(value = "Update a user profile data", notes = "This request changes current user data")
-    public ResponseEntity updateById(
+    public ResponseEntity updateByEmail(
             @ApiParam(
                     name = "email",
                     type = "Long",

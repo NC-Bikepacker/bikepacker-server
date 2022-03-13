@@ -15,7 +15,7 @@ public interface UserRepo extends JpaRepository<UserEntity, Long>, Serializable 
 
     Optional<UserEntity> findById(Long id);
 
-    Optional<UserEntity> findById(String email);
+    UserEntity findByid(Long id);
 
     void deleteById(Long id);
 
