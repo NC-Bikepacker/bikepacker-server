@@ -1,7 +1,5 @@
 package ru.netcracker.bikepackerserver.service;
 
-import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.security.core.userdetails.UsernameNotFoundException;
 import org.springframework.stereotype.Service;
 import ru.netcracker.bikepackerserver.entity.Friends;
 import ru.netcracker.bikepackerserver.entity.UserEntity;
@@ -16,11 +14,10 @@ import java.util.List;
 @Service
 public class FriendService {
 
-    FriendRepo friendRepository;
+    private FriendRepo friendRepository;
 
-    UserRepo userRepository;
+    private UserRepo userRepository;
 
-    @Autowired
     public FriendService(FriendRepo friendRepository, UserRepo userRepository) {
         this.friendRepository = friendRepository;
         this.userRepository = userRepository;
@@ -66,9 +63,14 @@ public class FriendService {
         return friendUsers;
     }
 
-    public void updateStatus(UserEntity user, UserEntity friend, boolean status) {
+    public List<Friends> getAllFriends() {
+        List<Friends> friendUsers = friendRepository.findAll();
+        return friendUsers;
+    }
+
+    public void updateStatus(UserEntity user, UserEntity friend, boolean status){
         Friends friends = friendRepository.findByUserAndFriend(user, friend);
-        if (friends != null) {
+        if (friends != null){
             friendRepository.updateStatus(friends.getId(), status);
         }
     }
