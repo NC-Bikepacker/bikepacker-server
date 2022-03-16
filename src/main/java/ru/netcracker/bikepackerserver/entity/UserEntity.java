@@ -152,7 +152,6 @@ public class UserEntity implements Serializable {
                 ", avatarImageUrl='" + avatarImageUrl + '\'' +
                 ", roles=" + roles +
                 ", email='" + email + '\'' +
-                ", tracks=" + tracks +
                 '}';
     }
 }
