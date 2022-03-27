@@ -2,51 +2,59 @@ package ru.netcracker.bikepackerserver.service;
 
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
+import ru.netcracker.bikepackerserver.entity.ImageEntity;
 import ru.netcracker.bikepackerserver.entity.PointEntity;
-import ru.netcracker.bikepackerserver.entity.TrackEntity;
+import ru.netcracker.bikepackerserver.exception.NullPointModelException;
 import ru.netcracker.bikepackerserver.model.PointModel;
+import ru.netcracker.bikepackerserver.repository.ImageRepo;
 import ru.netcracker.bikepackerserver.repository.PointRepo;
 import ru.netcracker.bikepackerserver.repository.TrackRepo;
 
-import javax.transaction.Transactional;
+import java.util.ArrayList;
 import java.util.List;
-import java.util.Map;
 
 @Service
-@Transactional
 public class PointServiceImpl implements PointService {
 
     @Autowired
     private final PointRepo pointRepo;
+
     @Autowired
     private final TrackRepo trackRepo;
 
-    public PointServiceImpl(PointRepo pointRepo, TrackRepo trackRepo) {
+    @Autowired
+    private final ImageServiceImpl imageService;
+
+    public PointServiceImpl(PointRepo pointRepo, TrackRepo trackRepo, ImageRepo imageRepo, ImageServiceImpl imageService) {
         this.pointRepo = pointRepo;
         this.trackRepo = trackRepo;
+        this.imageService = imageService;
     }
 
     @Override
-    public void save(PointModel model, Long trackId) {
-        PointEntity entity = PointModel.toEntity(model);
-        TrackEntity track = trackRepo.getByTrackId(trackId);
-        entity.setTrack(track);
-
-        pointRepo.save(entity);
+    public void save(PointModel pointModel) throws NullPointModelException {
+        PointEntity pointEntity = PointModel.toEntity(pointModel, trackRepo).orElseThrow(NullPointModelException::new);
+        PointEntity point = pointRepo.save(pointEntity);
+        List<ImageEntity> imageEntities = ImageEntity.toEntity(pointModel, point);
+        imageService.saveAll(imageEntities);
     }
 
     @Override
-    public void save(Map<PointModel, Long> pointModels) {
-        for (Map.Entry<PointModel, Long> entry : pointModels.entrySet()) {
-            PointEntity entity = PointModel.toEntity(entry.getKey());
-            TrackEntity track = trackRepo.getById(entry.getValue());
-            entity.setTrack(track);
+    public void saveAll(List<PointModel> models) throws NullPointModelException {
+        int size = models.size();
+        List<PointEntity> pointEntities = new ArrayList<>(size);
+        List<ImageEntity> imageEntities = new ArrayList<>();
 
-            pointRepo.save(entity);
+        for (PointModel pointModel : models) {
+            pointEntities.add(PointModel.toEntity(pointModel, trackRepo).orElseThrow(NullPointModelException::new));
         }
-    }
 
-    public List<PointEntity> readAll() {
-        return pointRepo.findAll();
+        List<PointEntity> savedPointEntities = pointRepo.saveAll(pointEntities);
+
+        for (int i = 0; i < size; i++) {
+            imageEntities.addAll(ImageEntity.toEntity(models.get(i), savedPointEntities.get(i)));
+        }
+
+        imageService.saveAll(imageEntities);
     }
 }

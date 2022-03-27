@@ -9,7 +9,6 @@ import javax.validation.constraints.NotNull;
 import javax.validation.constraints.Size;
 import java.io.Serializable;
 import java.util.Objects;
-import java.util.Set;
 
 @Entity
 @Table(name = "users", schema = "public")
@@ -51,13 +50,6 @@ public class UserEntity implements Serializable {
     @Email(message = "Email is not valid")
     private String email;
 
-    @OneToMany(
-            mappedBy = "user",
-            fetch = FetchType.LAZY,
-            cascade = CascadeType.ALL
-    )
-    private Set<TrackEntity> tracks;
-
     public UserEntity() {
     }
 
@@ -93,10 +85,6 @@ public class UserEntity implements Serializable {
         return email;
     }
 
-    public Set<TrackEntity> getTracks() {
-        return tracks;
-    }
-
     public void setFirstname(String firstname) {
         this.firstname = firstname;
     }
@@ -125,21 +113,17 @@ public class UserEntity implements Serializable {
         this.email = email;
     }
 
-    public void setTracks(Set<TrackEntity> tracks) {
-        this.tracks = tracks;
-    }
-
     @Override
     public boolean equals(Object o) {
         if (this == o) return true;
         if (!(o instanceof UserEntity)) return false;
         UserEntity that = (UserEntity) o;
-        return Objects.equals(getId(), that.getId()) && Objects.equals(getFirstname(), that.getFirstname()) && Objects.equals(getLastname(), that.getLastname()) && Objects.equals(getUsername(), that.getUsername()) && Objects.equals(getPassword(), that.getPassword()) && Objects.equals(getAvatarImageUrl(), that.getAvatarImageUrl()) && Objects.equals(getRoles(), that.getRoles()) && Objects.equals(getEmail(), that.getEmail()) && Objects.equals(getTracks(), that.getTracks());
+        return Objects.equals(getId(), that.getId()) && Objects.equals(getFirstname(), that.getFirstname()) && Objects.equals(getLastname(), that.getLastname()) && Objects.equals(getUsername(), that.getUsername()) && Objects.equals(getPassword(), that.getPassword()) && Objects.equals(getAvatarImageUrl(), that.getAvatarImageUrl()) && Objects.equals(getRoles(), that.getRoles()) && Objects.equals(getEmail(), that.getEmail());
     }
 
     @Override
     public int hashCode() {
-        return Objects.hash(getId(), getFirstname(), getLastname(), getUsername(), getPassword(), getAvatarImageUrl(), getRoles(), getEmail(), getTracks());
+        return Objects.hash(getId(), getFirstname(), getLastname(), getUsername(), getPassword(), getAvatarImageUrl(), getRoles(), getEmail());
     }
 
     @Override

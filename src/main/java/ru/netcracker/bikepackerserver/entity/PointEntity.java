@@ -30,11 +30,13 @@ public class PointEntity {
     @NotNull(message = "Longitude can not be null")
     private double longitude;
 
-    @ManyToOne(fetch = FetchType.EAGER, optional = false)
-    @JoinColumn(name = "id_track", referencedColumnName = "track_id", nullable = true)
+    @ManyToOne(fetch = FetchType.EAGER)
+    @JoinColumn(name = "id_track")
     @Nullable
     private TrackEntity track;
 
+    public PointEntity() {
+    }
 
     public Long getId() {
         return id;

@@ -1,17 +1,14 @@
 package ru.netcracker.bikepackerserver.entity;
 
-import org.hibernate.annotations.Fetch;
-import org.hibernate.annotations.FetchMode;
 import org.springframework.validation.annotation.Validated;
 
 import javax.persistence.*;
 import javax.validation.constraints.NotNull;
 import java.io.Serializable;
 import java.util.Objects;
-import java.util.Set;
 
 @Entity
-@Table(name="tracks", schema = "public")
+@Table(name = "tracks", schema = "public")
 @Validated
 public class TrackEntity implements Serializable {
     @Id
@@ -27,17 +24,10 @@ public class TrackEntity implements Serializable {
     @NotNull
     private short trackComplexity;
 
-    @ManyToOne(fetch = FetchType.EAGER, optional = false)
+    @ManyToOne(fetch = FetchType.EAGER, optional = true)
     @JoinColumn(name = "user_id", nullable = false)
     @NotNull
     private UserEntity user;
-
-    @OneToMany(
-            mappedBy = "track",
-            fetch = FetchType.LAZY,
-            cascade = CascadeType.ALL
-    )
-    private Set<PointEntity> points;
 
     private String gpx;
 
@@ -83,7 +73,6 @@ public class TrackEntity implements Serializable {
     public void setGpx(String gpx) {
         this.gpx = gpx;
     }
-
 
     @Override
     public String toString() {
