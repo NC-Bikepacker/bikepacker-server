@@ -8,7 +8,7 @@ import java.io.Serializable;
 import java.util.Objects;
 
 @Entity
-@Table(name = "tracks", schema = "public")
+@Table(name="tracks", schema = "public")
 @Validated
 public class TrackEntity implements Serializable {
     @Id

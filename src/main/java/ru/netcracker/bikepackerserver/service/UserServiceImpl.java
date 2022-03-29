@@ -89,7 +89,7 @@ public class UserServiceImpl implements UserService {
     }
 
     public void update(UserModel model, String email) {
-        UserEntity userEntity = userRepo.findById(email).orElseThrow(() -> new UserNotFoundException(email));
+        UserEntity userEntity = userRepo.findByEmail(email).orElseThrow(() -> new UserNotFoundException(email));
         updateEntity(model, userEntity);
         userRepo.save(userEntity);
     }

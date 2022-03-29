@@ -2,6 +2,7 @@ package ru.netcracker.bikepackerserver.entity;
 
 
 import javax.persistence.*;
+import java.util.Optional;
 
 @Entity
 @Table(name="friends", schema = "public")
