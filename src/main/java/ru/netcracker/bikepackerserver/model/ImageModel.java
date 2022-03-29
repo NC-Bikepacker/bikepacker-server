@@ -8,6 +8,7 @@ import ru.netcracker.bikepackerserver.entity.UserEntity;
 
 import javax.validation.constraints.NotEmpty;
 import java.util.Objects;
+import java.util.Optional;
 
 public class ImageModel {
 
@@ -15,13 +16,13 @@ public class ImageModel {
     private String imageBase64;
 
     @Nullable
-    private UserEntity userId;
+    private UserEntity user;
 
     @Nullable
-    private TrackEntity trackId;
+    private TrackEntity track;
 
     @Nullable
-    private PointEntity pointId;
+    private PointEntity point;
 
     public ImageModel() {
     }
@@ -35,41 +36,45 @@ public class ImageModel {
     }
 
     @Nullable
-    public UserEntity getUserId() {
-        return userId;
+    public UserEntity getUser() {
+        return user;
     }
 
-    public void setUserId(@Nullable UserEntity userId) {
-        this.userId = userId;
-    }
-
-    @Nullable
-    public TrackEntity getTrackId() {
-        return trackId;
-    }
-
-    public void setTrackId(@Nullable TrackEntity trackId) {
-        this.trackId = trackId;
+    public void setUser(@Nullable UserEntity user) {
+        this.user = user;
     }
 
     @Nullable
-    public PointEntity getPointId() {
-        return pointId;
+    public TrackEntity getTrack() {
+        return track;
     }
 
-    public void setPointId(@Nullable PointEntity pointId) {
-        this.pointId = pointId;
+    public void setTrack(@Nullable TrackEntity track) {
+        this.track = track;
     }
 
-    public static ImageEntity toEntity(ImageModel imageModel) {
-        ImageEntity imageEntity = new ImageEntity();
+    @Nullable
+    public PointEntity getPoint() {
+        return point;
+    }
 
-        imageEntity.setUserId(imageModel.getUserId());
-        imageEntity.setTrackId(imageModel.getTrackId());
-        imageEntity.setPoint(imageModel.getPointId());
-        imageEntity.setImageBase64(imageModel.getImageBase64());
+    public void setPoint(@Nullable PointEntity point) {
+        this.point = point;
+    }
 
-        return imageEntity;
+    public static Optional<ImageModel> toModel(ImageEntity imageEntity) {
+        ImageModel model = null;
+
+        if (imageEntity != null) {
+            model = new ImageModel();
+
+            model.setTrack(imageEntity.getTrackId());
+            model.setPoint(imageEntity.getPoint());
+            model.setUser(imageEntity.getUserId());
+            model.setImageBase64(imageEntity.getImageBase64());
+        }
+
+        return Optional.ofNullable(model);
     }
 
     @Override
@@ -77,21 +82,21 @@ public class ImageModel {
         if (this == o) return true;
         if (!(o instanceof ImageModel)) return false;
         ImageModel that = (ImageModel) o;
-        return Objects.equals(getImageBase64(), that.getImageBase64()) && Objects.equals(getUserId(), that.getUserId()) && Objects.equals(getTrackId(), that.getTrackId()) && Objects.equals(getPointId(), that.getPointId());
+        return Objects.equals(getImageBase64(), that.getImageBase64()) && Objects.equals(getUser(), that.getUser()) && Objects.equals(getTrack(), that.getTrack()) && Objects.equals(getPoint(), that.getPoint());
     }
 
     @Override
     public int hashCode() {
-        return Objects.hash(getImageBase64(), getUserId(), getTrackId(), getPointId());
+        return Objects.hash(getImageBase64(), getUser(), getTrack(), getPoint());
     }
 
     @Override
     public String toString() {
         return "ImageModel{" +
                 "imageBase64='" + imageBase64 + '\'' +
-                ", userId=" + userId +
-                ", trackId=" + trackId +
-                ", pointId=" + pointId +
+                ", userId=" + user +
+                ", trackId=" + track +
+                ", pointId=" + point +
                 '}';
     }
 }

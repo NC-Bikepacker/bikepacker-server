@@ -85,9 +85,9 @@ public class ImageEntity {
         if (model != null && model.getImageBase64() != null) {
             entity = new ImageEntity();
             entity.setImageBase64(model.getImageBase64());
-            entity.setTrackId(model.getTrackId());
-            entity.setPoint(model.getPointId());
-            entity.setUserId(model.getUserId());
+            entity.setTrackId(model.getTrack());
+            entity.setPoint(model.getPoint());
+            entity.setUserId(model.getUser());
         }
 
         return entity;

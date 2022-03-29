@@ -8,5 +8,5 @@ import ru.netcracker.bikepackerserver.entity.UserEntity;
 @Repository
 public interface TrackRepo extends JpaRepository<TrackEntity, Long> {
     TrackEntity findByUser (UserEntity id);
-    TrackEntity findByTrackId(Long trackId);
+    TrackEntity findTrackEntityByTrackId(Long trackId);
 }

@@ -4,10 +4,10 @@ import org.springframework.http.HttpStatus;
 import org.springframework.web.bind.annotation.ResponseStatus;
 
 @ResponseStatus(HttpStatus.NO_CONTENT)
-public class NullPointModelException extends BaseException {
+public class NoSuchTrackException extends BaseException {
 
-    public NullPointModelException() {
+    public NoSuchTrackException() {
         httpStatus = HttpStatus.NO_CONTENT;
-        description = "PointModel is null.";
+        description = "There is no track with such id.";
     }
 }

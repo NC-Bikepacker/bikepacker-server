@@ -1,5 +1,6 @@
 package ru.netcracker.bikepackerserver.service;
 
+import ru.netcracker.bikepackerserver.entity.PointEntity;
 import ru.netcracker.bikepackerserver.exception.NullPointModelException;
 import ru.netcracker.bikepackerserver.model.PointModel;
 
@@ -10,4 +11,14 @@ public interface PointService {
     void save(PointModel pointModel) throws NullPointModelException;
 
     void saveAll(List<PointModel> models) throws NullPointModelException;
+
+    PointModel getPointModelById(Long pointId);
+
+    PointEntity getPointEntityById(Long pointId);
+
+    List<PointModel> getPointModelsByTrackId(Long trackId) throws Exception;
+
+    List<PointModel> getPointModelsByCoordinates(double latitudeStart, double latitudeEnd, double longitudeStart, double longitudeEnd);
+
+    List<PointModel> getPointModelsByDescription(String text);
 }

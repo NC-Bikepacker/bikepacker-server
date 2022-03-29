@@ -4,10 +4,10 @@ import org.springframework.http.HttpStatus;
 import org.springframework.web.bind.annotation.ResponseStatus;
 
 @ResponseStatus(HttpStatus.NO_CONTENT)
-public class NullPointModelException extends BaseException {
+public class NullPointEntityException extends BaseException {
 
-    public NullPointModelException() {
+    public NullPointEntityException() {
         httpStatus = HttpStatus.NO_CONTENT;
-        description = "PointModel is null.";
+        description = "PointEntity is null.";
     }
 }

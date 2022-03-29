@@ -4,10 +4,10 @@ import org.springframework.http.HttpStatus;
 import org.springframework.web.bind.annotation.ResponseStatus;
 
 @ResponseStatus(HttpStatus.NO_CONTENT)
-public class NullPointModelException extends BaseException {
+public class NoAnyImagesException extends BaseException {
 
-    public NullPointModelException() {
+    public NoAnyImagesException() {
         httpStatus = HttpStatus.NO_CONTENT;
-        description = "PointModel is null.";
+        description = "There are no any images.";
     }
 }

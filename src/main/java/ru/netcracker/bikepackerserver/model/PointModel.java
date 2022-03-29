@@ -6,10 +6,13 @@ import org.springframework.lang.Nullable;
 import org.springframework.validation.annotation.Validated;
 import ru.netcracker.bikepackerserver.entity.PointEntity;
 import ru.netcracker.bikepackerserver.entity.TrackEntity;
-import ru.netcracker.bikepackerserver.exception.NullPointModelException;
-import ru.netcracker.bikepackerserver.repository.TrackRepo;
+import ru.netcracker.bikepackerserver.exception.BaseException;
+import ru.netcracker.bikepackerserver.exception.NoSuchTrackException;
+import ru.netcracker.bikepackerserver.exception.NullPointEntityException;
+import ru.netcracker.bikepackerserver.service.ImageServiceImpl;
 
 import javax.validation.constraints.NotNull;
+import java.util.ArrayList;
 import java.util.List;
 import java.util.Objects;
 import java.util.Optional;
@@ -91,33 +94,58 @@ public class PointModel {
         return Objects.hash(getDescription(), getLatitude(), getLongitude(), getTrackId(), getImages());
     }
 
-    public static Optional<PointEntity> toEntity(PointModel model, TrackRepo trackRepo) throws NullPointModelException {
-        PointEntity pointEntity = null;
+    public static PointModel toModel(PointEntity pointEntity, ImageServiceImpl imageService) throws BaseException {
+        Optional<PointEntity> entity = Optional.ofNullable(pointEntity);
 
-        if (model != null) {
-            pointEntity = new PointEntity();
-            TrackEntity trackEntity = null;
+        if (entity.isPresent()) {
+            PointModel model = new PointModel();
+            Long pointId = entity.get().getId();
 
-            Long modelTrackId = model.getTrackId();
-            double modelLongitude = model.getLongitude();
-            double modelLatitude = model.getLatitude();
-            String modelDescription = model.getDescription();
+            Optional<TrackEntity> track = Optional.ofNullable(entity.get().getTrack());
 
-            if (modelTrackId != null) {
-                trackEntity = trackRepo.findByTrackId(modelTrackId);
-                if (trackEntity == null) {
-                    LoggerFactory.getLogger(PointEntity.class).info("Track with id " + modelTrackId + " not found.");
+            if (track.isPresent()) {
+                Optional<Long> trackId = Optional.ofNullable(track.get().getTrackId());
+
+                if (trackId.isPresent()) {
+                    model.setTrackId(trackId.get());
+                }
+            } else {
+                model.setTrackId(null);
+            }
+
+            List<String> images = imageService.getImagesBase64ByPointId(pointId);
+            model.setImages(images);
+            model.setDescription(entity.get().getDescription());
+            model.setLatitude(entity.get().getLatitude());
+            model.setLongitude(entity.get().getLongitude());
+
+            return model;
+        } else {
+            LoggerFactory.getLogger(PointEntity.class).error("PointEntity in the arguments is null. The mapping operation cannot be performed.");
+            throw new NullPointEntityException();
+        }
+    }
+
+    public static List<PointModel> toModels(List<PointEntity> pointEntities, ImageServiceImpl imageService) throws BaseException {
+        Optional<List<PointEntity>> pointEntityList = Optional.ofNullable(pointEntities);
+
+        if (pointEntityList.isPresent() && pointEntityList.get().size() > 0) {
+            List<PointModel> pointModels = new ArrayList<>(pointEntityList.get().size());
+
+            for (PointEntity entity : pointEntityList.get()) {
+                Optional<PointEntity> pointEntity = Optional.ofNullable(entity);
+
+                if (pointEntity.isPresent()) {
+                    pointModels.add(PointModel.toModel(pointEntity.get(), imageService));
+                } else {
+                    LoggerFactory.getLogger(PointEntity.class).error("The point is null and is not added to the PointModels list.");
                 }
             }
 
-            pointEntity.setTrack(trackEntity);
-            pointEntity.setLongitude(modelLongitude);
-            pointEntity.setLatitude(modelLatitude);
-            pointEntity.setDescription(modelDescription);
+            return pointModels;
         } else {
-            throw new NullPointModelException();
+            LoggerFactory.getLogger(PointEntity.class).error("PointEntity list in the arguments is null. The mapping operation cannot be performed.");
+            throw new NullPointEntityException();
         }
-
-        return Optional.ofNullable(pointEntity);
     }
 }

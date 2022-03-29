@@ -14,6 +14,7 @@ import ru.netcracker.bikepackerserver.repository.PointRepo;
 import ru.netcracker.bikepackerserver.service.PointServiceImpl;
 
 import javax.validation.Valid;
+import java.util.ArrayList;
 import java.util.List;
 
 @RestController
@@ -46,7 +47,7 @@ public class PointController {
         try {
             pointService.save(pointModel);
         } catch (Exception e) {
-            LoggerFactory.getLogger(ResponseEntity.class).error("Bad request: ", e);
+            LoggerFactory.getLogger(ResponseEntity.class).error("Bad request to save a point: ", e);
             return new ResponseEntity(HttpStatus.BAD_REQUEST);
         }
         return new ResponseEntity(HttpStatus.OK);
@@ -65,9 +66,97 @@ public class PointController {
         try {
             pointService.saveAll(pointModels);
         } catch (Exception e) {
-            LoggerFactory.getLogger(ResponseEntity.class).error("Bad request: ", e);
+            LoggerFactory.getLogger(ResponseEntity.class).error("Bad request to save points: ", e);
             return new ResponseEntity(HttpStatus.BAD_REQUEST);
         }
         return new ResponseEntity(HttpStatus.OK);
+    }
+
+    @GetMapping("/trackid/{trackId}")
+    @ApiOperation(value = "Get points by track id", notes = "This query returns all points related to a particular track by its id.")
+    public ResponseEntity getPointsByTrackId(
+            @ApiParam(
+                    name = "id",
+                    type = "Long",
+                    value = "Track id",
+                    example = "1",
+                    required = true
+            )
+            @PathVariable Long trackId) {
+        List<PointModel> points = new ArrayList<>();
+        points = pointService.getPointModelsByTrackId(trackId);
+        return new ResponseEntity(points, HttpStatus.OK);
+    }
+
+    @GetMapping("/point/pointid/{pointId}")
+    @ApiOperation(value = "Get point by point id", notes = "This query returns the point its id.")
+    public ResponseEntity getPointByPointId(
+            @ApiParam(
+                    name = "id",
+                    type = "Long",
+                    value = "Point id",
+                    example = "1",
+                    required = true
+            )
+            @PathVariable Long pointId) {
+        PointModel point = null;
+        point = pointService.getPointModelById(pointId);
+        return new ResponseEntity(point, HttpStatus.OK);
+    }
+
+    @GetMapping("/coordinates")
+    @ApiOperation(value = "Get points with particular latitude and longitude", notes = "This query returns all points that lie within the area bounded by the given coordinates.")
+    public ResponseEntity getPointsFromArea(
+            @ApiParam(
+                    name = "latitude-start",
+                    type = "double",
+                    value = "Starting latitude point",
+                    example = "10.5",
+                    required = true
+            )
+            @RequestParam(name = "latitude-start") double latitudeStart,
+            @ApiParam(
+                    name = "latitude-end",
+                    type = "double",
+                    value = "Ending latitude point",
+                    example = "100.5",
+                    required = true
+            )
+            @RequestParam(name = "latitude-end") double latitudeEnd,
+            @ApiParam(
+                    name = "longitude-start",
+                    type = "double",
+                    value = "Starting longitude point",
+                    example = "40.75",
+                    required = true
+            )
+            @RequestParam(name = "longitude-start") double longitudeStart,
+            @ApiParam(
+                    name = "longitude-end",
+                    type = "double",
+                    value = "Ending longitude point",
+                    example = "50.75",
+                    required = true
+            )
+            @RequestParam(name = "longitude-end") double longitudeEnd) {
+        List<PointModel> points;
+        points = pointService.getPointModelsByCoordinates(latitudeStart, latitudeEnd, longitudeStart, longitudeEnd);
+        return new ResponseEntity(points, HttpStatus.OK);
+    }
+
+    @GetMapping("/description")
+    @ApiOperation(value = "Find points by description", notes = "This query returns all points that contain the string you are looking for.")
+    public ResponseEntity getPointsByDescription(
+            @ApiParam(
+                    name = "description",
+                    type = "String",
+                    value = "Text",
+                    example = "Гото Предестинация",
+                    required = true
+            )
+            @RequestParam(name = "text") String description) {
+        List<PointModel> points = null;
+        points = pointService.getPointModelsByDescription(description);
+        return new ResponseEntity(points, HttpStatus.OK);
     }
 }
