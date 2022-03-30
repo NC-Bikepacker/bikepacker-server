@@ -4,10 +4,10 @@ import org.springframework.http.HttpStatus;
 import org.springframework.web.bind.annotation.ResponseStatus;
 
 @ResponseStatus(HttpStatus.BAD_REQUEST)
-public class NoAnyImagesException extends BaseException {
+public class NoAnyPointException extends BaseException {
 
-    public NoAnyImagesException() {
+    public NoAnyPointException() {
         httpStatus = HttpStatus.BAD_REQUEST;
-        description = "There are no any images.";
+        description = "Point not found.";
     }
 }

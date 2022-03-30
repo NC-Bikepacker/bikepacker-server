@@ -41,61 +41,57 @@ public class ImageServiceImpl implements ImageService {
 
     @Override
     public List<ImageEntity> getImageEntitiesByPointId(Long pointId) throws BaseException {
+        List<ImageEntity> images = new ArrayList<>();
+
         if (pointId != null) {
             Optional<PointEntity> point = Optional.ofNullable(pointRepo.findPointEntityById(pointId));
 
             if (point.isPresent()) {
-                List<ImageEntity> images = imageRepo.findImageEntitiesByPoint(point.get());
-                return images;
+                images = imageRepo.findImageEntitiesByPoint(point.get());
             } else {
-                LoggerFactory.getLogger(PointModel.class).error("There is no point with id " + pointId);
-                throw new NullPointModelException();
+                LoggerFactory.getLogger(PointModel.class).error("It is impossible to find images by point id. There is no point with id " + pointId);
             }
         } else {
             LoggerFactory.getLogger(PointModel.class).error("Point id can't be null. ");
             throw new NullPointIdException();
         }
+        return images;
     }
 
     @Override
     public List<ImageModel> getImageModelsByPointId(Long pointId) throws BaseException {
+        List<ImageModel> imageModels = new ArrayList<>();
+
         if (pointId != null) {
             Optional<PointEntity> point = Optional.ofNullable(pointRepo.findPointEntityById(pointId));
 
             if (point.isPresent()) {
                 List<ImageEntity> imageEntities = imageRepo.findImageEntitiesByPoint(point.get());
 
-                List<ImageModel> imageModels = new ArrayList<>(imageEntities.size());
-
                 for (ImageEntity entity : imageEntities) {
-                    imageModels.add(ImageModel.toModel(entity).orElseThrow(NullPointModelException::new));
+                    imageModels.add(ImageModel.toModel(entity).orElseThrow(NoAnyPointException::new));
                 }
 
                 return imageModels;
             } else {
-                LoggerFactory.getLogger(PointModel.class).error("There is no point with id " + pointId);
-                throw new NullPointModelException();
+                LoggerFactory.getLogger(PointEntity.class).error("There is no point with id " + pointId);
+                throw new NoAnyPointException();
             }
         } else {
-            LoggerFactory.getLogger(PointModel.class).error("Point id can't be null. ");
+            LoggerFactory.getLogger(PointEntity.class).error("Point id can't be null. ");
             throw new NullPointIdException();
         }
     }
 
     @Override
     public List<String> getImagesBase64ByPointId(Long pointId) throws BaseException {
-        if (pointId != null) {
-            List<ImageModel> imageModels = getImageModelsByPointId(pointId);
-            List<String> imagesBase64 = new ArrayList<>(imageModels.size());
+        List<String> imagesBase64 = new ArrayList<>();
+        List<ImageModel> imageModels = getImageModelsByPointId(pointId);
 
-            for (ImageModel image : imageModels) {
-                imagesBase64.add(image.getImageBase64());
-            }
-
-            return imagesBase64;
-        } else {
-            LoggerFactory.getLogger(PointModel.class).error("Point id can't be null. ");
-            throw new NullPointIdException();
+        for (ImageModel image : imageModels) {
+            imagesBase64.add(image.getImageBase64());
         }
+
+        return imagesBase64;
     }
 }

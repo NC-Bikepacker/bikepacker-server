@@ -1,16 +1,15 @@
 package ru.netcracker.bikepackerserver.service;
 
 import ru.netcracker.bikepackerserver.entity.PointEntity;
-import ru.netcracker.bikepackerserver.exception.NullPointModelException;
 import ru.netcracker.bikepackerserver.model.PointModel;
 
 import java.util.List;
 
 public interface PointService {
 
-    void save(PointModel pointModel) throws NullPointModelException;
+    void save(PointModel pointModel);
 
-    void saveAll(List<PointModel> models) throws NullPointModelException;
+    void saveAll(List<PointModel> models);
 
     PointModel getPointModelById(Long pointId);
 

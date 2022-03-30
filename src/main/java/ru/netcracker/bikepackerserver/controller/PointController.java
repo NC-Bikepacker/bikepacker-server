@@ -37,38 +37,28 @@ public class PointController {
     @PostMapping("/point")
     @ApiOperation(value = "Save a new point", notes = "This request saves a new point into database")
     public ResponseEntity savePoint(
-            @ApiParam(
-                    name = "point",
-                    type = "PointModel",
-                    value = "Point model",
-                    required = true
-            )
-            @RequestBody @Valid PointModel pointModel) {
-        try {
-            pointService.save(pointModel);
-        } catch (Exception e) {
-            LoggerFactory.getLogger(ResponseEntity.class).error("Bad request to save a point: ", e);
-            return new ResponseEntity(HttpStatus.BAD_REQUEST);
-        }
+        @ApiParam(
+                name = "point",
+                type = "PointModel",
+                value = "Point model",
+                required = true
+        )
+        @RequestBody @Valid PointModel pointModel) {
+        pointService.save(pointModel);
         return new ResponseEntity(HttpStatus.OK);
     }
 
     @PostMapping()
     @ApiOperation(value = "Save points", notes = "This request saves several points into database")
     public ResponseEntity savePoints(
-            @ApiParam(
-                    name = "point",
-                    type = "PointModel",
-                    value = "Point models",
-                    required = true
-            )
-            @RequestBody @Valid List<PointModel> pointModels) {
-        try {
-            pointService.saveAll(pointModels);
-        } catch (Exception e) {
-            LoggerFactory.getLogger(ResponseEntity.class).error("Bad request to save points: ", e);
-            return new ResponseEntity(HttpStatus.BAD_REQUEST);
-        }
+        @ApiParam(
+                name = "point",
+                type = "PointModel",
+                value = "Point models",
+                required = true
+        )
+        @RequestBody @Valid List<PointModel> pointModels) {
+        pointService.saveAll(pointModels);
         return new ResponseEntity(HttpStatus.OK);
     }
 

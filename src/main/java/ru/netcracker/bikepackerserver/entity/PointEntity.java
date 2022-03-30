@@ -4,8 +4,7 @@ import org.slf4j.LoggerFactory;
 import org.springframework.lang.Nullable;
 import org.springframework.validation.annotation.Validated;
 import ru.netcracker.bikepackerserver.exception.NoSuchTrackException;
-import ru.netcracker.bikepackerserver.exception.NullPointEntityException;
-import ru.netcracker.bikepackerserver.exception.NullPointModelException;
+import ru.netcracker.bikepackerserver.exception.NoAnyPointException;
 import ru.netcracker.bikepackerserver.model.PointModel;
 import ru.netcracker.bikepackerserver.repository.TrackRepo;
 
@@ -108,7 +107,7 @@ public class PointEntity {
                 '}';
     }
 
-    public static PointEntity toEntity(PointModel model, TrackRepo trackRepo) throws NullPointModelException {
+    public static PointEntity toEntity(PointModel model, TrackRepo trackRepo) throws NoAnyPointException {
         Optional<PointModel> pointModel = Optional.ofNullable(model);
 
         if (pointModel.isPresent()) {
@@ -136,33 +135,29 @@ public class PointEntity {
                     throw new NoSuchTrackException();
                 }
             }
-            return null;
         } else {
-            LoggerFactory.getLogger(PointEntity.class).error("PointModel in the arguments is null. The mapping operation cannot be performed.");
-            throw new NullPointEntityException();
+            LoggerFactory.getLogger(PointModel.class).error("PointModel in the arguments is null. The mapping operation cannot be performed.");
         }
+        return null;
     }
 
     public static List<PointEntity> toEntities(List<PointModel> pointModels, TrackRepo trackRepo) {
         Optional<List<PointModel>> models = Optional.ofNullable(pointModels);
+        List<PointEntity> pointEntities = new ArrayList<>();
 
         if (models.isPresent() && models.get().size() > 0) {
-            List<PointEntity> pointEntities = new ArrayList<>(models.get().size());
-
-            for (PointModel pointModel : pointModels) {
+            for (PointModel pointModel : models.get()) {
                 Optional<PointModel> point = Optional.ofNullable(pointModel);
 
                 if (point.isPresent()) {
-                    pointEntities.add(Optional.ofNullable(PointEntity.toEntity(point.get(), trackRepo)).orElseThrow(NullPointEntityException::new));
+                    Optional.ofNullable(PointEntity.toEntity(point.get(), trackRepo)).ifPresent(pointEntities::add);
                 } else {
                     LoggerFactory.getLogger(PointEntity.class).error("The point is null and is not added to the PointEntity list.");
                 }
             }
-
-            return pointEntities;
         } else {
             LoggerFactory.getLogger(PointEntity.class).error("PointModel list in the arguments is null. The mapping operation cannot be performed.");
-            throw new NullPointEntityException();
         }
+        return pointEntities;
     }
 }

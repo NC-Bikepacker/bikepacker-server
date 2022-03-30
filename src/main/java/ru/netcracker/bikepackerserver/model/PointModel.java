@@ -7,8 +7,7 @@ import org.springframework.validation.annotation.Validated;
 import ru.netcracker.bikepackerserver.entity.PointEntity;
 import ru.netcracker.bikepackerserver.entity.TrackEntity;
 import ru.netcracker.bikepackerserver.exception.BaseException;
-import ru.netcracker.bikepackerserver.exception.NoSuchTrackException;
-import ru.netcracker.bikepackerserver.exception.NullPointEntityException;
+import ru.netcracker.bikepackerserver.exception.NoAnyPointException;
 import ru.netcracker.bikepackerserver.service.ImageServiceImpl;
 
 import javax.validation.constraints.NotNull;
@@ -122,16 +121,15 @@ public class PointModel {
             return model;
         } else {
             LoggerFactory.getLogger(PointEntity.class).error("PointEntity in the arguments is null. The mapping operation cannot be performed.");
-            throw new NullPointEntityException();
+            return null;
         }
     }
 
     public static List<PointModel> toModels(List<PointEntity> pointEntities, ImageServiceImpl imageService) throws BaseException {
         Optional<List<PointEntity>> pointEntityList = Optional.ofNullable(pointEntities);
+        List<PointModel> pointModels = new ArrayList<>();
 
         if (pointEntityList.isPresent() && pointEntityList.get().size() > 0) {
-            List<PointModel> pointModels = new ArrayList<>(pointEntityList.get().size());
-
             for (PointEntity entity : pointEntityList.get()) {
                 Optional<PointEntity> pointEntity = Optional.ofNullable(entity);
 
@@ -141,11 +139,10 @@ public class PointModel {
                     LoggerFactory.getLogger(PointEntity.class).error("The point is null and is not added to the PointModels list.");
                 }
             }
-
-            return pointModels;
         } else {
             LoggerFactory.getLogger(PointEntity.class).error("PointEntity list in the arguments is null. The mapping operation cannot be performed.");
-            throw new NullPointEntityException();
         }
+
+        return pointModels;
     }
 }

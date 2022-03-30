@@ -37,10 +37,15 @@ public class PointServiceImpl implements PointService {
 
     @Override
     public void save(PointModel pointModel) {
-        PointEntity pointEntity = Optional.ofNullable(PointEntity.toEntity(pointModel, trackRepo)).orElseThrow(NullPointEntityException::new);
-        PointEntity point = pointRepo.save(pointEntity);
-        List<ImageEntity> imageEntities = ImageEntity.toEntity(pointModel, point);
-        imageService.saveAll(imageEntities);
+        try {
+            PointEntity pointEntity = Optional.ofNullable(PointEntity.toEntity(pointModel, trackRepo)).orElseThrow(NoAnyPointException::new);
+            PointEntity point = pointRepo.save(pointEntity);
+            List<ImageEntity> imageEntities = ImageEntity.toEntity(pointModel, point);
+            imageService.saveAll(imageEntities);
+        } catch (Exception e) {
+            LoggerFactory.getLogger(PointModel.class).error("Saving point error." + e);
+            throw new ServerErrorException();
+        }
     }
 
     @Override
@@ -49,17 +54,22 @@ public class PointServiceImpl implements PointService {
         List<PointEntity> pointEntities = new ArrayList<>(size);
         List<ImageEntity> imageEntities = new ArrayList<>();
 
-        for (PointModel pointModel : models) {
-            pointEntities.add(Optional.ofNullable(PointEntity.toEntity(pointModel, trackRepo)).orElseThrow(NullPointEntityException::new));
+        try {
+            for (PointModel pointModel : models) {
+                pointEntities.add(Optional.ofNullable(PointEntity.toEntity(pointModel, trackRepo)).orElseThrow(NoAnyPointException::new));
+            }
+
+            List<PointEntity> savedPointEntities = pointRepo.saveAll(pointEntities);
+
+            for (int i = 0; i < size; i++) {
+                imageEntities.addAll(ImageEntity.toEntity(models.get(i), savedPointEntities.get(i)));
+            }
+
+            imageService.saveAll(imageEntities);
+        } catch (Exception e) {
+            LoggerFactory.getLogger(PointModel.class).error("Saving points error." + e);
+            throw new ServerErrorException();
         }
-
-        List<PointEntity> savedPointEntities = pointRepo.saveAll(pointEntities);
-
-        for (int i = 0; i < size; i++) {
-            imageEntities.addAll(ImageEntity.toEntity(models.get(i), savedPointEntities.get(i)));
-        }
-
-        imageService.saveAll(imageEntities);
     }
 
     @Override
@@ -69,13 +79,15 @@ public class PointServiceImpl implements PointService {
 
             if (track.isPresent()) {
                 List<PointEntity> pointEntities = pointRepo.findPointEntitiesByTrack(track.get());
+                List<PointModel> pointModels = new ArrayList<>(pointEntities.size());
 
                 if (pointEntities.size() > 0) {
-                    return PointModel.toModels(pointEntities, imageService);
+                    pointModels = PointModel.toModels(pointEntities, imageService);
                 } else {
                     LoggerFactory.getLogger(PointModel.class).error("There are no points for track with id " + trackId);
-                    throw new NullPointModelException();
                 }
+
+                return pointModels;
             } else {
                 LoggerFactory.getLogger(TrackEntity.class).error("There is no track with id " + trackId);
                 throw new NoSuchTrackException();
@@ -88,14 +100,17 @@ public class PointServiceImpl implements PointService {
 
     @Override
     public List<PointModel> getPointModelsByCoordinates(double latitudeStart, double latitudeEnd, double longitudeStart, double longitudeEnd) throws BaseException {
+        List<PointModel> pointModels = new ArrayList<>();
+
         if (latitudeStart < latitudeEnd && longitudeStart < longitudeEnd) {
             List<PointEntity> pointEntities = pointRepo.findPointEntitiesByLatitudeIsBetweenAndLongitudeIsBetween(latitudeStart, latitudeEnd, longitudeStart, longitudeEnd);
             if (pointEntities.size() > 0) {
-                return PointModel.toModels(pointEntities, imageService);
+                pointModels = PointModel.toModels(pointEntities, imageService);
             } else {
                 LoggerFactory.getLogger(PointModel.class).error("There are no points with such coordinates");
-                throw new NullPointModelException();
             }
+
+            return pointModels;
         } else {
             LoggerFactory.getLogger(PointModel.class).error("The coordinates are incorrect. Perhaps the value of the start coordinates is greater than the end coordinates.");
             throw new WrongCoordinatesException();
@@ -104,15 +119,18 @@ public class PointServiceImpl implements PointService {
 
     @Override
     public List<PointModel> getPointModelsByDescription(String text) throws BaseException {
+        List<PointModel> pointModels = new ArrayList<>();
+
         if (text != null) {
             List<PointEntity> pointEntities = pointRepo.findPointEntitiesByDescriptionContainsIgnoreCase(text);
 
             if (pointEntities.size() > 0) {
-                return PointModel.toModels(pointEntities, imageService);
+                pointModels = PointModel.toModels(pointEntities, imageService);
             } else {
                 LoggerFactory.getLogger(PointModel.class).error("There are no points with such a \"" + text + "\" description.");
-                throw new NullPointModelException();
             }
+
+            return pointModels;
         } else {
             LoggerFactory.getLogger(PointModel.class).error("Text can't be null");
             throw new NullTextException();
@@ -128,7 +146,7 @@ public class PointServiceImpl implements PointService {
                 return PointModel.toModel(pointEntity.get(), imageService);
             } else {
                 LoggerFactory.getLogger(PointModel.class).error("There is no point with id " + pointId);
-                throw new NullPointModelException();
+                throw new NoAnyPointException();
             }
         } else {
             LoggerFactory.getLogger(PointEntity.class).error("Point id can't be null");
@@ -145,7 +163,7 @@ public class PointServiceImpl implements PointService {
                 return pointEntity.get();
             } else {
                 LoggerFactory.getLogger(PointEntity.class).error("There is no point with id " + pointId);
-                throw new NullPointEntityException();
+                throw new NoAnyPointException();
             }
         } else {
             LoggerFactory.getLogger(PointEntity.class).error("Point id can't be null");
