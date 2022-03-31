@@ -48,7 +48,7 @@ public class SecurityConfiguration extends WebSecurityConfigurerAdapter {
                         UsernamePasswordAuthenticationFilter.class)
                 .authorizeRequests()
                 .antMatchers("/login", "/signup").permitAll()
-                .antMatchers("/logout", "/user","/friends","/users","/tracks").hasAnyRole(ADMIN, USER)
+                .antMatchers("/logout", "/user","/friends","/users","/tracks","/tracks/*").hasAnyRole(ADMIN, USER)
                 .antMatchers("/admin", "/users").hasRole(ADMIN)
                 .anyRequest().authenticated()
                 .and()

@@ -16,6 +16,7 @@ import ru.netcracker.bikepackerserver.repository.UserRepo;
 import java.net.URI;
 import java.net.URISyntaxException;
 import java.util.List;
+import java.util.Optional;
 
 @RestController
 @RequestMapping("/tracks")
@@ -40,10 +41,9 @@ public class TrackController {
     @GetMapping("{id}")
     public ResponseEntity read(@PathVariable(name = "id") Long id) {
         UserEntity user = userRepo.findByid(id);
-        if(user != null){
+        if (user != null) {
             return new ResponseEntity(trackRepo.findByUser(user), HttpStatus.OK);
-        }
-        else{
+        } else {
             return new ResponseEntity(HttpStatus.NOT_FOUND);
         }
 
@@ -65,14 +65,27 @@ public class TrackController {
         return ResponseEntity.created(new URI("/tracks/" + savedTrack.getTrackId())).body(savedTrack);
     }
 
-    @DeleteMapping("{id}")
-    public ResponseEntity deleteTrack(@PathVariable(name = "id") Long id){
+    @DeleteMapping("/{id}")
+    public ResponseEntity deleteTrack(@PathVariable(name = "id") Long id) {
         try {
             trackRepo.deleteById(id);
             return new ResponseEntity(HttpStatus.OK);
-        }
-        catch (Exception e){
+        } catch (Exception e) {
             return new ResponseEntity(HttpStatus.BAD_REQUEST);
         }
+    }
+
+    @PutMapping("/{id}")
+    public ResponseEntity updateTrack(@PathVariable(name = "id") Long id, @RequestBody TrackEntity track) {
+        Optional<TrackEntity> trackOptional = trackRepo.findById(id);
+
+        if (trackOptional.isEmpty()) {
+            return ResponseEntity.notFound().build();
+        }
+
+        track.setTrackId(id);
+        trackRepo.save(track);
+
+        return ResponseEntity.ok().build();
     }
 }
