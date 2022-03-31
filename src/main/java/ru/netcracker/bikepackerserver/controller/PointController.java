@@ -3,18 +3,15 @@ package ru.netcracker.bikepackerserver.controller;
 import io.swagger.annotations.Api;
 import io.swagger.annotations.ApiOperation;
 import io.swagger.annotations.ApiParam;
-import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.validation.annotation.Validated;
 import org.springframework.web.bind.annotation.*;
 import ru.netcracker.bikepackerserver.model.PointModel;
-import ru.netcracker.bikepackerserver.repository.PointRepo;
 import ru.netcracker.bikepackerserver.service.PointServiceImpl;
 
 import javax.validation.Valid;
-import java.util.ArrayList;
 import java.util.List;
 
 @RestController
@@ -26,12 +23,8 @@ public class PointController {
     @Autowired
     private final PointServiceImpl pointService;
 
-    @Autowired
-    private final PointRepo pointRepo;
-
-    public PointController(PointServiceImpl pointService, PointRepo pointRepo) {
+    public PointController(PointServiceImpl pointService) {
         this.pointService = pointService;
-        this.pointRepo = pointRepo;
     }
 
     @PostMapping("/point")
@@ -73,8 +66,7 @@ public class PointController {
                     required = true
             )
             @PathVariable Long trackId) {
-        List<PointModel> points = new ArrayList<>();
-        points = pointService.getPointModelsByTrackId(trackId);
+        List<PointModel> points = pointService.getPointModelsByTrackId(trackId);
         return new ResponseEntity(points, HttpStatus.OK);
     }
 
@@ -89,8 +81,7 @@ public class PointController {
                     required = true
             )
             @PathVariable Long pointId) {
-        PointModel point = null;
-        point = pointService.getPointModelById(pointId);
+        PointModel point = pointService.getPointModelById(pointId);
         return new ResponseEntity(point, HttpStatus.OK);
     }
 
@@ -129,8 +120,7 @@ public class PointController {
                     required = true
             )
             @RequestParam(name = "longitude-end") double longitudeEnd) {
-        List<PointModel> points;
-        points = pointService.getPointModelsByCoordinates(latitudeStart, latitudeEnd, longitudeStart, longitudeEnd);
+        List<PointModel> points = pointService.getPointModelsByCoordinates(latitudeStart, latitudeEnd, longitudeStart, longitudeEnd);
         return new ResponseEntity(points, HttpStatus.OK);
     }
 
@@ -145,8 +135,7 @@ public class PointController {
                     required = true
             )
             @RequestParam(name = "text") String description) {
-        List<PointModel> points = null;
-        points = pointService.getPointModelsByDescription(description);
+        List<PointModel> points = pointService.getPointModelsByDescription(description);
         return new ResponseEntity(points, HttpStatus.OK);
     }
 }

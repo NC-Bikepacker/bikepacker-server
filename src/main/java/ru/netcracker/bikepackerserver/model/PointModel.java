@@ -7,8 +7,7 @@ import org.springframework.validation.annotation.Validated;
 import ru.netcracker.bikepackerserver.entity.PointEntity;
 import ru.netcracker.bikepackerserver.entity.TrackEntity;
 import ru.netcracker.bikepackerserver.exception.BaseException;
-import ru.netcracker.bikepackerserver.exception.NoAnyPointException;
-import ru.netcracker.bikepackerserver.service.ImageServiceImpl;
+import ru.netcracker.bikepackerserver.service.ImageService;
 
 import javax.validation.constraints.NotNull;
 import java.util.ArrayList;
@@ -20,7 +19,7 @@ import java.util.Optional;
 @JsonIgnoreProperties(ignoreUnknown = true)
 public class PointModel {
 
-    @NotNull
+    @NotNull(message = "Description can not be null")
     private String description;
 
     @NotNull(message = "Latitude can not be null")
@@ -93,7 +92,7 @@ public class PointModel {
         return Objects.hash(getDescription(), getLatitude(), getLongitude(), getTrackId(), getImages());
     }
 
-    public static PointModel toModel(PointEntity pointEntity, ImageServiceImpl imageService) throws BaseException {
+    public static PointModel toModel(PointEntity pointEntity, ImageService imageService) throws BaseException {
         Optional<PointEntity> entity = Optional.ofNullable(pointEntity);
 
         if (entity.isPresent()) {
@@ -125,7 +124,7 @@ public class PointModel {
         }
     }
 
-    public static List<PointModel> toModels(List<PointEntity> pointEntities, ImageServiceImpl imageService) throws BaseException {
+    public static List<PointModel> toModels(List<PointEntity> pointEntities, ImageService imageService) throws BaseException {
         Optional<List<PointEntity>> pointEntityList = Optional.ofNullable(pointEntities);
         List<PointModel> pointModels = new ArrayList<>();
 
