@@ -9,11 +9,11 @@ import java.util.Objects;
 
 @Entity
 @Table(name="tracks", schema = "public")
+@Validated
 public class TrackEntity implements Serializable {
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     @Column(name = "track_id")
-    @NotNull
     private Long trackId;
 
     @Column(name = "travel_time")
@@ -24,9 +24,10 @@ public class TrackEntity implements Serializable {
     @NotNull
     private short trackComplexity;
 
-    @ManyToOne()
-    @JoinColumn(name = "user_id")
-    private  UserEntity user;
+    @ManyToOne(fetch = FetchType.EAGER, optional = true)
+    @JoinColumn(name = "user_id", nullable = false)
+    @NotNull
+    private UserEntity user;
 
     private String gpx;
 
@@ -73,17 +74,27 @@ public class TrackEntity implements Serializable {
         this.gpx = gpx;
     }
 
-
     @Override
     public String toString() {
         return "TrackEntity{" +
                 "track_id=" + trackId +
                 ", travel_time=" + travelTime +
                 ", track_complexity=" + trackComplexity +
-                ", user="  +
-                ", gpx_url='" + gpx+ '\'' +
+                ", userId=" + user.getId() +
+                ", gpx_url='" + gpx + '\'' +
                 '}';
     }
 
+    @Override
+    public boolean equals(Object o) {
+        if (this == o) return true;
+        if (o == null || getClass() != o.getClass()) return false;
+        TrackEntity that = (TrackEntity) o;
+        return Objects.equals(trackId, that.trackId) && Objects.equals(travelTime, that.travelTime) && Objects.equals(trackComplexity, that.trackComplexity) && Objects.equals(user, that.user) && Objects.equals(gpx, that.gpx);
+    }
 
+    @Override
+    public int hashCode() {
+        return Objects.hash(trackId, travelTime, trackComplexity, user, gpx);
+    }
 }
