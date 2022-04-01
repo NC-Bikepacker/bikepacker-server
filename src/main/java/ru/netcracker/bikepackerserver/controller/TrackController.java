@@ -3,6 +3,7 @@ package ru.netcracker.bikepackerserver.controller;
 import io.swagger.annotations.Api;
 import io.swagger.annotations.ApiOperation;
 import io.swagger.annotations.ApiParam;
+import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
@@ -65,7 +66,7 @@ public class TrackController {
         return ResponseEntity.created(new URI("/tracks/" + savedTrack.getTrackId())).body(savedTrack);
     }
 
-    @DeleteMapping("/{id}")
+    @DeleteMapping("{id}")
     public ResponseEntity deleteTrack(@PathVariable(name = "id") Long id) {
         try {
             trackRepo.deleteById(id);
@@ -75,17 +76,19 @@ public class TrackController {
         }
     }
 
-    @PutMapping("/{id}")
+    @PutMapping("{id}")
     public ResponseEntity updateTrack(@PathVariable(name = "id") Long id, @RequestBody TrackEntity track) {
         Optional<TrackEntity> trackOptional = trackRepo.findById(id);
-
         if (trackOptional.isEmpty()) {
             return ResponseEntity.notFound().build();
         }
 
         track.setTrackId(id);
-        trackRepo.save(track);
-
-        return ResponseEntity.ok().build();
+        try {
+            trackRepo.save(track);
+            return new ResponseEntity(HttpStatus.OK);
+        } catch (Exception e) {
+            return new ResponseEntity(HttpStatus.INTERNAL_SERVER_ERROR);
+        }
     }
 }
