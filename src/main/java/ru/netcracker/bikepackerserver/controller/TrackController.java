@@ -3,6 +3,7 @@ package ru.netcracker.bikepackerserver.controller;
 import io.swagger.annotations.Api;
 import io.swagger.annotations.ApiOperation;
 import io.swagger.annotations.ApiParam;
+import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
@@ -16,6 +17,7 @@ import ru.netcracker.bikepackerserver.repository.UserRepo;
 import java.net.URI;
 import java.net.URISyntaxException;
 import java.util.List;
+import java.util.Optional;
 
 @RestController
 @RequestMapping("/tracks")
@@ -40,10 +42,9 @@ public class TrackController {
     @GetMapping("{id}")
     public ResponseEntity read(@PathVariable(name = "id") Long id) {
         UserEntity user = userRepo.findByid(id);
-        if(user != null){
+        if (user != null) {
             return new ResponseEntity(trackRepo.findByUser(user), HttpStatus.OK);
-        }
-        else{
+        } else {
             return new ResponseEntity(HttpStatus.NOT_FOUND);
         }
 
@@ -66,13 +67,28 @@ public class TrackController {
     }
 
     @DeleteMapping("{id}")
-    public ResponseEntity deleteTrack(@PathVariable(name = "id") Long id){
+    public ResponseEntity deleteTrack(@PathVariable(name = "id") Long id) {
         try {
             trackRepo.deleteById(id);
             return new ResponseEntity(HttpStatus.OK);
+        } catch (Exception e) {
+            return new ResponseEntity(HttpStatus.INTERNAL_SERVER_ERROR);
         }
-        catch (Exception e){
-            return new ResponseEntity(HttpStatus.BAD_REQUEST);
+    }
+
+    @PutMapping("{id}")
+    public ResponseEntity updateTrack(@PathVariable(name = "id") Long id, @RequestBody TrackEntity track) {
+        Optional<TrackEntity> trackOptional = trackRepo.findById(id);
+        if (trackOptional.isEmpty()) {
+            return ResponseEntity.notFound().build();
+        }
+
+        track.setTrackId(id);
+        try {
+            trackRepo.save(track);
+            return new ResponseEntity(HttpStatus.OK);
+        } catch (Exception e) {
+            return new ResponseEntity(HttpStatus.INTERNAL_SERVER_ERROR);
         }
     }
 }
