@@ -10,11 +10,13 @@ import org.springframework.validation.annotation.Validated;
 import org.springframework.web.bind.annotation.*;
 import ru.netcracker.bikepackerserver.entity.TrackEntity;
 import ru.netcracker.bikepackerserver.entity.UserEntity;
+import ru.netcracker.bikepackerserver.model.TrackModel;
 import ru.netcracker.bikepackerserver.repository.TrackRepo;
 import ru.netcracker.bikepackerserver.repository.UserRepo;
+import ru.netcracker.bikepackerserver.service.TrackImageService;
+import ru.netcracker.bikepackerserver.service.TrackServiceImpl;
 
 import java.net.URI;
-import java.net.URISyntaxException;
 import java.util.List;
 
 @RestController
@@ -25,28 +27,34 @@ public class TrackController {
 
     private TrackRepo trackRepo;
     private UserRepo userRepo;
+    private TrackImageService trackImageService;
+    private TrackServiceImpl trackService;
 
     @Autowired
-    public TrackController(TrackRepo trackRepo) {
+    public TrackController(TrackRepo trackRepo, UserRepo userRepo, TrackImageService trackImageService, TrackServiceImpl trackService) {
         this.trackRepo = trackRepo;
+        this.userRepo = userRepo;
+        this.trackImageService = trackImageService;
+        this.trackService = trackService;
     }
+
+
+
 
     @GetMapping
     @ApiOperation(value = "Get all tracks in the app", notes = "This request returns a list of all of the tracks in DB")
-    public List<TrackEntity> getTracks() {
-        return trackRepo.findAll();
+    public List<TrackModel> getTracks() {
+        return trackService.getAllTracks();
     }
 
     @GetMapping("{id}")
     public ResponseEntity read(@PathVariable(name = "id") Long id) {
-        UserEntity user = userRepo.findByid(id);
-        if(user != null){
-            return new ResponseEntity(trackRepo.findByUser(user), HttpStatus.OK);
+        if(id != null){
+            return new ResponseEntity(trackService.getTracksForUser(id), HttpStatus.OK);
         }
         else{
-            return new ResponseEntity(HttpStatus.NOT_FOUND);
+            return new ResponseEntity(HttpStatus.BAD_REQUEST);
         }
-
     }
 
     @PostMapping
@@ -59,10 +67,10 @@ public class TrackController {
                     value = "Track Entity",
                     required = true
             )
-                    TrackEntity track
-    ) throws URISyntaxException {
-        TrackEntity savedTrack = trackRepo.save(track);
-        return ResponseEntity.created(new URI("/tracks/" + savedTrack.getTrackId())).body(savedTrack);
+                    TrackModel track
+    ) throws Exception {
+        trackService.save(track);
+        return new ResponseEntity(HttpStatus.OK);
     }
 
     @DeleteMapping("{id}")
@@ -72,7 +80,7 @@ public class TrackController {
             return new ResponseEntity(HttpStatus.OK);
         }
         catch (Exception e){
-            return new ResponseEntity(HttpStatus.BAD_REQUEST);
+            return new ResponseEntity(HttpStatus.NOT_FOUND);
         }
     }
 }
