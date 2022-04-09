@@ -68,4 +68,15 @@ public class FavoriteTrackController {
     public ResponseEntity getTracks() {
         return new ResponseEntity(favoriteTrackService.getTracks(), HttpStatus.OK);
     }
+
+    @DeleteMapping("delete/{id}")
+    public ResponseEntity deleteFavoriteTrack(@PathVariable(name = "id") Long id){
+        try {
+            favoriteTrackRepo.deleteById(id);
+            return new ResponseEntity(HttpStatus.OK);
+        }
+        catch (Exception e){
+            return new ResponseEntity(HttpStatus.NOT_FOUND);
+        }
+    }
 }

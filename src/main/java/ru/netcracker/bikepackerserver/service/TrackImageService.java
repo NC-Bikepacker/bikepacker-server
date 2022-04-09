@@ -98,16 +98,46 @@ public class TrackImageService {
     }
 
     private String getZoomVariable(Double latiLongiDifference) {
-        if (latiLongiDifference > 0 & latiLongiDifference < 0.001) {
+        if (latiLongiDifference > 0 & latiLongiDifference <= 0.0005) {
             return "19";
-        } else if (latiLongiDifference > 0.001 & latiLongiDifference < 0.005) {
+        } else if (latiLongiDifference > 0.0005 & latiLongiDifference < 0.001) {
             return "18";
-        } else if (latiLongiDifference >= 0.005 & latiLongiDifference < 0.01) {
+        } else if (latiLongiDifference >= 0.001 & latiLongiDifference < 0.003) {
             return "17";
-        } else if (latiLongiDifference >= 0.01 & latiLongiDifference < 0.03) {
+        } else if (latiLongiDifference >= 0.003 & latiLongiDifference < 0.005) {
             return "16";
-        } else if (latiLongiDifference >= 0.03 & latiLongiDifference < 0.1) {
+        } else if (latiLongiDifference >= 0.005 & latiLongiDifference < 0.011) {
             return "15";
+        } else if (latiLongiDifference >= 0.011 & latiLongiDifference < 0.022) {
+            return "14";
+        } else if (latiLongiDifference >= 0.022 & latiLongiDifference < 0.044) {
+            return "13";
+        } else if (latiLongiDifference >= 0.044 & latiLongiDifference < 0.088) {
+            return "12";
+        } else if (latiLongiDifference >= 0.088 & latiLongiDifference < 0.176) {
+            return "11";
+        } else if (latiLongiDifference >= 0.176 & latiLongiDifference < 0.352) {
+            return "10";
+        } else if (latiLongiDifference >= 0.352 & latiLongiDifference < 0.703) {
+            return "9";
+        } else if (latiLongiDifference >= 0.703 & latiLongiDifference < 1.406) {
+            return "8";
+        } else if (latiLongiDifference >= 1.406 & latiLongiDifference < 2.813) {
+            return "7";
+        } else if (latiLongiDifference >= 2.813 & latiLongiDifference < 5.625) {
+            return "6";
+        } else if (latiLongiDifference >= 5.625 & latiLongiDifference < 11.25) {
+            return "5";
+        } else if (latiLongiDifference >= 11.25 & latiLongiDifference < 22.5) {
+            return "4";
+        } else if (latiLongiDifference >= 22.5 & latiLongiDifference < 45) {
+            return "3";
+        } else if (latiLongiDifference >= 45 & latiLongiDifference < 90) {
+            return "2";
+        } else if (latiLongiDifference >= 90 & latiLongiDifference < 180) {
+            return "1";
+        } else if (latiLongiDifference >= 180 & latiLongiDifference < 360) {
+            return "0";
         } else {
             return "10";
         }

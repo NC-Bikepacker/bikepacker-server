@@ -10,4 +10,6 @@ import java.util.List;
 @Repository
 public interface FavoriteTrackRepo extends JpaRepository<FavoriteTrackEntity, Long> {
     List<FavoriteTrackEntity> findByUser(UserEntity user);
+    @Override
+    void deleteById(Long id);
 }

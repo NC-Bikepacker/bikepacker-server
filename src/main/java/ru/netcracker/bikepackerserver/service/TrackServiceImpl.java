@@ -3,6 +3,7 @@ package ru.netcracker.bikepackerserver.service;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
+import ru.netcracker.bikepackerserver.entity.ImageEntity;
 import ru.netcracker.bikepackerserver.entity.TrackEntity;
 import ru.netcracker.bikepackerserver.entity.UserEntity;
 import ru.netcracker.bikepackerserver.exception.UserNotFoundException;
@@ -55,7 +56,10 @@ public class TrackServiceImpl  implements  TrackService{
     @Override
     public void delete(Long trackId) {
         if(trackId != null){
+            TrackEntity trackEntity = trackRepo.findTrackEntityByTrackId(trackId);
+            ImageEntity imageEntity = imageRepo.findByTrack(trackEntity);
             trackRepo.deleteById(trackId);
+            imageRepo.deleteById(imageEntity.getImageId());
         }
         else {
             throw new IllegalArgumentException();

@@ -2,8 +2,11 @@ package ru.netcracker.bikepackerserver.entity;
 
 import com.sun.istack.NotNull;
 import com.sun.istack.Nullable;
+import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.validation.annotation.Validated;
 import ru.netcracker.bikepackerserver.model.ImageModel;
+import ru.netcracker.bikepackerserver.repository.TrackRepo;
+import ru.netcracker.bikepackerserver.repository.UserRepo;
 
 import javax.persistence.*;
 
@@ -31,9 +34,15 @@ public class ImageEntity {
     @Nullable
     private TrackEntity track;
 
+    public ImageEntity() {
+    }
 
     public Long getImageId() {
         return imageId;
+    }
+
+    public void setImageId(Long imageId) {
+        this.imageId = imageId;
     }
 
     public String getImageBase64() {
@@ -44,32 +53,33 @@ public class ImageEntity {
         this.imageBase64 = imageBase64;
     }
 
-    @Nullable
-    public UserEntity getUserId() {
+    public UserEntity getUser() {
         return user;
     }
 
-    public void setUser(@Nullable UserEntity user) {
+    public void setUser(UserEntity user) {
         this.user = user;
     }
 
-    @Nullable
     public TrackEntity getTrack() {
         return track;
     }
 
-    public void setTrack(@Nullable TrackEntity track) {
+    public void setTrack(TrackEntity track) {
         this.track = track;
     }
 
-    public static ImageEntity toEntity(ImageModel model) {
-        ImageEntity entity = null;
+    public static ImageEntity toEntity(ImageModel model, UserRepo userRepo, TrackRepo trackRepo) {
+        ImageEntity entity = new ImageEntity();
 
         if (model != null && model.getImageBase64() != null) {
             entity = new ImageEntity();
             entity.setImageBase64(model.getImageBase64());
-            entity.setTrack(model.getTrack());
-            entity.setUser(model.getUser());
+            entity.setTrack(trackRepo.getById(model.getTrack().getTrackId()));
+            entity.setUser(userRepo.findByid(model.getUser().getId()));
+        }
+        else {
+            throw new IllegalArgumentException();
         }
 
         return entity;

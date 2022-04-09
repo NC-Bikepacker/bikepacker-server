@@ -38,17 +38,14 @@ public class TrackController {
         this.trackService = trackService;
     }
 
-
-
-
     @GetMapping
     @ApiOperation(value = "Get all tracks in the app", notes = "This request returns a list of all of the tracks in DB")
     public List<TrackModel> getTracks() {
         return trackService.getAllTracks();
     }
 
-    @GetMapping("{id}")
-    public ResponseEntity read(@PathVariable(name = "id") Long id) {
+    @GetMapping("/{id}")
+    public ResponseEntity getTrackByUser(@PathVariable(name = "id") Long id) {
         if(id != null){
             return new ResponseEntity(trackService.getTracksForUser(id), HttpStatus.OK);
         }
@@ -76,7 +73,7 @@ public class TrackController {
     @DeleteMapping("{id}")
     public ResponseEntity deleteTrack(@PathVariable(name = "id") Long id){
         try {
-            trackRepo.deleteById(id);
+            trackService.delete(id);
             return new ResponseEntity(HttpStatus.OK);
         }
         catch (Exception e){
