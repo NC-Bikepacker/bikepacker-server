@@ -24,7 +24,7 @@ jobs:
         username: ${{ secrets.USERNAME }}
         password: ${{ secrets.PASSWORD }}
         localPath: './build/libs/'
-        remotePath: 'home/user_ci/'
+        remotePath: 'home/user_ci/testFolder'
 
   build:
     needs: FTP-Deploy-Action
