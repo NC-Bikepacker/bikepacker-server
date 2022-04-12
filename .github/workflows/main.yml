@@ -39,6 +39,9 @@ jobs:
         password: ${{ secrets.PASSWORD }}
         command_timeout: 200m
         script: |
-          echo VFilonova | sudo kill $(sudo lsof -t -i:8085)
-          java -jar home/user_ci/BikepackerServer-0.0.1-SNAPSHOT.jar --spring.datasource.username="${{ secrets.USERNAME_DB}}" --spring.datasource.password="${{secrets.PASSWORD_DB}}" &
-          exit
+            echo VFilonova | sudo systemctl stop bikepacker
+            echo VFilonova | sudo systemctl start bikepacker
+          
+#           echo VFilonova | sudo kill $(sudo lsof -t -i:8085)
+#           java -jar home/user_ci/BikepackerServer-0.0.1-SNAPSHOT.jar --spring.datasource.username="${{ secrets.USERNAME_DB}}" --spring.datasource.password="${{secrets.PASSWORD_DB}}" &
+#           exit
