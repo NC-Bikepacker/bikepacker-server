@@ -6,8 +6,27 @@ on:
     branches: [ main ]
 
   workflow_dispatch:
-   
+
 jobs:   
+
+  stop:
+    needs: FTP-Deploy-Action
+    name: Stop
+    runs-on: ubuntu-latest
+    steps:
+    - name: executing remote ssh commands using password
+      uses: appleboy/ssh-action@master
+      with:
+        host: ${{ secrets.SERVER }}
+        username: ${{ secrets.USERNAME }}
+        password: ${{ secrets.PASSWORD }}
+        command_timeout: 200m
+        script: |
+            echo ${{ secrets.PASSWORD }} | sudo systemctl stop bikepacker
+            pwd
+            cd /home/user_ci
+            #echo ${{ secrets.PASSWORD }} | sudo rm BikepackerServer-0.0.1-SNAPSHOT.jar
+            
   FTP-Deploy-Action:
     name: FTP-Deploy-Action
     runs-on: ubuntu-latest
@@ -24,7 +43,7 @@ jobs:
         username: ${{ secrets.USERCI }}
         password: ${{ secrets.PASSWORDCI }}
         localPath: './build/libs/'
-        remotePath: '/'
+        remotePath: '/home/user_ci/'
 
   build:
     needs: FTP-Deploy-Action
@@ -39,5 +58,4 @@ jobs:
         password: ${{ secrets.PASSWORD }}
         command_timeout: 200m
         script: |
-            echo ${{ secrets.PASSWORD }} | sudo systemctl stop bikepacker
             echo ${{ secrets.PASSWORD }} | sudo systemctl start bikepacker
