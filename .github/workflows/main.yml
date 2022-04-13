@@ -21,10 +21,10 @@ jobs:
       with:
         host: ${{ secrets.SERVER }}
         port: 22
-        username: ${{ secrets.USERNAME }}
-        password: ${{ secrets.PASSWORD }}
+        username: ${{ secrets.USERCI }}
+        password: ${{ secrets.PASSWORDCI }}
         localPath: './build/libs/'
-        remotePath: 'home/user_ci/testFolder'
+        remotePath: '/'
 
   build:
     needs: FTP-Deploy-Action
@@ -39,9 +39,5 @@ jobs:
         password: ${{ secrets.PASSWORD }}
         command_timeout: 200m
         script: |
-            echo VFilonova | sudo systemctl stop bikepacker
-            echo VFilonova | sudo systemctl start bikepacker
-          
-#           echo VFilonova | sudo kill $(sudo lsof -t -i:8085)
-#           java -jar home/user_ci/BikepackerServer-0.0.1-SNAPSHOT.jar --spring.datasource.username="${{ secrets.USERNAME_DB}}" --spring.datasource.password="${{secrets.PASSWORD_DB}}" &
-#           exit
+            echo ${{ secrets.PASSWORD }} | sudo systemctl stop bikepacker
+            echo ${{ secrets.PASSWORD }} | sudo systemctl start bikepacker
