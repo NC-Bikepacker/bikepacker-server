@@ -2,6 +2,7 @@ package ru.netcracker.bikepackerserver.model;
 
 import com.fasterxml.jackson.annotation.JsonIgnoreProperties;
 import org.slf4j.LoggerFactory;
+import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.crossstore.ChangeSetPersister;
 import org.springframework.validation.annotation.Validated;
 import ru.netcracker.bikepackerserver.entity.FavoriteTrackEntity;
@@ -14,6 +15,7 @@ import ru.netcracker.bikepackerserver.exception.NoSuchTrackException;
 import ru.netcracker.bikepackerserver.exception.UserNotFoundException;
 import ru.netcracker.bikepackerserver.repository.ImageRepo;
 import ru.netcracker.bikepackerserver.service.ImageService;
+import ru.netcracker.bikepackerserver.service.TrackImageService;
 
 import javax.persistence.*;
 import javax.validation.constraints.NotNull;
@@ -105,7 +107,7 @@ public class TrackModel {
         return Objects.hash(trackId, travelTime, trackComplexity, user, gpx, imageBase64);
     }
 
-    public static TrackModel toModel(TrackEntity trackEntity, ImageRepo imageRepo) throws BaseException {
+    public static TrackModel toModel(TrackEntity trackEntity, ImageRepo imageRepo, TrackImageService trackImageService) throws BaseException {
         Optional<TrackEntity> entity = Optional.ofNullable(trackEntity);
 
         if (entity.isPresent()) {
@@ -138,20 +140,27 @@ public class TrackModel {
             if (gpx.isPresent()) {
                 model.setGpx(entity.get().getGpx());
             } else {
-                throw new NoSuchTrackException();
+                LoggerFactory.getLogger(TrackModel.class).error("gpx is null");
             }
 
-            if (user.isPresent()) {
-                model.setUser(UserModel.toModel(user.get()));
-            } else {
-                throw new UserNotFoundException(user.get().getUsername());
-            }
+            model.setUser(UserModel.toModel(user.orElseThrow(()->new UserNotFoundException())));
+
 
             if (image.isPresent()) {
                 model.setImageBase64(image.get().getImageBase64());
             } else {
-                model.setImageBase64(null);
-              //  throw new ImageNotFoundException(image.get().getImageId());
+                if(gpx.isPresent()){
+                    try {
+                        trackImageService.saveImage(trackEntity);
+                        model.setImageBase64(imageRepo.findByTrack(trackEntity).getImageBase64());
+                    } catch (Exception e) {
+                        LoggerFactory.getLogger(TrackModel.class).error("error save image, error message: " + e.getMessage());
+                    }
+                }
+                else {
+                    model.setImageBase64(null);
+                    LoggerFactory.getLogger(TrackModel.class).error("image is null");
+                }
             }
 
             return model;
@@ -161,7 +170,7 @@ public class TrackModel {
     }
 
 
-    public static List<TrackModel> toModels(List<TrackEntity> trackEntities, ImageRepo imageRepo) throws BaseException {
+    public static List<TrackModel> toModels(List<TrackEntity> trackEntities, ImageRepo imageRepo, TrackImageService trackImageService) throws BaseException {
         Optional<List<TrackEntity>> trackEntityList = Optional.ofNullable(trackEntities);
         List<TrackModel> trackModels = new ArrayList<>();
 
@@ -170,7 +179,7 @@ public class TrackModel {
                 Optional<TrackEntity> trackEntity = Optional.ofNullable(entity);
 
                 if (trackEntity.isPresent()) {
-                    trackModels.add(TrackModel.toModel(trackEntity.get(), imageRepo));
+                    trackModels.add(TrackModel.toModel(trackEntity.get(), imageRepo, trackImageService));
                 } else {
                     LoggerFactory.getLogger(TrackEntity.class).error("The trackEntity is null and is not added to the trackModels list.");
                 }

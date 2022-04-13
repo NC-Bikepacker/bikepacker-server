@@ -1,9 +1,9 @@
 package ru.netcracker.bikepackerserver.service;
 
+import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 import org.w3c.dom.Document;
-import org.w3c.dom.Node;
 import org.w3c.dom.NodeList;
 import org.xml.sax.InputSource;
 import ru.netcracker.bikepackerserver.entity.ImageEntity;
@@ -75,9 +75,8 @@ public class TrackImageService {
             DocumentBuilder documentBuilder = dbf.newDocumentBuilder();
             document = documentBuilder.parse(new InputSource(new StringReader(track.getGpx())));
         } catch (Exception e) {
-            System.out.println(123);
+            LoggerFactory.getLogger(TrackImageService.class).error("error document builder or parser, error message: " + e.getMessage(), e);
         }
-        Node node = document.getFirstChild();
         NodeList nodeList = document.getElementsByTagName("trkpt");
 
         for (int i = 0; i < nodeList.getLength(); i++) {
@@ -85,7 +84,7 @@ public class TrackImageService {
                 latitude.add(Double.valueOf(nodeList.item(i).getAttributes().getNamedItem("lat").getNodeValue()));
                 longitude.add(Double.valueOf(nodeList.item(i).getAttributes().getNamedItem("lon").getNodeValue()));
                 lineResponseCoordinates = lineResponseCoordinates + nodeList.item(i).getAttributes().getNamedItem("lat").getNodeValue() + "," + nodeList.item(i).getAttributes().getNamedItem("lon").getNodeValue() + ";" + nodeList.item(i + 1).getAttributes().getNamedItem("lat").getNodeValue() + "," + nodeList.item(i + 1).getAttributes().getNamedItem("lon").getNodeValue() + "|width:7|color:%235D3EA8";
-            } else if(!nodeList.item(i).getNodeValue().isEmpty()) {
+            } else {
                 lineResponseCoordinates = lineResponseCoordinates + "&line=coords:" + nodeList.item(i - 1).getAttributes().getNamedItem("lat").getNodeValue() + "," + nodeList.item(i - 1).getAttributes().getNamedItem("lon").getNodeValue() + ";" + nodeList.item(i).getAttributes().getNamedItem("lat").getNodeValue() + "," + nodeList.item(i).getAttributes().getNamedItem("lon").getNodeValue() + "|width:7|color:%235D3EA8";
                 latitude.add(Double.valueOf(nodeList.item(i).getAttributes().getNamedItem("lat").getNodeValue()));
                 longitude.add(Double.valueOf(nodeList.item(i).getAttributes().getNamedItem("lon").getNodeValue()));
@@ -98,7 +97,7 @@ public class TrackImageService {
     }
 
     private String getZoomVariable(Double latiLongiDifference) {
-        if (latiLongiDifference > 0 & latiLongiDifference <= 0.0005) {
+        if (latiLongiDifference >= 0 & latiLongiDifference <= 0.0005) {
             return "19";
         } else if (latiLongiDifference > 0.0005 & latiLongiDifference < 0.001) {
             return "18";
@@ -139,7 +138,7 @@ public class TrackImageService {
         } else if (latiLongiDifference >= 180 & latiLongiDifference < 360) {
             return "0";
         } else {
-            return "10";
+            return "14";
         }
     }
 }

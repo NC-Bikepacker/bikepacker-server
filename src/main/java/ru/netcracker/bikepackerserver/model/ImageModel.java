@@ -7,6 +7,7 @@ import ru.netcracker.bikepackerserver.entity.UserEntity;
 import ru.netcracker.bikepackerserver.exception.BaseException;
 import ru.netcracker.bikepackerserver.repository.ImageRepo;
 import ru.netcracker.bikepackerserver.repository.TrackRepo;
+import ru.netcracker.bikepackerserver.service.TrackImageService;
 
 import javax.validation.constraints.NotEmpty;
 import java.util.Objects;
@@ -83,7 +84,7 @@ public class ImageModel {
                 '}';
     }
 
-    public static ImageModel toModel(ImageEntity imageEntity, ImageRepo imageRepo) throws BaseException {
+    public static ImageModel toModel(ImageEntity imageEntity, ImageRepo imageRepo, TrackImageService trackImageService) throws BaseException {
         ImageModel imageModel = new ImageModel();
         Optional<ImageEntity> entity = Optional.ofNullable(imageEntity);
         if(entity.isEmpty()){
@@ -93,7 +94,7 @@ public class ImageModel {
             imageModel.setImageId(imageEntity.getImageId());
         }
         imageModel.setUser(UserModel.toModel(imageEntity.getUser()));
-        imageModel.setTrack(TrackModel.toModel(imageEntity.getTrack(), imageRepo));
+        imageModel.setTrack(TrackModel.toModel(imageEntity.getTrack(), imageRepo, trackImageService));
         imageModel.setImageBase64(imageEntity.getImageBase64());
 
         return imageModel;

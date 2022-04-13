@@ -11,11 +11,13 @@ import org.springframework.web.bind.annotation.*;
 import ru.netcracker.bikepackerserver.entity.TrackEntity;
 import ru.netcracker.bikepackerserver.entity.UserEntity;
 import ru.netcracker.bikepackerserver.model.TrackModel;
+import ru.netcracker.bikepackerserver.model.UserModel;
 import ru.netcracker.bikepackerserver.repository.TrackRepo;
 import ru.netcracker.bikepackerserver.repository.UserRepo;
 import ru.netcracker.bikepackerserver.service.TrackImageService;
 import ru.netcracker.bikepackerserver.service.TrackServiceImpl;
 
+import javax.validation.Valid;
 import java.net.URI;
 import java.util.List;
 
@@ -70,7 +72,7 @@ public class TrackController {
         return new ResponseEntity(HttpStatus.OK);
     }
 
-    @DeleteMapping("{id}")
+    @DeleteMapping("/delete/{id}")
     public ResponseEntity deleteTrack(@PathVariable(name = "id") Long id){
         try {
             trackService.delete(id);
@@ -79,5 +81,21 @@ public class TrackController {
         catch (Exception e){
             return new ResponseEntity(HttpStatus.NOT_FOUND);
         }
+    }
+
+    @PutMapping("/update")
+    @ApiOperation(value = "Update a track data", notes = "This request changes current track")
+    public ResponseEntity updateTrack(
+            @ApiParam(
+                    name = "id",
+                    type = "Long",
+                    value = "Track id",
+                    example = "11",
+                    required = true
+            )
+            @RequestBody @Valid TrackModel trackModel
+    ) {
+        trackService.update(trackModel);
+        return new ResponseEntity(HttpStatus.OK);
     }
 }

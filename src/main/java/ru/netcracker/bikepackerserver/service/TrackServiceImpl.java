@@ -8,6 +8,7 @@ import ru.netcracker.bikepackerserver.entity.TrackEntity;
 import ru.netcracker.bikepackerserver.entity.UserEntity;
 import ru.netcracker.bikepackerserver.exception.UserNotFoundException;
 import ru.netcracker.bikepackerserver.model.TrackModel;
+import ru.netcracker.bikepackerserver.model.UserModel;
 import ru.netcracker.bikepackerserver.repository.ImageRepo;
 import ru.netcracker.bikepackerserver.repository.TrackRepo;
 import ru.netcracker.bikepackerserver.repository.UserRepo;
@@ -42,11 +43,6 @@ public class TrackServiceImpl  implements  TrackService{
         Optional<TrackModel> trackModel = Optional.ofNullable(track);
         if(trackModel.isPresent()){
             trackRepo.save(TrackEntity.toEntity(track, userRepo));
-            try {
-                trackImageService.saveImage(TrackEntity.toEntity(track, userRepo));
-            } catch (Exception e) {
-                LoggerFactory.getLogger(TrackServiceImpl.class).error("Error save track route image");
-            }
         }
         else {
             throw new IllegalArgumentException();
@@ -67,20 +63,48 @@ public class TrackServiceImpl  implements  TrackService{
     }
 
     @Override
+    public void update(TrackModel trackModel) {
+            TrackEntity trackEntity = trackRepo.getById(trackModel.getTrackId());
+            if(trackEntity != null) {
+                trackEntity.setUser(userRepo.findByid(trackModel.getUser().getId()));
+                trackEntity.setTrackComplexity(trackModel.getTrackComplexity());
+                trackEntity.setTravelTime(trackModel.getTravelTime());
+                trackEntity.setGpx(trackModel.getGpx());
+                trackRepo.save(trackEntity);
+                saveImageForTrack(trackEntity);
+            }
+        }
+
+    @Override
     public List<TrackModel> getTracksForUser(Long userId) {
         if(userId!=null){
             Optional<UserEntity> userEntity = Optional.ofNullable(userRepo.findByid(userId));
             if(userEntity.isEmpty()){
                 throw new UserNotFoundException(userId);
             }
-            return TrackModel.toModels(trackRepo.findByUser(userEntity.get()), imageRepo);
+            return TrackModel.toModels(trackRepo.findByUser(userEntity.get()), imageRepo, trackImageService);
         }
         else {
             throw new IllegalArgumentException();
         }
     }
+
     @Override
     public List<TrackModel> getAllTracks() {
-        return TrackModel.toModels(trackRepo.findAll(), imageRepo);
+        return TrackModel.toModels(trackRepo.findAll(), imageRepo, trackImageService);
+    }
+
+    private void saveImageForTrack(TrackEntity trackEntity){
+        ImageEntity imageEntity = imageRepo.findByTrack(trackEntity);
+
+        if(imageEntity != null){
+            imageRepo.deleteById(imageEntity.getImageId());
+        }
+
+            try {
+                trackImageService.saveImage(trackEntity);
+            } catch (Exception e) {
+                e.printStackTrace();
+            }
     }
 }

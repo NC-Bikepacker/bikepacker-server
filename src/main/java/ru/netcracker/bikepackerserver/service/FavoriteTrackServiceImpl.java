@@ -33,12 +33,16 @@ public class FavoriteTrackServiceImpl implements FavoriteTrackService{
     @Autowired
     private final TrackRepo trackRepo;
 
+    @Autowired
+    private final TrackImageService trackImageService;
 
-    public FavoriteTrackServiceImpl(FavoriteTrackRepo favoriteTrackRepo, ImageRepo imageRepo, UserRepo userRepo, TrackRepo trackRepo) {
+
+    public FavoriteTrackServiceImpl(FavoriteTrackRepo favoriteTrackRepo, ImageRepo imageRepo, UserRepo userRepo, TrackRepo trackRepo, TrackImageService trackImageService) {
         this.favoriteTrackRepo = favoriteTrackRepo;
         this.imageRepo = imageRepo;
         this.userRepo = userRepo;
         this.trackRepo = trackRepo;
+        this.trackImageService = trackImageService;
     }
 
     @Override
@@ -58,7 +62,7 @@ public class FavoriteTrackServiceImpl implements FavoriteTrackService{
                 List<TrackEntity> trackEntities = trackRepo.findByUser(user.get());
                 List<TrackModel> trackModels = new ArrayList<>();
                 if (trackEntities.size() > 0) {
-                    trackModels.addAll(TrackModel.toModels(trackEntities, imageRepo));
+                    trackModels.addAll(TrackModel.toModels(trackEntities, imageRepo, trackImageService));
                 } else {
                     LoggerFactory.getLogger(FavoriteTrackService.class).error("There are no tracks");
                 }
@@ -74,7 +78,7 @@ public class FavoriteTrackServiceImpl implements FavoriteTrackService{
     @Override
     public List<TrackModel> getTracks() throws BaseException {
         List<TrackEntity> trackEntities = trackRepo.findAll();
-        List<TrackModel> trackModels = TrackModel.toModels(trackEntities, imageRepo);
+        List<TrackModel> trackModels = TrackModel.toModels(trackEntities, imageRepo, trackImageService);
         return trackModels;
     }
 }
