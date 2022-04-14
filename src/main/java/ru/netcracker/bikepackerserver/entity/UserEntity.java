@@ -9,7 +9,6 @@ import javax.validation.constraints.NotNull;
 import javax.validation.constraints.Size;
 import java.io.Serializable;
 import java.util.Objects;
-import java.util.Set;
 
 @Entity
 @Table(name = "users", schema = "public")
@@ -137,7 +136,6 @@ public class UserEntity implements Serializable {
                 ", avatarImageUrl='" + avatarImageUrl + '\'' +
                 ", roles=" + roles +
                 ", email='" + email + '\'' +
-                ", tracks=" +
                 '}';
     }
 }

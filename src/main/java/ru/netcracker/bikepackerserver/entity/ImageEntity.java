@@ -5,10 +5,13 @@ import com.sun.istack.Nullable;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.validation.annotation.Validated;
 import ru.netcracker.bikepackerserver.model.ImageModel;
+import ru.netcracker.bikepackerserver.model.PointModel;
 import ru.netcracker.bikepackerserver.repository.TrackRepo;
 import ru.netcracker.bikepackerserver.repository.UserRepo;
 
 import javax.persistence.*;
+import java.util.ArrayList;
+import java.util.List;
 
 @Entity
 @Table(name = "image", schema = "public")
@@ -33,6 +36,11 @@ public class ImageEntity {
     @JoinColumn(name = "track_id")
     @Nullable
     private TrackEntity track;
+
+    @ManyToOne(fetch = FetchType.EAGER)
+    @JoinColumn(name = "point_id")
+    @Nullable
+    private PointEntity point;
 
     public ImageEntity() {
     }
@@ -69,6 +77,16 @@ public class ImageEntity {
         this.track = track;
     }
 
+
+    @Nullable
+    public PointEntity getPoint() {
+        return point;
+    }
+
+    public void setPoint(@Nullable PointEntity pointId) {
+        this.point = pointId;
+    }
+
     public static ImageEntity toEntity(ImageModel model, UserRepo userRepo, TrackRepo trackRepo) {
         ImageEntity entity = new ImageEntity();
 
@@ -77,6 +95,7 @@ public class ImageEntity {
             entity.setImageBase64(model.getImageBase64());
             entity.setTrack(trackRepo.getById(model.getTrack().getTrackId()));
             entity.setUser(userRepo.findByid(model.getUser().getId()));
+            entity.setPoint(model.getPoint());
         }
         else {
             throw new IllegalArgumentException();
@@ -85,12 +104,34 @@ public class ImageEntity {
         return entity;
     }
 
+    public static List<ImageEntity> toEntity(PointModel pointModel, PointEntity pointEntity) {
+        List<ImageEntity> imageEntities = new ArrayList<>();
+
+        if (pointModel != null) {
+            List<String> images = pointModel.getImages();
+
+            if (images != null && images.size() != 0) {
+                if (pointEntity != null) {
+                    for (String image : images) {
+                        ImageEntity imageEntity = new ImageEntity();
+                        imageEntity.setPoint(pointEntity);
+                        imageEntity.setImageBase64(image);
+                        imageEntities.add(imageEntity);
+                    }
+                }
+            }
+        }
+
+        return imageEntities;
+    }
+
     @Override
     public String toString() {
         return "ImageEntity{" +
                 "imageId=" + imageId +
                 ", userId=" + user +
                 ", trackId=" + track +
+                ", pointId=" + point +
                 '}';
     }
 }

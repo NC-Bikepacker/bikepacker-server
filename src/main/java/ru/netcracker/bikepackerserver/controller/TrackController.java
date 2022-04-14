@@ -3,6 +3,7 @@ package ru.netcracker.bikepackerserver.controller;
 import io.swagger.annotations.Api;
 import io.swagger.annotations.ApiOperation;
 import io.swagger.annotations.ApiParam;
+import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
@@ -19,7 +20,9 @@ import ru.netcracker.bikepackerserver.service.TrackServiceImpl;
 
 import javax.validation.Valid;
 import java.net.URI;
+import java.net.URISyntaxException;
 import java.util.List;
+import java.util.Optional;
 
 @RestController
 @RequestMapping("/tracks")
@@ -79,7 +82,7 @@ public class TrackController {
             return new ResponseEntity(HttpStatus.OK);
         }
         catch (Exception e){
-            return new ResponseEntity(HttpStatus.NOT_FOUND);
+            return new ResponseEntity(HttpStatus.INTERNAL_SERVER_ERROR);
         }
     }
 

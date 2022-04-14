@@ -1,6 +1,7 @@
 package ru.netcracker.bikepackerserver.entity;
 
 import com.fasterxml.jackson.annotation.JsonIgnoreProperties;
+import org.springframework.validation.annotation.Validated;
 import ru.netcracker.bikepackerserver.exception.NoAnyFavoriteTrackException;
 import ru.netcracker.bikepackerserver.exception.NoAnyUsersException;
 import ru.netcracker.bikepackerserver.exception.NoSuchTrackException;
@@ -15,10 +16,12 @@ import java.util.Optional;
 @JsonIgnoreProperties({"hibernateLazyInitializer"})
 @Entity
 @Table(name="tracks", schema = "public")
+@Validated
 public class TrackEntity implements Serializable {
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     @Column(name = "track_id")
+    @NotNull
     private Long trackId;
 
     @Column(name = "travel_time")
@@ -31,6 +34,7 @@ public class TrackEntity implements Serializable {
 
     @ManyToOne()
     @JoinColumn(name = "user_id")
+    @NotNull
     private  UserEntity user;
 
     private String gpx;
@@ -78,14 +82,13 @@ public class TrackEntity implements Serializable {
         this.gpx = gpx;
     }
 
-
     @Override
     public String toString() {
         return "TrackEntity{" +
                 "track_id=" + trackId +
                 ", travel_time=" + travelTime +
                 ", track_complexity=" + trackComplexity +
-                ", user="  +
+                ", user="  + user +
                 ", gpx_url='" + gpx+ '\'' +
                 '}';
     }

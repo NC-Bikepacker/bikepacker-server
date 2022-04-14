@@ -4,6 +4,7 @@ import com.sun.istack.Nullable;
 import ru.netcracker.bikepackerserver.entity.ImageEntity;
 import ru.netcracker.bikepackerserver.entity.TrackEntity;
 import ru.netcracker.bikepackerserver.entity.UserEntity;
+import ru.netcracker.bikepackerserver.entity.PointEntity;
 import ru.netcracker.bikepackerserver.exception.BaseException;
 import ru.netcracker.bikepackerserver.repository.ImageRepo;
 import ru.netcracker.bikepackerserver.repository.TrackRepo;
@@ -27,7 +28,18 @@ public class ImageModel {
     @Nullable
     private TrackModel track;
 
+    @Nullable
+    private PointEntity point;
+
     public ImageModel() {
+    }
+
+    public Long getImageId() {
+        return imageId;
+    }
+
+    public void setImageId(Long imageId) {
+        this.imageId = imageId;
     }
 
     public String getImageBase64() {
@@ -54,49 +66,28 @@ public class ImageModel {
         this.track = track;
     }
 
-    public Long getImageId() {
-        return imageId;
+    public PointEntity getPoint() {
+        return point;
     }
 
-    public void setImageId(Long imageId) {
-        this.imageId = imageId;
+    public void setPoint(PointEntity point) {
+        this.point = point;
     }
 
-    @Override
-    public boolean equals(Object o) {
-        if (this == o) return true;
-        if (o == null || getClass() != o.getClass()) return false;
-        ImageModel that = (ImageModel) o;
-        return Objects.equals(imageBase64, that.imageBase64) && Objects.equals(user, that.user) && Objects.equals(track, that.track);
-    }
-
-    @Override
-    public int hashCode() {
-        return Objects.hash(imageBase64, user, track);
-    }
-
-    @Override
-    public String toString() {
-        return "ImageModel{" +
-                "imageBase64='" + imageBase64 + '\'' +
-                ", user=" + user +
-                ", track=" + track +
-                '}';
-    }
-
-    public static ImageModel toModel(ImageEntity imageEntity, ImageRepo imageRepo, TrackImageService trackImageService) throws BaseException {
+    public static Optional<ImageModel> toModel(ImageEntity imageEntity, ImageRepo imageRepo, TrackImageService trackImageService) throws BaseException {
         ImageModel imageModel = new ImageModel();
         Optional<ImageEntity> entity = Optional.ofNullable(imageEntity);
-        if(entity.isEmpty()){
+        if (entity.isEmpty()) {
             throw new IllegalArgumentException();
         }
-        if(imageEntity.getImageId() != null){
+        if (imageEntity.getImageId() != null) {
             imageModel.setImageId(imageEntity.getImageId());
         }
         imageModel.setUser(UserModel.toModel(imageEntity.getUser()));
         imageModel.setTrack(TrackModel.toModel(imageEntity.getTrack(), imageRepo, trackImageService));
         imageModel.setImageBase64(imageEntity.getImageBase64());
+        imageModel.setPoint(imageEntity.getPoint());
 
-        return imageModel;
+        return Optional.ofNullable(imageModel);
     }
 }
