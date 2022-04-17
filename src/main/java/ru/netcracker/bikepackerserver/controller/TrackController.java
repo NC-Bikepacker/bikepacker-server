@@ -99,9 +99,7 @@ public class TrackController {
             @RequestBody TrackModel trackModel
 
     ) {
-        System.out.println("track is: " + trackModel.toString());
         trackService.update(trackModel);
-        System.out.println("update track");
         return new ResponseEntity(HttpStatus.OK);
     }
 }
