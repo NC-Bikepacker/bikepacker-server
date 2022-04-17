@@ -21,15 +21,12 @@ public class TrackEntity implements Serializable {
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     @Column(name = "track_id")
-    @NotNull
     private Long trackId;
 
     @Column(name = "travel_time")
-    @NotNull
     private Long travelTime;
 
     @Column(name = "track_complexity")
-    @NotNull
     private short trackComplexity;
 
     @ManyToOne()
@@ -98,31 +95,40 @@ public class TrackEntity implements Serializable {
         TrackEntity trackEntity = new TrackEntity();
         UserEntity userEntity;
 
+        System.out.println("to entity");
+
         if (trackModel.isPresent()) {
             Optional<Long> travelTime = Optional.ofNullable(trackModel.get().getTravelTime());
             Optional<Short> trackComplexity = Optional.ofNullable(trackModel.get().getTrackComplexity());
             Optional<Long> userId = Optional.ofNullable(trackModel.get().getUser().getId());
             Optional<String> gpx = Optional.ofNullable(trackModel.get().getGpx());
 
+            System.out.println("trackmodel is present" + trackModel.toString());
+
             if (travelTime.isPresent()){
                 trackEntity.setTravelTime(trackModel.get().getTravelTime());
+                System.out.println("traveltime is present" + travelTime.toString());
             } else {
                 throw new NoSuchTrackException();
             }
             if (trackComplexity.isPresent()) {
                 trackEntity.setTrackComplexity(trackModel.get().getTrackComplexity());
+                System.out.println("trackcomplexity is present");
             } else {
                 throw new NoSuchTrackException();
             }
             if (gpx.isPresent()) {
                 trackEntity.setGpx(trackModel.get().getGpx());
+                System.out.println("gpx is present");
             } else {
                 throw new NoSuchTrackException();
             }
             if (userId.isPresent()) {
-                userEntity = userRepo.findByid(userId.get().longValue());
+                userEntity = userRepo.findByid(userId.get());
+                System.out.println("userId is present");
                 if(userEntity!=null){
                     trackEntity.setUser(userEntity);
+                    System.out.println("userEntity != null");
                 }
                 else {
                     throw new NoAnyUsersException();
@@ -130,6 +136,7 @@ public class TrackEntity implements Serializable {
             } else {
                 throw new NoAnyUsersException();
             }
+            System.out.println("return trackEntity");
             return trackEntity;
         }
         else {

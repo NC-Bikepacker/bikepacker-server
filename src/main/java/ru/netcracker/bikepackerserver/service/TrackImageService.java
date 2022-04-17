@@ -77,23 +77,29 @@ public class TrackImageService {
         } catch (Exception e) {
             LoggerFactory.getLogger(TrackImageService.class).error("error document builder or parser, error message: " + e.getMessage(), e);
         }
-        NodeList nodeList = document.getElementsByTagName("trkpt");
+        try {
+            NodeList nodeList = document.getElementsByTagName("trkpt");
 
-        for (int i = 0; i < nodeList.getLength(); i++) {
-            if (i == 0) {
-                latitude.add(Double.valueOf(nodeList.item(i).getAttributes().getNamedItem("lat").getNodeValue()));
-                longitude.add(Double.valueOf(nodeList.item(i).getAttributes().getNamedItem("lon").getNodeValue()));
-                lineResponseCoordinates = lineResponseCoordinates + nodeList.item(i).getAttributes().getNamedItem("lat").getNodeValue() + "," + nodeList.item(i).getAttributes().getNamedItem("lon").getNodeValue() + ";" + nodeList.item(i + 1).getAttributes().getNamedItem("lat").getNodeValue() + "," + nodeList.item(i + 1).getAttributes().getNamedItem("lon").getNodeValue() + "|width:7|color:%235D3EA8";
-            } else {
-                lineResponseCoordinates = lineResponseCoordinates + "&line=coords:" + nodeList.item(i - 1).getAttributes().getNamedItem("lat").getNodeValue() + "," + nodeList.item(i - 1).getAttributes().getNamedItem("lon").getNodeValue() + ";" + nodeList.item(i).getAttributes().getNamedItem("lat").getNodeValue() + "," + nodeList.item(i).getAttributes().getNamedItem("lon").getNodeValue() + "|width:7|color:%235D3EA8";
-                latitude.add(Double.valueOf(nodeList.item(i).getAttributes().getNamedItem("lat").getNodeValue()));
-                longitude.add(Double.valueOf(nodeList.item(i).getAttributes().getNamedItem("lon").getNodeValue()));
+            for (int i = 0; i < nodeList.getLength(); i++) {
+                if (i == 0) {
+                    latitude.add(Double.valueOf(nodeList.item(i).getAttributes().getNamedItem("lat").getNodeValue()));
+                    longitude.add(Double.valueOf(nodeList.item(i).getAttributes().getNamedItem("lon").getNodeValue()));
+                    lineResponseCoordinates = lineResponseCoordinates + nodeList.item(i).getAttributes().getNamedItem("lat").getNodeValue() + "," + nodeList.item(i).getAttributes().getNamedItem("lon").getNodeValue() + ";" + nodeList.item(i + 1).getAttributes().getNamedItem("lat").getNodeValue() + "," + nodeList.item(i + 1).getAttributes().getNamedItem("lon").getNodeValue() + "|width:7|color:%235D3EA8";
+                } else {
+                    lineResponseCoordinates = lineResponseCoordinates + "&line=coords:" + nodeList.item(i - 1).getAttributes().getNamedItem("lat").getNodeValue() + "," + nodeList.item(i - 1).getAttributes().getNamedItem("lon").getNodeValue() + ";" + nodeList.item(i).getAttributes().getNamedItem("lat").getNodeValue() + "," + nodeList.item(i).getAttributes().getNamedItem("lon").getNodeValue() + "|width:7|color:%235D3EA8";
+                    latitude.add(Double.valueOf(nodeList.item(i).getAttributes().getNamedItem("lat").getNodeValue()));
+                    longitude.add(Double.valueOf(nodeList.item(i).getAttributes().getNamedItem("lon").getNodeValue()));
+                }
             }
+            Double latiDifference = Math.abs(Collections.max(latitude) - Collections.min(latitude));
+            Double longiDifference = Math.abs(Collections.max(longitude) - Collections.min(longitude));
+            zoom = latiDifference > longiDifference ? getZoomVariable(latiDifference) : getZoomVariable(longiDifference);
+            return startStringGetResponseImage + zoom + lineResponseCoordinates;
         }
-        Double latiDifference = Math.abs(Collections.max(latitude) - Collections.min(latitude));
-        Double longiDifference = Math.abs(Collections.max(longitude) - Collections.min(longitude));
-        zoom = latiDifference > longiDifference ? getZoomVariable(latiDifference) : getZoomVariable(longiDifference);
-        return startStringGetResponseImage + zoom + lineResponseCoordinates;
+        catch (Exception e){
+            LoggerFactory.getLogger(TrackImageService.class).error("gpx not corrected" + e.getMessage());
+            return null;
+        }
     }
 
     private String getZoomVariable(Double latiLongiDifference) {

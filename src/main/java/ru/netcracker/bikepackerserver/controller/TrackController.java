@@ -55,7 +55,7 @@ public class TrackController {
             return new ResponseEntity(trackService.getTracksForUser(id), HttpStatus.OK);
         }
         else{
-            return new ResponseEntity(HttpStatus.BAD_REQUEST);
+            return new ResponseEntity(HttpStatus.NOT_FOUND);
         }
     }
 
@@ -64,15 +64,14 @@ public class TrackController {
     public ResponseEntity createTrack(
             @RequestBody
             @ApiParam(
-                    name = "Track Entity",
-                    type = "TrackEntity",
-                    value = "Track Entity",
+                    name = "Track Model",
+                    type = "TrackModel",
+                    value = "TrackModel",
                     required = true
             )
                     TrackModel track
     ) throws Exception {
-        trackService.save(track);
-        return new ResponseEntity(HttpStatus.OK);
+        return new ResponseEntity(trackService.save(track).getTrackId(), HttpStatus.OK);
     }
 
     @DeleteMapping("/delete/{id}")
@@ -86,19 +85,23 @@ public class TrackController {
         }
     }
 
-    @PutMapping("/update")
+    @PutMapping("/update/{id}")
     @ApiOperation(value = "Update a track data", notes = "This request changes current track")
     public ResponseEntity updateTrack(
             @ApiParam(
                     name = "id",
                     type = "Long",
-                    value = "Track id",
-                    example = "11",
+                    value = "134",
+                    example = "134",
                     required = true
             )
-            @RequestBody @Valid TrackModel trackModel
+            @PathVariable Long id,
+            @RequestBody TrackModel trackModel
+
     ) {
+        System.out.println("track is: " + trackModel.toString());
         trackService.update(trackModel);
+        System.out.println("update track");
         return new ResponseEntity(HttpStatus.OK);
     }
 }

@@ -190,4 +190,15 @@ public class TrackModel {
         return trackModels;
     }
 
+    @Override
+    public String toString() {
+        return "TrackModel{" +
+                "trackId=" + trackId +
+                ", travelTime=" + travelTime +
+                ", trackComplexity=" + trackComplexity +
+                ", user=" + user +
+                ", gpx='" + gpx + '\'' +
+                ", imageBase64='" + imageBase64 + '\'' +
+                '}';
+    }
 }
