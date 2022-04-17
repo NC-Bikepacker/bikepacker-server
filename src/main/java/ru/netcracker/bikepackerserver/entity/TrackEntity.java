@@ -95,8 +95,6 @@ public class TrackEntity implements Serializable {
         TrackEntity trackEntity = new TrackEntity();
         UserEntity userEntity;
 
-        System.out.println("to entity");
-
         if (trackModel.isPresent()) {
             Optional<Long> travelTime = Optional.ofNullable(trackModel.get().getTravelTime());
             Optional<Short> trackComplexity = Optional.ofNullable(trackModel.get().getTrackComplexity());

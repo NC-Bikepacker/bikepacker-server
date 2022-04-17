@@ -48,7 +48,6 @@ public class TrackServiceImpl  implements  TrackService{
             trackEntity.setTravelTime(track.getTravelTime());
             trackEntity.setGpx(track.getGpx());
             trackEntity.setUser(userRepo.findByid(track.getUser().getId()));
-            System.out.println( "trackEntity to sting and save" + trackEntity.toString() );
             return trackRepo.save(trackEntity);
         }
         else {
@@ -71,24 +70,19 @@ public class TrackServiceImpl  implements  TrackService{
 
     @Override
     public void update(TrackModel trackModel) {
-        System.out.println("model trackid: " + trackModel.getTrackId());
         TrackEntity trackEntity = trackRepo.getById(trackModel.getTrackId());
-        System.out.println("trackEntity id ="+ trackEntity.getTrackId() + " track travel time" + trackEntity.getTravelTime());
             if(trackEntity != null) {
                 trackEntity.setUser(userRepo.findByid(trackModel.getUser().getId()));
                 trackEntity.setTrackComplexity(trackModel.getTrackComplexity());
                 trackEntity.setTravelTime(trackModel.getTravelTime());
                 trackEntity.setGpx(trackModel.getGpx());
                 trackRepo.save(trackEntity);
-                System.out.println("track save");
                 if(!trackModel.getGpx().isBlank()){
                     saveImageForTrack(trackEntity);
-                    System.out.println("image save");
                 }
 
             }
             else {
-                System.out.println("track not put");
                 throw new IllegalArgumentException();
             }
         }
