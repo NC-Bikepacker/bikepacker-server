@@ -1,11 +1,15 @@
 package ru.netcracker.bikepackerserver.service;
 
+import org.hibernate.ObjectNotFoundException;
+import org.hibernate.annotations.NotFound;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.data.crossstore.ChangeSetPersister;
 import org.springframework.stereotype.Service;
 import ru.netcracker.bikepackerserver.entity.ImageEntity;
 import ru.netcracker.bikepackerserver.entity.TrackEntity;
 import ru.netcracker.bikepackerserver.entity.UserEntity;
+import ru.netcracker.bikepackerserver.exception.TrackNotFoundException;
 import ru.netcracker.bikepackerserver.exception.UserNotFoundException;
 import ru.netcracker.bikepackerserver.model.TrackModel;
 import ru.netcracker.bikepackerserver.model.UserModel;
@@ -116,7 +120,19 @@ public class TrackServiceImpl  implements  TrackService{
             try {
                 trackImageService.saveImage(trackEntity);
             } catch (Exception e) {
-                e.printStackTrace();
+                LoggerFactory.getLogger(TrackServiceImpl.class).error("Error save image for trackEntity. Track entity id is: " + trackEntity.getTrackId()+ ". Exception message: " + e.getMessage(), e);
             }
+    }
+
+    @Override
+    public TrackModel getOneTrack(Long trackId) {
+        TrackEntity trackEntity = trackRepo.findTrackEntityByTrackId(trackId);
+        if(trackEntity!=null){
+            return TrackModel.toModel(trackEntity, imageRepo, trackImageService);
+        }
+        else{
+            throw new TrackNotFoundException(trackId);
+        }
+
     }
 }

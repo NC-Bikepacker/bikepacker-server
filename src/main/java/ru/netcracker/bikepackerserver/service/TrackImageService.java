@@ -35,9 +35,12 @@ public class TrackImageService {
 
     public void saveImage(TrackEntity track) throws Exception {
         ImageEntity image = new ImageEntity();
-        image.setImageBase64(sendGet(getUrl(track)));
-        image.setTrack(track);
-        imageRepo.save(image);
+        String url = getUrl(track);
+        if(url!=""){
+            image.setImageBase64(sendGet(url));
+            image.setTrack(track);
+            imageRepo.save(image);
+        }
     }
 
     private String sendGet(String url) throws Exception{
@@ -97,8 +100,8 @@ public class TrackImageService {
             return startStringGetResponseImage + zoom + lineResponseCoordinates;
         }
         catch (Exception e){
-            LoggerFactory.getLogger(TrackImageService.class).error("gpx not corrected" + e.getMessage());
-            return null;
+            LoggerFactory.getLogger(TrackImageService.class).error("gpx for track id=" + track.getTrackId() + " not corrected. Error message:" + e.getMessage());
+            return "";
         }
     }
 

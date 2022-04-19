@@ -59,6 +59,26 @@ public class TrackController {
         }
     }
 
+    @GetMapping("/getonetrack/{id}")
+    @ApiOperation(value = "get one track", notes = "This request getting one track")
+    public ResponseEntity getOneTrack(
+        @ApiParam(
+                name = "id",
+                type = "Long",
+                value = "track id",
+                example = "13",
+                required = true
+        )
+        @PathVariable @Valid Long id
+    ){
+        if(id != null){
+            return new ResponseEntity(trackService.getOneTrack(id), HttpStatus.OK);
+        }
+        else{
+            return new ResponseEntity(HttpStatus.BAD_REQUEST);
+        }
+    }
+
     @PostMapping
     @ApiOperation(value = "Create a new track", notes = "This request creates a new track")
     public ResponseEntity createTrack(

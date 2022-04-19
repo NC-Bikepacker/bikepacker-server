@@ -17,7 +17,7 @@ public class FavoriteTrackEntity {
 
     @ManyToOne()
     @JoinColumn(name = "user_id", referencedColumnName = "user_id")
-    UserEntity user;
+    private UserEntity user;
 
     @ManyToOne()
     @JoinColumn(name = "track_id")
