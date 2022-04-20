@@ -1,10 +1,14 @@
 package ru.netcracker.bikepackerserver.model;
 
-import org.springframework.lang.Nullable;
+import com.sun.istack.Nullable;
 import ru.netcracker.bikepackerserver.entity.ImageEntity;
-import ru.netcracker.bikepackerserver.entity.PointEntity;
 import ru.netcracker.bikepackerserver.entity.TrackEntity;
 import ru.netcracker.bikepackerserver.entity.UserEntity;
+import ru.netcracker.bikepackerserver.entity.PointEntity;
+import ru.netcracker.bikepackerserver.exception.BaseException;
+import ru.netcracker.bikepackerserver.repository.ImageRepo;
+import ru.netcracker.bikepackerserver.repository.TrackRepo;
+import ru.netcracker.bikepackerserver.service.TrackImageService;
 
 import javax.validation.constraints.NotEmpty;
 import java.util.Objects;
@@ -13,18 +17,29 @@ import java.util.Optional;
 public class ImageModel {
 
     @NotEmpty(message = "Image may not be empty")
+    private Long imageId;
+
+    @NotEmpty(message = "Image may not be empty")
     private String imageBase64;
 
     @Nullable
-    private UserEntity user;
+    private UserModel user;
 
     @Nullable
-    private TrackEntity track;
+    private TrackModel track;
 
     @Nullable
     private PointEntity point;
 
     public ImageModel() {
+    }
+
+    public Long getImageId() {
+        return imageId;
+    }
+
+    public void setImageId(Long imageId) {
+        this.imageId = imageId;
     }
 
     public String getImageBase64() {
@@ -35,68 +50,44 @@ public class ImageModel {
         this.imageBase64 = imageBase64;
     }
 
-    @Nullable
-    public UserEntity getUser() {
+    public UserModel getUser() {
         return user;
     }
 
-    public void setUser(@Nullable UserEntity user) {
+    public void setUser(UserModel user) {
         this.user = user;
     }
 
-    @Nullable
-    public TrackEntity getTrack() {
+    public TrackModel getTrack() {
         return track;
     }
 
-    public void setTrack(@Nullable TrackEntity track) {
+    public void setTrack(TrackModel track) {
         this.track = track;
     }
 
-    @Nullable
     public PointEntity getPoint() {
         return point;
     }
 
-    public void setPoint(@Nullable PointEntity point) {
+    public void setPoint(PointEntity point) {
         this.point = point;
     }
 
-    public static Optional<ImageModel> toModel(ImageEntity imageEntity) {
-        ImageModel model = null;
-
-        if (imageEntity != null) {
-            model = new ImageModel();
-
-            model.setTrack(imageEntity.getTrackId());
-            model.setPoint(imageEntity.getPoint());
-            model.setUser(imageEntity.getUserId());
-            model.setImageBase64(imageEntity.getImageBase64());
+    public static Optional<ImageModel> toModel(ImageEntity imageEntity, ImageRepo imageRepo, TrackImageService trackImageService) throws BaseException {
+        ImageModel imageModel = new ImageModel();
+        Optional<ImageEntity> entity = Optional.ofNullable(imageEntity);
+        if (entity.isEmpty()) {
+            throw new IllegalArgumentException();
         }
+        if (imageEntity.getImageId() != null) {
+            imageModel.setImageId(imageEntity.getImageId());
+        }
+        imageModel.setUser(UserModel.toModel(imageEntity.getUser()));
+        imageModel.setTrack(TrackModel.toModel(imageEntity.getTrack(), imageRepo, trackImageService));
+        imageModel.setImageBase64(imageEntity.getImageBase64());
+        imageModel.setPoint(imageEntity.getPoint());
 
-        return Optional.ofNullable(model);
-    }
-
-    @Override
-    public boolean equals(Object o) {
-        if (this == o) return true;
-        if (!(o instanceof ImageModel)) return false;
-        ImageModel that = (ImageModel) o;
-        return Objects.equals(getImageBase64(), that.getImageBase64()) && Objects.equals(getUser(), that.getUser()) && Objects.equals(getTrack(), that.getTrack()) && Objects.equals(getPoint(), that.getPoint());
-    }
-
-    @Override
-    public int hashCode() {
-        return Objects.hash(getImageBase64(), getUser(), getTrack(), getPoint());
-    }
-
-    @Override
-    public String toString() {
-        return "ImageModel{" +
-                "imageBase64='" + imageBase64 + '\'' +
-                ", userId=" + user +
-                ", trackId=" + track +
-                ", pointId=" + point +
-                '}';
+        return Optional.ofNullable(imageModel);
     }
 }

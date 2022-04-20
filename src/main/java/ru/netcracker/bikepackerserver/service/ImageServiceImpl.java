@@ -24,9 +24,13 @@ public class ImageServiceImpl implements ImageService {
     @Autowired
     private final PointRepo pointRepo;
 
-    public ImageServiceImpl(ImageRepo imageRepo, PointRepo pointRepo) {
+    @Autowired
+    private final TrackImageService trackImageService;
+
+    public ImageServiceImpl(ImageRepo imageRepo, PointRepo pointRepo, TrackImageService trackImageService) {
         this.imageRepo = imageRepo;
         this.pointRepo = pointRepo;
+        this.trackImageService = trackImageService;
     }
 
     @Override
@@ -69,7 +73,7 @@ public class ImageServiceImpl implements ImageService {
                 List<ImageEntity> imageEntities = imageRepo.findImageEntitiesByPoint(point.get());
 
                 for (ImageEntity entity : imageEntities) {
-                    imageModels.add(ImageModel.toModel(entity).orElseThrow(NoAnyPointException::new));
+                    imageModels.add(ImageModel.toModel(entity, imageRepo, trackImageService).orElseThrow(NoAnyPointException::new));
                 }
 
                 return imageModels;
