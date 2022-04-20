@@ -59,10 +59,11 @@ public class FavoriteTrackServiceImpl implements FavoriteTrackService{
         if (userId != null) {
             Optional<UserEntity> user = Optional.ofNullable(userRepo.findByid(userId));
             if (user.isPresent()) {
-                List<TrackEntity> trackEntities = trackRepo.findByUser(user.get());
+                List<FavoriteTrackEntity> favoriteTrackEntities = favoriteTrackRepo.findByUser(user.get());
+                List<TrackEntity> trackEntities = new ArrayList<>();
                 List<TrackModel> trackModels = new ArrayList<>();
-                if (trackEntities.size() > 0) {
-                    trackModels.addAll(TrackModel.toModels(trackEntities, imageRepo, trackImageService));
+                if (favoriteTrackEntities.size() > 0) {
+                    trackModels.addAll(TrackModel.toModels(FavoriteTrackEntity.toTrackEntities(favoriteTrackEntities), imageRepo, trackImageService));
                 } else {
                     LoggerFactory.getLogger(FavoriteTrackService.class).error("There are no tracks");
                 }
@@ -78,7 +79,6 @@ public class FavoriteTrackServiceImpl implements FavoriteTrackService{
     @Override
     public List<TrackModel> getTracks() throws BaseException {
         List<TrackEntity> trackEntities = trackRepo.findAll();
-        List<TrackModel> trackModels = TrackModel.toModels(trackEntities, imageRepo, trackImageService);
-        return trackModels;
+        return TrackModel.toModels(trackEntities, imageRepo, trackImageService);
     }
 }
