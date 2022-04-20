@@ -4,6 +4,8 @@ import org.springframework.validation.annotation.Validated;
 
 import javax.persistence.*;
 import javax.validation.constraints.NotNull;
+import java.util.List;
+import java.util.stream.Collectors;
 
 @Entity
 @Table(name = "favorite_track", schema = "public")
@@ -57,5 +59,9 @@ public class FavoriteTrackEntity {
                 ", user=" + user +
                 ", track=" + track +
                 '}';
+    }
+
+    public static List<TrackEntity> toTrackEntities(List<FavoriteTrackEntity> favoriteTrackEntities){
+        return favoriteTrackEntities.stream().map(FavoriteTrackEntity::getTrack).collect(Collectors.toList());
     }
 }
