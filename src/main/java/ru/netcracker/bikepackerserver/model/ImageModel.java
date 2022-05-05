@@ -1,6 +1,8 @@
 package ru.netcracker.bikepackerserver.model;
 
 import com.sun.istack.Nullable;
+import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.boot.autoconfigure.amqp.RabbitProperties;
 import ru.netcracker.bikepackerserver.entity.ImageEntity;
 import ru.netcracker.bikepackerserver.entity.TrackEntity;
 import ru.netcracker.bikepackerserver.entity.UserEntity;
@@ -11,8 +13,12 @@ import ru.netcracker.bikepackerserver.repository.TrackRepo;
 import ru.netcracker.bikepackerserver.service.TrackImageService;
 
 import javax.validation.constraints.NotEmpty;
+import java.util.Arrays;
+import java.util.List;
 import java.util.Objects;
 import java.util.Optional;
+import java.util.stream.Collectors;
+import java.util.stream.Stream;
 
 public class ImageModel {
 
@@ -89,5 +95,11 @@ public class ImageModel {
         imageModel.setPoint(imageEntity.getPoint());
 
         return Optional.ofNullable(imageModel);
+    }
+
+    public static List<ImageModel> toModels(List<ImageEntity> images, ImageRepo imageRepo, TrackImageService trackImageService ){
+        return images.stream()
+                .map(p->ImageModel.toModel(p,imageRepo,trackImageService).get())
+                .collect(Collectors.toList());
     }
 }

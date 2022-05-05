@@ -12,4 +12,5 @@ public interface TrackService {
     TrackModel getOneTrack(Long id);
     List<TrackModel> getAllTracks();
     List<TrackModel> getTracksForUser(Long userId);
+    List<TrackModel> getLastFriendTracks(Long userId);
 }

@@ -12,6 +12,8 @@ import ru.netcracker.bikepackerserver.repository.UserRepo;
 import javax.persistence.*;
 import java.util.ArrayList;
 import java.util.List;
+import java.util.Objects;
+import java.util.stream.Collectors;
 
 @Entity
 @Table(name = "image", schema = "public")
@@ -41,6 +43,11 @@ public class ImageEntity {
     @JoinColumn(name = "point_id")
     @Nullable
     private PointEntity point;
+
+    @ManyToOne(fetch = FetchType.EAGER)
+    @JoinColumn(name = "news_id")
+    @Nullable
+    private NewsEntity news;
 
     public ImageEntity() {
     }
@@ -77,6 +84,10 @@ public class ImageEntity {
         this.track = track;
     }
 
+    public NewsEntity getNews() { return news;  }
+
+    public void setNews(NewsEntity news) { this.news = news; }
+
 
     @Nullable
     public PointEntity getPoint() {
@@ -102,6 +113,18 @@ public class ImageEntity {
         }
 
         return entity;
+    }
+
+    public static List<ImageEntity> toEntities(List<ImageModel> images, UserRepo userRepo, TrackRepo trackRepo){
+        if(!images.isEmpty()){
+            return images.stream()
+                    .filter(Objects::nonNull)
+                    .map(p->ImageEntity.toEntity(p, userRepo, trackRepo))
+                    .collect(Collectors.toList());
+        }
+        else {
+            throw new IllegalArgumentException();
+        }
     }
 
     public static List<ImageEntity> toEntity(PointModel pointModel, PointEntity pointEntity) {

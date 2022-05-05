@@ -1,0 +1,13 @@
+package ru.netcracker.bikepackerserver.exception;
+
+import org.springframework.http.HttpStatus;
+import org.springframework.web.bind.annotation.ResponseStatus;
+
+@ResponseStatus(HttpStatus.NOT_FOUND)
+public class NewsNotFoundException extends BaseException{
+    public NewsNotFoundException(Long id) {
+        httpStatus = HttpStatus.NOT_FOUND;
+        description = "News with id " + id + " is not found.";
+    }
+
+}
