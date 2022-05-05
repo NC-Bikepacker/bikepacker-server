@@ -17,8 +17,11 @@ import ru.netcracker.bikepackerserver.repository.ImageRepo;
 import ru.netcracker.bikepackerserver.repository.TrackRepo;
 import ru.netcracker.bikepackerserver.repository.UserRepo;
 
+import java.util.ArrayList;
 import java.util.List;
+import java.util.Objects;
 import java.util.Optional;
+import java.util.stream.Collectors;
 
 @Service
 public class TrackServiceImpl  implements  TrackService{
@@ -35,11 +38,15 @@ public class TrackServiceImpl  implements  TrackService{
     @Autowired
     private TrackImageService trackImageService;
 
-    public TrackServiceImpl(TrackRepo trackRepo, ImageRepo imageRepo, UserRepo userRepo, TrackImageService trackImageService) {
+    @Autowired
+    private FriendService friendService;
+
+    public TrackServiceImpl(TrackRepo trackRepo, ImageRepo imageRepo, UserRepo userRepo, TrackImageService trackImageService, FriendService friendService) {
         this.trackRepo = trackRepo;
         this.imageRepo = imageRepo;
         this.userRepo = userRepo;
         this.trackImageService = trackImageService;
+        this.friendService = friendService;
     }
 
     @Override
@@ -116,7 +123,6 @@ public class TrackServiceImpl  implements  TrackService{
         if(imageEntity != null){
             imageRepo.deleteById(imageEntity.getImageId());
         }
-
             try {
                 trackImageService.saveImage(trackEntity);
             } catch (Exception e) {
@@ -134,5 +140,20 @@ public class TrackServiceImpl  implements  TrackService{
             throw new TrackNotFoundException(trackId);
         }
 
+    }
+
+    @Override
+    public List<TrackModel> getLastFriendTracks(Long userId) {
+        List<TrackEntity> trackEntities = new ArrayList<>();
+        List<UserEntity> friends = friendService.getFriends(userId);
+
+        friends.stream()
+                .map(p->trackRepo.findByUser(p))
+                .filter(Objects::nonNull)
+                .forEach(p->trackEntities.addAll(p));
+
+        return trackEntities.stream()
+                .map(p->TrackModel.toModel(p,imageRepo,trackImageService))
+                .collect(Collectors.toList());
     }
 }
