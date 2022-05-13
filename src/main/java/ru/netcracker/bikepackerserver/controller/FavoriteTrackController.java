@@ -68,7 +68,7 @@ public class FavoriteTrackController {
     }
 
     @DeleteMapping("delete/{id}")
-    public ResponseEntity deleteFavoriteTrack(@PathVariable(name = "id") Long id){
+    public ResponseEntity deleteFavoriteTrack(@PathVariable(name = "id") Long id) {
         try {
             favoriteTrackRepo.deleteById(id);
             return new ResponseEntity(HttpStatus.OK);

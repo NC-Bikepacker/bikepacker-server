@@ -11,11 +11,13 @@ import ru.netcracker.bikepackerserver.repository.UserRepo;
 import javax.persistence.*;
 import javax.validation.constraints.NotNull;
 import java.io.Serializable;
+import java.sql.Date;
+import java.time.LocalDate;
 import java.util.Optional;
 
 @JsonIgnoreProperties({"hibernateLazyInitializer"})
 @Entity
-@Table(name="tracks", schema = "public")
+@Table(name = "tracks", schema = "public")
 @Validated
 public class TrackEntity implements Serializable {
     @Id
@@ -27,16 +29,147 @@ public class TrackEntity implements Serializable {
     private Long travelTime;
 
     @Column(name = "track_complexity")
-    private short trackComplexity;
+    private @NotNull double trackComplexity;
 
     @ManyToOne()
     @JoinColumn(name = "user_id")
     @NotNull
-    private  UserEntity user;
+    private UserEntity user;
 
     private String gpx;
 
+    @Column(name = "track_name")
+    @NotNull
+    private String trackName;
+
+    @Column(name = "track_date")
+    private Date trackDate;
+
+    @Column(name = "track_distance")
+    private Double trackDistance;
+
+    @Column(name = "track_avg_speed")
+    private Double trackAvgSpeed;
+
+    @Column(name = "track_start_lat")
+    private Double trackStartLat;
+
+    @Column(name = "track_start_lon")
+    private Double trackStartLon;
+
+    @Column(name = "track_finish_lat")
+    private Double trackFinishLat;
+
+    @Column(name = "track_finish_lon")
+    private Double trackFinishLon;
+
     public TrackEntity() {
+    }
+
+    public static TrackEntity toEntity(TrackModel model, UserRepo userRepo) throws NoAnyFavoriteTrackException {
+        Optional<TrackModel> trackModel = Optional.ofNullable(model);
+        TrackEntity trackEntity = new TrackEntity();
+        UserEntity userEntity;
+
+        if (trackModel.isPresent()) {
+            Optional<Long> travelTime = Optional.ofNullable(trackModel.get().getTravelTime());
+            Optional<@NotNull Double> trackComplexity = Optional.ofNullable(trackModel.get().getTrackComplexity());
+            Optional<Long> userId = Optional.ofNullable(trackModel.get().getUser().getId());
+            Optional<String> gpx = Optional.ofNullable(trackModel.get().getGpx());
+
+            if (travelTime.isPresent()) {
+                trackEntity.setTravelTime(trackModel.get().getTravelTime());
+            } else {
+                throw new NoSuchTrackException();
+            }
+            if (trackComplexity.isPresent()) {
+                trackEntity.setTrackComplexity(trackModel.get().getTrackComplexity());
+            } else {
+                throw new NoSuchTrackException();
+            }
+            if (gpx.isPresent()) {
+                trackEntity.setGpx(trackModel.get().getGpx());
+            } else {
+                throw new NoSuchTrackException();
+            }
+            if (userId.isPresent()) {
+                userEntity = userRepo.findByid(userId.get());
+                if (userEntity != null) {
+                    trackEntity.setUser(userEntity);
+                } else {
+                    throw new NoAnyUsersException();
+                }
+            } else {
+                throw new NoAnyUsersException();
+            }
+            return trackEntity;
+        } else {
+            throw new IllegalArgumentException();
+        }
+    }
+
+    public String getTrackName() {
+        return trackName;
+    }
+
+    public void setTrackName(String trackName) {
+        this.trackName = trackName;
+    }
+
+    public Date getTrackDate() {
+        return trackDate;
+    }
+
+    public void setTrackDate(Date trackDate) {
+        this.trackDate = trackDate;
+    }
+
+    public Double getTrackDistance() {
+        return trackDistance;
+    }
+
+    public void setTrackDistance(Double trackDistance) {
+        this.trackDistance = trackDistance;
+    }
+
+    public Double getTrackAvgSpeed() {
+        return trackAvgSpeed;
+    }
+
+    public void setTrackAvgSpeed(Double trackAvgSpeed) {
+        this.trackAvgSpeed = trackAvgSpeed;
+    }
+
+    public Double getTrackStartLat() {
+        return trackStartLat;
+    }
+
+    public void setTrackStartLat(Double trackStartLat) {
+        this.trackStartLat = trackStartLat;
+    }
+
+    public Double getTrackStartLon() {
+        return trackStartLon;
+    }
+
+    public void setTrackStartLon(Double trackStartLon) {
+        this.trackStartLon = trackStartLon;
+    }
+
+    public Double getTrackFinishLat() {
+        return trackFinishLat;
+    }
+
+    public void setTrackFinishLat(Double trackFinishLat) {
+        this.trackFinishLat = trackFinishLat;
+    }
+
+    public Double getTrackFinishLon() {
+        return trackFinishLon;
+    }
+
+    public void setTrackFinishLon(Double trackFinishLon) {
+        this.trackFinishLon = trackFinishLon;
     }
 
     public Long getTrackId() {
@@ -55,11 +188,11 @@ public class TrackEntity implements Serializable {
         this.travelTime = travel_time;
     }
 
-    public short getTrackComplexity() {
+    public @NotNull double getTrackComplexity() {
         return trackComplexity;
     }
 
-    public void setTrackComplexity(short track_complexity) {
+    public void setTrackComplexity(@NotNull double track_complexity) {
         this.trackComplexity = track_complexity;
     }
 
@@ -85,52 +218,8 @@ public class TrackEntity implements Serializable {
                 "track_id=" + trackId +
                 ", travel_time=" + travelTime +
                 ", track_complexity=" + trackComplexity +
-                ", user="  + user +
-                ", gpx_url='" + gpx+ '\'' +
+                ", user=" + user +
+                ", gpx_url='" + gpx + '\'' +
                 '}';
-    }
-
-    public static TrackEntity toEntity(TrackModel model, UserRepo userRepo) throws NoAnyFavoriteTrackException {
-        Optional<TrackModel> trackModel = Optional.ofNullable(model);
-        TrackEntity trackEntity = new TrackEntity();
-        UserEntity userEntity;
-
-        if (trackModel.isPresent()) {
-            Optional<Long> travelTime = Optional.ofNullable(trackModel.get().getTravelTime());
-            Optional<Short> trackComplexity = Optional.ofNullable(trackModel.get().getTrackComplexity());
-            Optional<Long> userId = Optional.ofNullable(trackModel.get().getUser().getId());
-            Optional<String> gpx = Optional.ofNullable(trackModel.get().getGpx());
-
-            if (travelTime.isPresent()){
-                trackEntity.setTravelTime(trackModel.get().getTravelTime());
-            } else {
-                throw new NoSuchTrackException();
-            }
-            if (trackComplexity.isPresent()) {
-                trackEntity.setTrackComplexity(trackModel.get().getTrackComplexity());
-            } else {
-                throw new NoSuchTrackException();
-            }
-            if (gpx.isPresent()) {
-                trackEntity.setGpx(trackModel.get().getGpx());
-            } else {
-                throw new NoSuchTrackException();
-            }
-            if (userId.isPresent()) {
-                userEntity = userRepo.findByid(userId.get());
-                if(userEntity!=null){
-                    trackEntity.setUser(userEntity);
-                }
-                else {
-                    throw new NoAnyUsersException();
-                }
-            } else {
-                throw new NoAnyUsersException();
-            }
-            return trackEntity;
-        }
-        else {
-            throw new IllegalArgumentException();
-        }
     }
 }

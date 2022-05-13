@@ -35,6 +35,7 @@ dependencies {
 
     implementation group: 'com.fasterxml.jackson.datatype', name: 'jackson-datatype-jsr310', version: '2.13.2'
 
+    implementation group: 'io.jenetics', name: 'jpx', version: '2.3.0'
 }
 
 test {

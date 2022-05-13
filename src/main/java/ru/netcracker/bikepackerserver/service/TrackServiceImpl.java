@@ -59,6 +59,14 @@ public class TrackServiceImpl  implements  TrackService{
             trackEntity.setTravelTime(track.getTravelTime());
             trackEntity.setGpx(track.getGpx());
             trackEntity.setUser(userRepo.findByid(track.getUser().getId()));
+            trackEntity.setTrackName(track.getTrackName());
+            trackEntity.setTrackDate(track.getTrackDate());
+            trackEntity.setTrackDistance(track.getTrackDistance());
+            trackEntity.setTrackAvgSpeed(track.getTrackAvgSpeed());
+            trackEntity.setTrackStartLat(track.getTrackStartLat());
+            trackEntity.setTrackStartLon(track.getTrackStartLon());
+            trackEntity.setTrackFinishLat(track.getTrackFinishLat());
+            trackEntity.setTrackFinishLon(track.getTrackFinishLon());
             return trackRepo.save(trackEntity);
         }
         else {
@@ -87,6 +95,14 @@ public class TrackServiceImpl  implements  TrackService{
                 trackEntity.setTrackComplexity(trackModel.getTrackComplexity());
                 trackEntity.setTravelTime(trackModel.getTravelTime());
                 trackEntity.setGpx(trackModel.getGpx());
+                trackEntity.setTrackName(trackModel.getTrackName());
+                trackEntity.setTrackDate(trackModel.getTrackDate());
+                trackEntity.setTrackDistance(trackModel.getTrackDistance());
+                trackEntity.setTrackAvgSpeed(trackModel.getTrackAvgSpeed());
+                trackEntity.setTrackStartLat(trackModel.getTrackStartLat());
+                trackEntity.setTrackStartLon(trackModel.getTrackStartLon());
+                trackEntity.setTrackFinishLat(trackModel.getTrackFinishLat());
+                trackEntity.setTrackFinishLon(trackModel.getTrackFinishLon());
                 trackRepo.save(trackEntity);
                 if(!trackModel.getGpx().isBlank()){
                     saveImageForTrack(trackEntity);
