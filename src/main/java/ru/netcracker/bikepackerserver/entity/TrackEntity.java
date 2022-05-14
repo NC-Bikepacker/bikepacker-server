@@ -1,6 +1,11 @@
 package ru.netcracker.bikepackerserver.entity;
 
+import com.fasterxml.jackson.annotation.JsonFormat;
 import com.fasterxml.jackson.annotation.JsonIgnoreProperties;
+import com.fasterxml.jackson.databind.annotation.JsonDeserialize;
+import com.fasterxml.jackson.databind.annotation.JsonSerialize;
+import com.fasterxml.jackson.datatype.jsr310.deser.LocalDateDeserializer;
+import com.fasterxml.jackson.datatype.jsr310.ser.LocalDateSerializer;
 import org.springframework.validation.annotation.Validated;
 import ru.netcracker.bikepackerserver.exception.NoAnyFavoriteTrackException;
 import ru.netcracker.bikepackerserver.exception.NoAnyUsersException;
@@ -29,7 +34,7 @@ public class TrackEntity implements Serializable {
     private Long travelTime;
 
     @Column(name = "track_complexity")
-    private @NotNull double trackComplexity;
+    private double trackComplexity;
 
     @ManyToOne()
     @JoinColumn(name = "user_id")
@@ -39,11 +44,13 @@ public class TrackEntity implements Serializable {
     private String gpx;
 
     @Column(name = "track_name")
-    @NotNull
     private String trackName;
 
+    @JsonDeserialize(using = LocalDateDeserializer.class)
+    @JsonSerialize(using = LocalDateSerializer.class)
+    @JsonFormat(shape = JsonFormat.Shape.STRING, pattern = "yyyy-MM-dd")
     @Column(name = "track_date")
-    private Date trackDate;
+    private LocalDate trackDate;
 
     @Column(name = "track_distance")
     private Double trackDistance;
@@ -116,11 +123,11 @@ public class TrackEntity implements Serializable {
         this.trackName = trackName;
     }
 
-    public Date getTrackDate() {
+    public LocalDate getTrackDate() {
         return trackDate;
     }
 
-    public void setTrackDate(Date trackDate) {
+    public void setTrackDate(LocalDate trackDate) {
         this.trackDate = trackDate;
     }
 

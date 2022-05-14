@@ -24,25 +24,20 @@ import java.util.Optional;
 @JsonIgnoreProperties(ignoreUnknown = true)
 public class TrackModel {
 
-    @NotNull
     private Long trackId;
 
-    @NotNull
     private Long travelTime;
 
-    private @NotNull double trackComplexity;
+    private double trackComplexity;
 
     @NotNull
     private UserModel user;
 
-    @NotNull
     private String gpx;
 
-    @NotNull
     private String imageBase64;
-    @NotNull
     private String trackName;
-    private Date trackDate;
+    private LocalDate trackDate;
     private Double trackDistance;
     private Double trackAvgSpeed;
     private Double trackStartLat;
@@ -58,11 +53,11 @@ public class TrackModel {
             Optional<UserEntity> user = Optional.ofNullable(trackEntity.getUser());
             Optional<Long> trackId = Optional.ofNullable(trackEntity.getTrackId());
             Optional<Long> travelTime = Optional.ofNullable(trackEntity.getTravelTime());
-            Optional<@NotNull Double> trackComplexity = Optional.of(trackEntity.getTrackComplexity());
+            Optional<Double> trackComplexity = Optional.of(trackEntity.getTrackComplexity());
             Optional<String> gpx = Optional.ofNullable(trackEntity.getGpx());
             Optional<ImageEntity> image = Optional.ofNullable(imageRepo.findByTrack(trackEntity));
             Optional<String> trackName = Optional.of(trackEntity.getTrackName());
-            Optional<Date> trackDate = Optional.ofNullable(trackEntity.getTrackDate());
+            Optional<LocalDate> trackDate = Optional.ofNullable(trackEntity.getTrackDate());
             Optional<Double> trackDistance = Optional.ofNullable(trackEntity.getTrackDistance());
             Optional<Double> trackAvgSpeed = Optional.ofNullable(trackEntity.getTrackAvgSpeed());
             Optional<Double> trackStartLat = Optional.ofNullable(trackEntity.getTrackStartLat());
@@ -171,11 +166,11 @@ public class TrackModel {
         this.trackName = trackName;
     }
 
-    public Date getTrackDate() {
+    public LocalDate getTrackDate() {
         return trackDate;
     }
 
-    public void setTrackDate(Date trackDate) {
+    public void setTrackDate(LocalDate trackDate) {
         this.trackDate = trackDate;
     }
 

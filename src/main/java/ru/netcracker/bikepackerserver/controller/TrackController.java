@@ -515,8 +515,15 @@ public class TrackController {
                     required = true
             )
                     TrackModel track
-    ) throws Exception {
+    ){
+    try{
+        System.out.println(track.toString());
         return new ResponseEntity(trackService.save(track).getTrackId(), HttpStatus.OK);
+    }
+    catch (Exception e){
+        return new ResponseEntity(HttpStatus.BAD_REQUEST);
+    }
+
     }
 
     @DeleteMapping("/delete/{id}")
