@@ -3,9 +3,11 @@ package ru.netcracker.bikepackerserver.service;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 import ru.netcracker.bikepackerserver.entity.UserEntity;
+import ru.netcracker.bikepackerserver.entity.VerificationTokenEntity;
 import ru.netcracker.bikepackerserver.exception.*;
 import ru.netcracker.bikepackerserver.model.UserModel;
 import ru.netcracker.bikepackerserver.repository.UserRepo;
+import ru.netcracker.bikepackerserver.repository.VerificationTokenRepo;
 
 import javax.transaction.Transactional;
 import java.util.ArrayList;
@@ -19,6 +21,9 @@ public class UserServiceImpl implements UserService {
 
     @Autowired
     private final UserRepo userRepo;
+
+    @Autowired
+    private VerificationTokenRepo verificationTokenRepo;
 
     public UserServiceImpl(UserRepo userRepo) {
         this.userRepo = userRepo;
@@ -115,6 +120,20 @@ public class UserServiceImpl implements UserService {
         } else {
             throw new UsersDeletingException();
         }
+    }
+
+    @Override
+    public void createVerificationToken(UserEntity user, String token) {
+        VerificationTokenEntity myToken = new VerificationTokenEntity(token, user);
+        verificationTokenRepo.save(myToken);
+    }
+
+
+    @Override
+    public UserEntity getUserByVerificationToken(String VerificationToken) {
+        VerificationTokenEntity verificationToken = verificationTokenRepo.findByToken(VerificationToken);
+        return userRepo.findById(verificationToken.getUser().getId()).get();
+
     }
 
     private void updateEntity(UserModel model, UserEntity userEntity) {
