@@ -1,7 +1,6 @@
 package ru.netcracker.bikepackerserver.service;
 
 import ru.netcracker.bikepackerserver.entity.UserEntity;
-import ru.netcracker.bikepackerserver.entity.VerificationTokenEntity;
 import ru.netcracker.bikepackerserver.exception.EmailAlreadyExistsException;
 import ru.netcracker.bikepackerserver.exception.NoAnyUsersException;
 import ru.netcracker.bikepackerserver.exception.UserNotFoundException;
@@ -31,4 +30,6 @@ public interface UserService {
     void createVerificationToken(UserEntity user, String token);
 
     UserEntity getUserByVerificationToken(String VerificationToken);
+
+    UserModel updateUserData(UserEntity user, Long userId);
 }

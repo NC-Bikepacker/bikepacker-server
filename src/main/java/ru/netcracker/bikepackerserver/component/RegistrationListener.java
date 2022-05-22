@@ -55,7 +55,7 @@ public class RegistrationListener implements ApplicationListener<OnRegistrationC
     private void confirmRegistration(OnRegistrationCompleteEvent event) throws MessagingException {
         UserEntity user = event.getUser();
         Optional<String> recipientAddress = Optional.ofNullable(user.getEmail());
-        Optional<String> userFirstname = Optional.of(Optional.ofNullable(user.getFirstname()).orElse("дорогой пользователь!"));
+        Optional<String> userFirstname = Optional.of(Optional.ofNullable(user.getFirstname()).orElse("dear user!"));
 
         if(recipientAddress.isPresent()){
             MimeMessage mail = mailSender.createMimeMessage();
@@ -63,18 +63,18 @@ public class RegistrationListener implements ApplicationListener<OnRegistrationC
             String token = UUID.randomUUID().toString();
             service.createVerificationToken(user, token);
             String urlMessage = serverUrl+"registrationConfirm/" + token;
-            String message = getHTML(userFirstname, urlMessage);
+            String message = getHTML(urlMessage);
             mail.setContent(message,"text/html;charset=UTF-8");
             mimeMessageHelper.setTo(recipientAddress.get());
             mimeMessageHelper.setFrom(emailBikepacker);
-            mimeMessageHelper.setSubject("Подтвердите регистрацию в Bikepacker");
+            mimeMessageHelper.setSubject("Confirm Bikepacker registration");
             mailSender.send(mail);
         }
 
     }
 
 
-    private String getHTML(Optional<String> userFirstname, String urlMessage){
+    private String getHTML(String urlMessage){
          return "<html><head><style>\n" +
                  "    @import url('https://fonts.googleapis.com/css2?family=Poppins&display=swap');\n" +
                  "</style>\n" +

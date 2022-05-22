@@ -1,6 +1,8 @@
 package ru.netcracker.bikepackerserver.service;
 
+import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
 import org.springframework.stereotype.Service;
 import ru.netcracker.bikepackerserver.entity.UserEntity;
 import ru.netcracker.bikepackerserver.entity.VerificationTokenEntity;
@@ -132,8 +134,11 @@ public class UserServiceImpl implements UserService {
     @Override
     public UserEntity getUserByVerificationToken(String VerificationToken) {
         VerificationTokenEntity verificationToken = verificationTokenRepo.findByToken(VerificationToken);
-        return userRepo.findById(verificationToken.getUser().getId()).get();
-
+        Optional<UserEntity> user = Optional.ofNullable(
+                userRepo.findById(verificationToken.getUser().getId())
+                        .orElseThrow(() -> new UserNotFoundException(verificationToken.getUser().getId()))
+        );
+        return user.get();
     }
 
     private void updateEntity(UserModel model, UserEntity userEntity) {
@@ -151,5 +156,30 @@ public class UserServiceImpl implements UserService {
             return true;
         }
         return false;
+    }
+
+    @Override
+    public UserModel updateUserData(UserEntity user, Long userId) {
+        if(user==null || userId==null){ throw new IllegalArgumentException();}
+        UserEntity userTemp = new UserEntity();
+        BCryptPasswordEncoder encrypter = new BCryptPasswordEncoder(12);
+        try {
+            userTemp = userRepo.findByid(userId);
+            if(!user.getFirstname().equals("") &&
+                    !user.getFirstname().equals(userTemp.getFirstname())){userTemp.setFirstname(user.getFirstname());}
+            if(!user.getLastname().equals("") &&
+                    !user.getLastname().equals(userTemp.getLastname())){userTemp.setLastname(user.getLastname());}
+            if(!user.getEmail().equals("") &&
+                    !user.getEmail().equals(userTemp.getEmail())){userTemp.setEmail(user.getEmail());}
+            if(!user.getUsername().equals("") &&
+                    !user.getUsername().equals(userTemp.getUsername())){userTemp.setUsername(user.getUsername());}
+            if(user.getPassword()!= null && !user.getPassword().equals("")
+                    && user.getPassword().length() >= 8 ){userTemp.setPassword(encrypter.encode(user.getPassword()));}
+        }
+        catch (Exception e){
+            LoggerFactory.getLogger(UserServiceImpl.class).error("Error update user data", e.getMessage(),e);
+        }
+        userRepo.save(userTemp);
+        return UserModel.toModel(userTemp);
     }
 }

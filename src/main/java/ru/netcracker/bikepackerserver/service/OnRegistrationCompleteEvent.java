@@ -19,6 +19,12 @@ public class OnRegistrationCompleteEvent extends ApplicationEvent {
         this.appUrl = appUrl;
     }
 
+    public OnRegistrationCompleteEvent(
+            UserEntity user) {
+        super(user);
+        this.user = user;
+    }
+
     public String getAppUrl() {
         return appUrl;
     }
