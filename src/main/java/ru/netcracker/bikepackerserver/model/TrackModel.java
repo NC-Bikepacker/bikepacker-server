@@ -1,6 +1,11 @@
 package ru.netcracker.bikepackerserver.model;
 
+import com.fasterxml.jackson.annotation.JsonFormat;
 import com.fasterxml.jackson.annotation.JsonIgnoreProperties;
+import com.fasterxml.jackson.databind.annotation.JsonDeserialize;
+import com.fasterxml.jackson.databind.annotation.JsonSerialize;
+import com.fasterxml.jackson.datatype.jsr310.deser.LocalDateDeserializer;
+import com.fasterxml.jackson.datatype.jsr310.ser.LocalDateSerializer;
 import org.slf4j.LoggerFactory;
 import org.springframework.validation.annotation.Validated;
 import ru.netcracker.bikepackerserver.entity.ImageEntity;
@@ -37,6 +42,10 @@ public class TrackModel {
 
     private String imageBase64;
     private String trackName;
+
+    @JsonDeserialize(using = LocalDateDeserializer.class)
+    @JsonSerialize(using = LocalDateSerializer.class)
+    @JsonFormat(shape = JsonFormat.Shape.STRING, pattern = "yyyy-MM-dd")
     private LocalDate trackDate;
     private Double trackDistance;
     private Double trackAvgSpeed;
@@ -56,7 +65,6 @@ public class TrackModel {
             Optional<Double> trackComplexity = Optional.of(trackEntity.getTrackComplexity());
             Optional<String> gpx = Optional.ofNullable(trackEntity.getGpx());
             Optional<ImageEntity> image = Optional.ofNullable(imageRepo.findByTrack(trackEntity));
-            Optional<String> trackName = Optional.of(trackEntity.getTrackName());
             Optional<LocalDate> trackDate = Optional.ofNullable(trackEntity.getTrackDate());
             Optional<Double> trackDistance = Optional.ofNullable(trackEntity.getTrackDistance());
             Optional<Double> trackAvgSpeed = Optional.ofNullable(trackEntity.getTrackAvgSpeed());
@@ -73,8 +81,6 @@ public class TrackModel {
 
             if (travelTime.isPresent()) {
                 model.setTravelTime(entity.get().getTravelTime());
-            } else {
-                throw new NoSuchTrackException();
             }
 
             model.setTrackComplexity(entity.get().getTrackComplexity());
