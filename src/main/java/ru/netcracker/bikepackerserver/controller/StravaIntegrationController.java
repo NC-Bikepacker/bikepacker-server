@@ -103,7 +103,7 @@ public class StravaIntegrationController {
                         transformer.transform(domSource, result);
                         activities.put(entry.getName(), writer.toString());
                     } catch (ParserConfigurationException | SAXException | TransformerException e) {
-                        e.printStackTrace();
+                        LoggerFactory.getLogger(StravaIntegrationController.class).error(e.getMessage(),e);
                     } finally {
                         baos.close();
                     }
@@ -151,7 +151,7 @@ public class StravaIntegrationController {
                             trackModel.setUser(userModel);
                             trackService.save(trackModel);
                         } catch (Exception e) {
-                            e.printStackTrace();
+                            LoggerFactory.getLogger(StravaIntegrationController.class).error(e.getMessage(),e);
                         }
                     }
                     parser.close();
@@ -173,7 +173,7 @@ public class StravaIntegrationController {
                             user.setLastname(record.get("Last Name"));
                             userService.update(user,userId);
                         } catch (Exception e) {
-                            e.printStackTrace();
+                            LoggerFactory.getLogger(StravaIntegrationController.class).error(e.getMessage(),e);
                         }
                     }
                     parser.close();

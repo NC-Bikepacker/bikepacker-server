@@ -72,7 +72,7 @@ public class TrackController {
                         gpx = GPX.read(new ByteArrayInputStream(gpxStr.getBytes(StandardCharsets.UTF_8)));
                     }
                 } catch (IOException e) {
-                    e.printStackTrace();
+                    LoggerFactory.getLogger(StravaIntegrationController.class).error(e.getMessage(),e);
                 }
                 if (gpx != null) {
                     for (Track track : gpx.getTracks()) {

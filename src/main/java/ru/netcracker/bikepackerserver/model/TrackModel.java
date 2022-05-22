@@ -140,7 +140,7 @@ public class TrackModel {
 
             return model;
         } else {
-            throw new IllegalArgumentException();
+            throw new IllegalArgumentException("TrackEntity is not present");
         }
     }
 
