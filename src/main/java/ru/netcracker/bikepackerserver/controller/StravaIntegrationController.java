@@ -119,7 +119,6 @@ public class StravaIntegrationController {
                     CSVParser parser = CSVFormat.newFormat(',').withQuote('"').withHeader().parse(
                             new InputStreamReader(new ByteArrayInputStream(bytes), StandardCharsets.UTF_8));
                     // out
-                    System.out.println(entry.getName() + " in String format is:");
                     for (CSVRecord record : parser) {
                         try {
                             TrackModel trackModel = new TrackModel();
@@ -150,15 +149,6 @@ public class StravaIntegrationController {
                             trackModel.setTrackComplexity(Double.parseDouble(record.get("Perceived Exertion")) / 2);
                             UserModel userModel = userService.readById(userId);
                             trackModel.setUser(userModel);
-                            System.out.println("\n" + record.get("Activity Date"));
-                            System.out.println(record.get("Activity Name"));
-//                            System.out.println(record.get("Elapsed Time"));
-//                            System.out.println(record.get("Distance"));
-//                            System.out.println(gpxStr.substring(0, 1000));
-//                            System.out.println(start);
-//                            System.out.println(finish);
-//                            System.out.println(record.get("Average Speed"));
-//                            System.out.println(record.get("Perceived Exertion"));
                             trackService.save(trackModel);
                         } catch (Exception e) {
                             e.printStackTrace();
@@ -177,11 +167,8 @@ public class StravaIntegrationController {
                     CSVParser parser = CSVFormat.newFormat(',').withQuote('"').withHeader().parse(
                             new InputStreamReader(new ByteArrayInputStream(bytes), StandardCharsets.UTF_8));
                     // out
-                    System.out.println(entry.getName() + " in String format is:");
                     for (CSVRecord record : parser) {
                         try {
-                            System.out.println(record.get("First Name"));
-                            System.out.println(record.get("Last Name"));
                             user.setFirstname(record.get("First Name"));
                             user.setLastname(record.get("Last Name"));
                             userService.update(user,userId);
