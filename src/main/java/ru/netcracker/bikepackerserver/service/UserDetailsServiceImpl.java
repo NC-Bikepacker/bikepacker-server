@@ -11,7 +11,7 @@ import ru.netcracker.bikepackerserver.repository.UserRepo;
 import java.util.Optional;
 
 @Service
-public class UserDetailsServiceImpl implements UserDetailsService {
+public class UserDetailsServiceImpl  implements UserDetailsService {
 
     private UserRepo userRepository;
     private RoleRepo rolesRepository;

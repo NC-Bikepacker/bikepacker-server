@@ -47,7 +47,7 @@ public class SecurityConfiguration extends WebSecurityConfigurerAdapter {
                         authFilter,
                         UsernamePasswordAuthenticationFilter.class)
                 .authorizeRequests()
-                .antMatchers("/login", "/signup").permitAll()
+                .antMatchers("/login", "/signup","/registrationConfirm/*","/repeatConfirm/*").permitAll()
                 .antMatchers("/logout", "/user").hasAnyRole(ADMIN, USER)
                 .antMatchers("/tracks", "/tracks/update", "/tracks/delete/").hasAnyRole(ADMIN, USER)
                 .antMatchers("/friends").hasAnyRole(ADMIN, USER)
@@ -55,6 +55,7 @@ public class SecurityConfiguration extends WebSecurityConfigurerAdapter {
                 .antMatchers("/favoritetracks").hasAnyRole(ADMIN, USER)
                 .antMatchers("/image").hasAnyRole(ADMIN, USER)
                 .antMatchers("/points", "/points/*", "/points/**", "/points/*/**").hasAnyRole(ADMIN, USER)
+                .antMatchers("/updateuserdata").hasAnyRole(ADMIN,USER)
                 .antMatchers("/admin", "/users").hasRole(ADMIN)
                 .anyRequest().authenticated()
                 .and()

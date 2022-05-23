@@ -1,0 +1,128 @@
+<!DOCTYPE html>
+<html lang="en"><head>
+    <meta charset="UTF-8">
+    <meta http-equiv="X-UA-Compatible" content="IE=edge">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Document</title>
+    <style>
+    @import url('https://fonts.googleapis.com/css2?family=Poppins&display=swap');
+
+    body {
+        padding: 0;
+        margin: 0;
+        font-family: 'Poppins', sans-serif;
+    }
+
+    header, footer {
+        background-color: #5D3EA8;
+        height: 60px;
+        display: flex;
+        align-items: center;
+        flex-direction: row;
+    }
+
+    header #bikepacker-logo {
+        display: block;
+        height: 50px;
+        margin-left: 15px;
+    }
+
+    main {
+        display: flex;
+        width: 100vw;
+        height: calc(100vh - 120px);
+        position: relative;
+        justify-content: center;
+        align-items: center;
+    }
+
+    main:after {
+        content: "";
+        width: 100vw;
+        height: calc(100vh - 120px);
+        display: block;
+        opacity: 0.6;
+        background-color: #000000;
+        z-index: 1;
+        position: absolute;
+    }
+
+    main .main-background-image {
+        display: block;
+        position: absolute;
+        width: 100vw;
+        height: calc(100vh - 120px);
+        top: 0;
+        left: 0;
+        z-index: 0;
+        object-fit: cover;
+    }
+
+    main .content {
+        display: flex;
+        flex-direction: column;
+        z-index: 10;
+        align-items: center;
+        justify-content: center;
+        color: #ffffff;
+    }
+
+    main .content h1 {
+        text-align: center;
+        font-size: 2.2rem;
+        margin: 20px;
+    }
+
+    main .content p {
+        font-size: 1.5rem;
+        text-align: center;
+    }
+
+    footer {
+        justify-content: space-between;
+    }
+
+    footer .copyright {
+        height: 100%;
+        display: flex;
+        align-items: center;
+    }
+
+    footer .copyright span {
+        color: #ffffff;
+        margin: 0;
+        padding: 0 20px;
+        font-size: 0.8rem;
+    }
+</style></head>
+
+<body>
+<header>
+    <object id="bikepacker-logo" data="https://svgshare.com/i/h3d.svg" type="image/svg+xml">
+        <img src="https://res.cloudinary.com/mcborrow228/image/upload/v1652348632/bikepacker_logo_sznejt.png" alt="Bikepacker logo" style="
+                                                    background-color: #5D3EA8;
+                                                    margin: 0;
+                                                    padding: 0;
+                                                    border: 0;
+                                                    display: block;
+                                                    width: 100%;
+                                                    height: 100px;
+                                                    object-fit: contain;
+                                                " id="nvidia-logo_mr_css_attr" constrain="true" imagepreview="false" width="720" height="50">
+    </object>
+</header>
+<main>
+    <img src="https://bikepacking.com/wp-content/uploads/2021/09/tree-to-sea-loop-vancouver-island_211.jpg" alt="Vancouver Island" class="main-background-image">
+    <div class="content">
+        <h1>oooops!</h1>
+        <p>the code has expired, request the code again</p>
+    </div>
+</main>
+<footer>
+    <div class="empty-space"></div>
+    <div class="copyright">
+        <span>© 2022 NetCracker Technology Corporation</span>
+    </div>
+</footer>
+
+</body></html>

@@ -26,4 +26,10 @@ public interface UserService {
     void deleteByUsername(String username);
 
     boolean deleteAll();
+
+    void createVerificationToken(UserEntity user, String token);
+
+    UserEntity getUserByVerificationToken(String VerificationToken);
+
+    UserModel updateUserData(UserEntity user, Long userId);
 }

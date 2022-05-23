@@ -50,7 +50,12 @@ public class UserEntity implements Serializable {
     @Email(message = "Email is not valid")
     private String email;
 
+    @Column(name = "account_verification")
+    private boolean accountVerification;
+
     public UserEntity() {
+        super();
+        this.accountVerification = false;
     }
 
     public Long getId() {
@@ -111,6 +116,14 @@ public class UserEntity implements Serializable {
 
     public void setEmail(String email) {
         this.email = email;
+    }
+
+    public boolean isAccountVerification() {
+        return accountVerification;
+    }
+
+    public void setAccountVerification(boolean accountVerification) {
+        this.accountVerification = accountVerification;
     }
 
     @Override

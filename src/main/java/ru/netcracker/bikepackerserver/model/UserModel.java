@@ -33,6 +33,8 @@ public class UserModel {
     @NotNull
     private Long id;
 
+    private boolean accountVerification;
+
     public UserModel() {
     }
 
@@ -44,6 +46,7 @@ public class UserModel {
         model.setEmail(entity.getEmail());
         model.setUserPicLink(entity.getAvatarImageUrl());
         model.setId(entity.getId());
+        model.setAccountVerification(entity.isAccountVerification());
         return model;
     }
 
@@ -55,6 +58,7 @@ public class UserModel {
         model.setEmail(userDetails.getEmail());
         model.setUserPicLink(userDetails.getAvatarImageUrl());
         model.setId(userDetails.getId());
+        model.setAccountVerification(userDetails.isVerification());
         return model;
     }
 
@@ -104,6 +108,14 @@ public class UserModel {
 
     public void setId(Long id) {
         this.id = id;
+    }
+
+    public boolean isAccountVerification() {
+        return accountVerification;
+    }
+
+    public void setAccountVerification(boolean accountVerification) {
+        this.accountVerification = accountVerification;
     }
 
     @Override

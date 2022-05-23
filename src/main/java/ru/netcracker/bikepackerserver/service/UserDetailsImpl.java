@@ -24,6 +24,7 @@ public class UserDetailsImpl implements UserDetails {
     private RoleEntity roles;
     private List<GrantedAuthority> authorities;
     private Long id;
+    private boolean verification;
 
     public UserDetailsImpl(UserEntity user) {
         this.firstname = user.getFirstname();
@@ -37,6 +38,7 @@ public class UserDetailsImpl implements UserDetails {
         this.authorities = Arrays.stream(user.getRoles().getRoleName().split(","))
                 .map(SimpleGrantedAuthority::new)
                 .collect(Collectors.toList());
+        this.verification = user.isAccountVerification();
     }
 
     public UserDetailsImpl() {
@@ -141,6 +143,14 @@ public class UserDetailsImpl implements UserDetails {
         this.id = id;
     }
 
+    public boolean isVerification() {
+        return verification;
+    }
+
+    public void setVerification(boolean verification) {
+        this.verification = verification;
+    }
+
     @Override
     public String toString() {
         return "UserDetailsImpl{" +
@@ -152,6 +162,8 @@ public class UserDetailsImpl implements UserDetails {
                 ", email='" + email + '\'' +
                 ", roles=" + roles +
                 ", authorities=" + authorities +
+                ", id=" + id +
+                ", verification=" + verification +
                 '}';
     }
 }
