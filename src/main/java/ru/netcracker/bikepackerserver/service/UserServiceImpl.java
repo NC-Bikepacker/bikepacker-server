@@ -1,5 +1,6 @@
 package ru.netcracker.bikepackerserver.service;
 
+import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
@@ -27,8 +28,11 @@ public class UserServiceImpl implements UserService {
     @Autowired
     private VerificationTokenRepo verificationTokenRepo;
 
+    private Logger logger;
+
     public UserServiceImpl(UserRepo userRepo) {
         this.userRepo = userRepo;
+        this.logger = LoggerFactory.getLogger(UserServiceImpl.class);
     }
 
     @Override
@@ -134,19 +138,15 @@ public class UserServiceImpl implements UserService {
     @Override
     public UserEntity getUserByVerificationToken(String VerificationToken) {
         VerificationTokenEntity verificationToken = verificationTokenRepo.findByToken(VerificationToken);
-        Optional<UserEntity> user = Optional.ofNullable(
-                userRepo.findById(verificationToken.getUser().getId())
-                        .orElseThrow(() -> new UserNotFoundException(verificationToken.getUser().getId()))
-        );
-        return user.get();
+        return userRepo.findById(verificationToken.getUser().getId()).orElseThrow(()->new UserNotFoundException(verificationToken.getUser().getId()));
     }
 
     private void updateEntity(UserModel model, UserEntity userEntity) {
-        if (!model.getFirstname().equals("")) userEntity.setFirstname(model.getFirstname());
-        if (!model.getLastname().equals("")) userEntity.setLastname(model.getLastname());
-        if (!model.getUsername().equals("")) userEntity.setUsername(model.getUsername());
-        if (!model.getEmail().equals("")) userEntity.setEmail(model.getEmail());
-        if (!model.getUserPicLink().equals("")) userEntity.setAvatarImageUrl(model.getUserPicLink());
+        if (!model.getFirstname().isEmpty()) userEntity.setFirstname(model.getFirstname());
+        if (!model.getLastname().isEmpty()) userEntity.setLastname(model.getLastname());
+        if (!model.getUsername().isEmpty()) userEntity.setUsername(model.getUsername());
+        if (!model.getEmail().isEmpty()) userEntity.setEmail(model.getEmail());
+        if (!model.getUserPicLink().isEmpty()) userEntity.setAvatarImageUrl(model.getUserPicLink());
     }
 
     public boolean contains(String part, String user) {
@@ -165,19 +165,19 @@ public class UserServiceImpl implements UserService {
         BCryptPasswordEncoder encrypter = new BCryptPasswordEncoder(12);
         try {
             userTemp = userRepo.findByid(userId);
-            if(!user.getFirstname().equals("") &&
+            if(!user.getFirstname().isEmpty() &&
                     !user.getFirstname().equals(userTemp.getFirstname())){userTemp.setFirstname(user.getFirstname());}
-            if(!user.getLastname().equals("") &&
+            if(!user.getLastname().isEmpty() &&
                     !user.getLastname().equals(userTemp.getLastname())){userTemp.setLastname(user.getLastname());}
-            if(!user.getEmail().equals("") &&
+            if(!user.getEmail().isEmpty() &&
                     !user.getEmail().equals(userTemp.getEmail())){userTemp.setEmail(user.getEmail());}
-            if(!user.getUsername().equals("") &&
+            if(!user.getUsername().isEmpty() &&
                     !user.getUsername().equals(userTemp.getUsername())){userTemp.setUsername(user.getUsername());}
-            if(user.getPassword()!= null && !user.getPassword().equals("")
+            if(user.getPassword()!= null && !user.getPassword().isEmpty()
                     && user.getPassword().length() >= 8 ){userTemp.setPassword(encrypter.encode(user.getPassword()));}
         }
         catch (Exception e){
-            LoggerFactory.getLogger(UserServiceImpl.class).error("Error update user data", e.getMessage(),e);
+            logger.error("Error update user data", "Error: " + e.getMessage(),e);
         }
         userRepo.save(userTemp);
         return UserModel.toModel(userTemp);

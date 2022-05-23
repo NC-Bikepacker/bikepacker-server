@@ -3,6 +3,7 @@ package ru.netcracker.bikepackerserver.controller;
 import io.swagger.annotations.Api;
 import io.swagger.annotations.ApiOperation;
 import io.swagger.annotations.ApiParam;
+import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.context.ApplicationEventPublisher;
@@ -33,6 +34,7 @@ import java.util.Optional;
 public class SignUpController {
 
     private final UserServiceImpl userService;
+    private final Logger logger;
 
     @Autowired
     ApplicationEventPublisher eventPublisher;
@@ -47,6 +49,7 @@ public class SignUpController {
         this.userService = userService;
         this.eventPublisher = eventPublisher;
         this.verificationTokenRepo = verificationTokenRepo;
+        this.logger = LoggerFactory.getLogger(SignUpController.class);
     }
 
     @PostMapping("/signup")
@@ -68,7 +71,7 @@ public class SignUpController {
             eventPublisher.publishEvent(new OnRegistrationCompleteEvent(userEntity, request.getLocale(), request.getContextPath()));
         } catch (Exception exception) {
             System.out.println(exception.getMessage());
-            LoggerFactory.getLogger(SignUpController.class).error(exception.getMessage(), exception);
+            logger.error(exception.getMessage(), exception);
             return new ResponseEntity("Registration error", HttpStatus.BAD_REQUEST);
         }
 
@@ -101,7 +104,11 @@ public class SignUpController {
     public ResponseEntity repeatConfirm (@PathVariable @Valid Long user_id) {
         UserEntity user = userRepo.findByid(user_id);
         Optional<String> email;
-        if(user == null){new UserNotFoundException(user_id);}
+        if(user == null){
+            Exception exception = new UserNotFoundException(user_id);
+            logger.error("User not found", "Error: " + exception.getMessage(),exception);
+            return new ResponseEntity(HttpStatus.NOT_FOUND);
+        }
         assert user != null;
         if(user.isAccountVerification()){return new ResponseEntity("Your account does not need to be verified", HttpStatus.BAD_REQUEST);}
         email = Optional.ofNullable(user.getEmail());
@@ -113,8 +120,7 @@ public class SignUpController {
             eventPublisher.publishEvent(new OnRegistrationCompleteEvent(user));
         }
         catch (Exception e){
-            System.out.println(e.getMessage());
-            LoggerFactory.getLogger(SignUpController.class).error(e.getMessage(), e);
+            logger.error(e.getMessage(), e);
             return new ResponseEntity("Confirmation link request error" , HttpStatus.BAD_REQUEST);
         }
         return new ResponseEntity("Confirm your account to complete registration, an email was sent to you: " + email.orElse("email@email.ru"), HttpStatus.CREATED);
@@ -136,7 +142,7 @@ public class SignUpController {
             newUserData = userService.updateUserData(userEntity, userId);
         }
         catch (Exception e){
-            LoggerFactory.getLogger(SignUpController.class).error("Error update user data", e.getMessage(), e);
+            logger.error("Error update user data", "Error: " + e.getMessage(), e);
         }
         return new ResponseEntity(newUserData, HttpStatus.OK);
     }

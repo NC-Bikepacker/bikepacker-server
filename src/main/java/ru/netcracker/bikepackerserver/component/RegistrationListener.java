@@ -55,7 +55,6 @@ public class RegistrationListener implements ApplicationListener<OnRegistrationC
     private void confirmRegistration(OnRegistrationCompleteEvent event) throws MessagingException {
         UserEntity user = event.getUser();
         Optional<String> recipientAddress = Optional.ofNullable(user.getEmail());
-        Optional<String> userFirstname = Optional.of(Optional.ofNullable(user.getFirstname()).orElse("dear user!"));
 
         if(recipientAddress.isPresent()){
             MimeMessage mail = mailSender.createMimeMessage();
