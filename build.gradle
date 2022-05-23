@@ -34,9 +34,12 @@ dependencies {
     testImplementation 'org.springframework.boot:spring-boot-starter-test:2.6.3'
     implementation group: 'org.springframework.boot', name: 'spring-boot-starter-mail', version: '2.6.7'
     implementation group: 'org.springframework', name: 'spring-context-support', version: '5.3.19'
+    implementation group: 'org.apache.commons', name: 'commons-csv', version: '1.9.0'
+
 
     implementation group: 'com.fasterxml.jackson.datatype', name: 'jackson-datatype-jsr310', version: '2.13.2'
 
+    implementation group: 'io.jenetics', name: 'jpx', version: '2.3.0'
 }
 
 test {
